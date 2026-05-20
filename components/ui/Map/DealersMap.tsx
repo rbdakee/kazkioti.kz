@@ -16,12 +16,15 @@ export interface DealerPoint {
   hours?: string
 }
 
+export type DealersMapVariant = 'all' | 'dealer' | 'service'
+
 export interface DealersMapProps {
   dealers: readonly DealerPoint[]
   activeId?: string
   onSelect?: (id: string) => void
   interactive?: boolean
   className?: string
+  variant?: DealersMapVariant
 }
 
 const KZ_PATH =
@@ -33,6 +36,7 @@ export function DealersMap({
   onSelect,
   interactive = true,
   className,
+  variant = 'all',
 }: DealersMapProps) {
   const t = useTranslations('dealers')
   const [internalActive, setInternalActive] = useState<string | undefined>(activeId)
@@ -43,6 +47,12 @@ export function DealersMap({
     setInternalActive(id)
     onSelect?.(id)
   }
+
+  const visible = dealers.filter((dealer) => {
+    if (variant === 'all') return true
+    if (variant === 'dealer') return dealer.type === 'dealer' || dealer.type === 'factory'
+    return dealer.type === 'service' || dealer.type === 'factory'
+  })
 
   return (
     <div className={cn('relative w-full', className)}>
@@ -58,7 +68,7 @@ export function DealersMap({
           stroke="rgba(15,15,15,0.18)"
           strokeWidth={1.5}
         />
-        {dealers.map((dealer) => (
+        {visible.map((dealer) => (
           <MapPin
             key={dealer.id}
             cx={dealer.cx}
@@ -66,7 +76,7 @@ export function DealersMap({
             type={dealer.type}
             active={current === dealer.id}
             onClick={interactive ? () => handleSelect(dealer.id) : undefined}
-            label={dealer.city}
+            label={interactive ? dealer.city : undefined}
           />
         ))}
       </svg>

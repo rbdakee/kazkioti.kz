@@ -3,6 +3,7 @@ import type { Locale } from '@/lib/i18n/routing'
 import { Button } from '@/components/ui/Button'
 import { Eyebrow } from '@/components/ui/Eyebrow'
 import { VideoPlayer } from '@/components/ui/VideoPlayer'
+import { HeroMetric } from '@/components/ui/HeroMetric'
 
 export interface HeroProps {
   locale: Locale
@@ -40,22 +41,11 @@ export async function Hero({ locale }: HeroProps) {
           />
         </div>
         <div className="mt-10 grid grid-cols-2 gap-6 border-t border-border pt-8 sm:grid-cols-3">
-          <Metric value="10" label={t('metricYears')} />
-          <Metric value="6" label={t('metricModels')} />
-          <Metric value="30%" label={t('metricSubsidy')} />
+          <HeroMetric value={10} label={t('metricYears')} />
+          <HeroMetric value={6} label={t('metricModels')} />
+          <HeroMetric value={30} suffix="%" label={t('metricSubsidy')} />
         </div>
       </div>
     </section>
-  )
-}
-
-function Metric({ value, label }: { value: string; label: string }) {
-  return (
-    <div>
-      <p className="font-mono text-h2 text-text-primary">{value}</p>
-      <p className="mt-2 font-mono text-mono-label uppercase tracking-widest text-text-muted">
-        {label}
-      </p>
-    </div>
   )
 }

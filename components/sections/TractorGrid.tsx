@@ -44,7 +44,12 @@ export function TractorGrid({
     if (!showCompareTray) return
     try {
       const stored = sessionStorage.getItem(COMPARE_KEY)
-      if (stored) setCompareSlugs(JSON.parse(stored) as string[])
+      if (stored) {
+        const parsed: unknown = JSON.parse(stored)
+        if (Array.isArray(parsed) && parsed.every((s) => typeof s === 'string')) {
+          setCompareSlugs(parsed)
+        }
+      }
     } catch {
       // ignore parsing errors
     }

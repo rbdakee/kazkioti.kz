@@ -1,8 +1,20 @@
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import type { Locale } from '@/lib/i18n/routing'
 import { getTractor, getAllTractors } from '@/lib/content/tractors'
+import { getAttachment } from '@/lib/content/attachments'
+import { getAllCases } from '@/lib/content/cases'
 import { routing } from '@/lib/i18n/routing'
+import { Breadcrumbs } from '@/components/ui/Breadcrumbs'
+import { SpecTable, type SpecGroup } from '@/components/ui/SpecTable'
+import { VideoPlayer } from '@/components/ui/VideoPlayer'
+import { Eyebrow } from '@/components/ui/Eyebrow'
+import { CardCase } from '@/components/ui/Card/CardCase'
+import { TractorProductHero } from '@/components/sections/TractorProductHero'
+import { TractorSubNav } from '@/components/sections/TractorSubNav'
+import { TractorLeadBar } from '@/components/sections/TractorLeadBar'
+import { FinalCTA } from '@/components/sections/FinalCTA'
 
 export async function generateStaticParams() {
   const params: Array<{ locale: Locale; model: string }> = []
@@ -25,12 +37,30 @@ export async function generateMetadata({
   if (!tractor) return {}
   const t = await getTranslations({ locale, namespace: 'meta.tractorDetail' })
   return {
-    title: t('title', { model: tractor.frontmatter.name }),
-    description: t('description', {
-      model: tractor.frontmatter.name,
-      power: tractor.frontmatter.power,
-    }),
+    title: tractor.frontmatter.metaTitle ?? t('title', { model: tractor.frontmatter.name }),
+    description:
+      tractor.frontmatter.metaDescription ??
+      t('description', {
+        model: tractor.frontmatter.name,
+        power: tractor.frontmatter.power,
+      }),
+    openGraph: {
+      title: tractor.frontmatter.metaTitle ?? t('title', { model: tractor.frontmatter.name }),
+      description:
+        tractor.frontmatter.metaDescription ??
+        t('description', {
+          model: tractor.frontmatter.name,
+          power: tractor.frontmatter.power,
+        }),
+      images: [tractor.frontmatter.ogImage ?? tractor.frontmatter.heroImage],
+    },
   }
+}
+
+interface AttachmentPreview {
+  slug: string
+  name: string
+  categoryKey: 'seeding' | 'tillage' | 'mowing' | 'extra'
 }
 
 export default async function TractorDetailPage({
@@ -43,9 +73,315 @@ export default async function TractorDetailPage({
   const tractor = await getTractor(model, locale)
   if (!tractor) notFound()
 
+  const t = await getTranslations({ locale })
+  const tDetail = await getTranslations({ locale, namespace: 'tractorDetail' })
+  const frontmatter = tractor.frontmatter
+
+  const attachmentSlugs: readonly string[] = frontmatter.compatibleAttachments ?? []
+  const attachmentResults = await Promise.all(
+    attachmentSlugs.map(async (slug): Promise<AttachmentPreview | null> => {
+      try {
+        const record = await getAttachment(slug, locale)
+        if (!record) {
+          console.warn(`[tractor-detail] attachment slug not found: ${slug}`)
+          return null
+        }
+        return { slug, name: record.frontmatter.name, categoryKey: record.frontmatter.category }
+      } catch (err) {
+        console.warn(`[tractor-detail] failed to load attachment ${slug}:`, err)
+        return null
+      }
+    }),
+  )
+  const attachments = attachmentResults.filter((a): a is AttachmentPreview => a !== null)
+
+  const CATEGORY_LABEL_KEY: Record<AttachmentPreview['categoryKey'], string> = {
+    seeding: t('attachments.groupSeedingTitle'),
+    tillage: t('attachments.groupTillageTitle'),
+    mowing: t('attachments.groupMowingTitle'),
+    extra: t('attachments.groupExtraTitle'),
+  }
+
+  const allCases = await getAllCases(locale)
+  const relatedCases = allCases
+    .map((record) => record.frontmatter)
+    .filter(
+      (item) =>
+        item.tractorModel === frontmatter.slug ||
+        (frontmatter.relatedCases ?? []).includes(item.slug) ||
+        (item.relatedTractors ?? []).includes(frontmatter.slug),
+    )
+    .slice(0, 3)
+
+  const specGroups: SpecGroup[] = [
+    {
+      title: tDetail('specGroupEngine'),
+      rows: [
+        { label: tDetail('specEngineModel'), value: frontmatter.engineModel },
+        { label: tDetail('specEngineCylinders'), value: String(frontmatter.engineCylinders) },
+        { label: tDetail('specEngineDisplacement'), value: `${frontmatter.engineDisplacement} cm³` },
+        { label: tDetail('specEngineEco'), value: frontmatter.engineEcoClass },
+        { label: tDetail('specEngineFuel'), value: frontmatter.fuelType },
+      ],
+    },
+    {
+      title: tDetail('specGroupTransmission'),
+      rows: [
+        { label: tDetail('specTrType'), value: frontmatter.transmissionType },
+        { label: tDetail('specTrGears'), value: frontmatter.transmission },
+        { label: tDetail('specTrDrive'), value: frontmatter.driveType },
+        { label: tDetail('specTrPto'), value: frontmatter.pto },
+        ...(frontmatter.clutch
+          ? [{ label: tDetail('specTrClutch'), value: frontmatter.clutch }]
+          : []),
+      ],
+    },
+    {
+      title: tDetail('specGroupDimensions'),
+      rows: [
+        { label: tDetail('specDimLength'), value: `${frontmatter.lengthMm} mm` },
+        { label: tDetail('specDimWidth'), value: `${frontmatter.widthMm} mm` },
+        { label: tDetail('specDimHeight'), value: `${frontmatter.heightMm} mm` },
+        { label: tDetail('specDimMass'), value: `${frontmatter.weight} kg` },
+        ...(frontmatter.wheelbase
+          ? [{ label: tDetail('specDimWheelbase'), value: `${frontmatter.wheelbase} mm` }]
+          : []),
+      ],
+    },
+    {
+      title: tDetail('specGroupHydraulics'),
+      rows: [
+        { label: tDetail('specHydTank'), value: `${frontmatter.fuelTank} L` },
+        ...(frontmatter.hydraulicPump
+          ? [{ label: tDetail('specHydPump'), value: frontmatter.hydraulicPump }]
+          : []),
+        ...(frontmatter.rearLinkage
+          ? [{ label: tDetail('specHydRear'), value: frontmatter.rearLinkage }]
+          : []),
+        ...(frontmatter.brakes
+          ? [{ label: tDetail('specHydBrakes'), value: frontmatter.brakes }]
+          : []),
+        {
+          label: tDetail('specHydWarranty'),
+          value: `${frontmatter.warrantyYears} / ${frontmatter.warrantyHours}`,
+        },
+      ],
+    },
+  ]
+
+  const cabinItems: Array<{ key: string; title: string; body: string }> = [
+    { key: 'ac', title: tDetail('cabinAcTitle'), body: tDetail('cabinAcBody') },
+    { key: 'steering', title: tDetail('cabinSteeringTitle'), body: tDetail('cabinSteeringBody') },
+    { key: 'noise', title: tDetail('cabinNoiseTitle'), body: tDetail('cabinNoiseBody') },
+    { key: 'view', title: tDetail('cabinViewTitle'), body: tDetail('cabinViewBody') },
+  ]
+
+  const showReview = Boolean(frontmatter.videoUrl)
+  const showAttachments = attachments.length > 0
+  const showCases = relatedCases.length > 0
+  const kpHref = '#kp'
+
   return (
-    <div className="mx-auto max-w-container px-4 py-20 sm:px-6 lg:px-10">
-      <h1 className="font-heading text-h1 text-text-primary">{tractor.frontmatter.name}</h1>
-    </div>
+    <>
+      <div className="mx-auto max-w-container px-4 pt-24 sm:px-6 lg:px-10">
+        <Breadcrumbs
+          items={[
+            { label: t('breadcrumbs.home'), href: `/${locale}` },
+            { label: t('breadcrumbs.tractors'), href: `/${locale}/tractors` },
+            { label: frontmatter.name },
+          ]}
+        />
+      </div>
+
+      <TractorProductHero tractor={frontmatter} locale={locale} />
+
+      <TractorSubNav
+        showReview={showReview}
+        showAttachments={showAttachments}
+        showCases={showCases}
+        kpHref={kpHref}
+      />
+
+      {showReview ? (
+        <section id="review" className="bg-bg-default">
+          <div className="mx-auto max-w-container px-4 py-20 sm:px-6 lg:px-10">
+            <div className="flex max-w-3xl flex-col gap-3">
+              <Eyebrow>01 · {tDetail('subNavReview')}</Eyebrow>
+              <h2 className="font-heading text-h2 text-text-primary">
+                {tDetail('reviewTitle', { model: frontmatter.name })}
+              </h2>
+            </div>
+            <div className="mt-10">
+              <VideoPlayer
+                type="youtube"
+                src={frontmatter.videoUrl ?? ''}
+                poster={frontmatter.heroImage}
+                alt={`${frontmatter.name} ${tDetail('subNavReview')}`}
+                aspectRatio="16 / 9"
+              />
+              <div className="mt-3 font-mono text-mono-label uppercase tracking-widest text-text-muted">
+                <span>{tDetail('reviewCaption')}</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      ) : null}
+
+      <section id="specs" className="bg-bg-soft">
+        <div className="mx-auto max-w-container px-4 py-20 sm:px-6 lg:px-10">
+          <div className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-end">
+            <div className="flex max-w-3xl flex-col gap-3">
+              <Eyebrow>02 · {tDetail('subNavSpecs')}</Eyebrow>
+              <h2 className="font-heading text-h2 text-text-primary">{tDetail('specsTitle')}</h2>
+              <p className="text-lede text-text-muted">{tDetail('specsLede')}</p>
+            </div>
+          </div>
+          <SpecTable groups={specGroups} className="mt-10" />
+        </div>
+      </section>
+
+      <section id="cabin" className="bg-bg-default">
+        <div className="mx-auto max-w-container px-4 py-20 sm:px-6 lg:px-10">
+          <div className="flex max-w-3xl flex-col gap-3">
+            <Eyebrow>03 · {tDetail('subNavCabin')}</Eyebrow>
+            <h2 className="font-heading text-h2 text-text-primary">{tDetail('cabinTitle')}</h2>
+          </div>
+          <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {cabinItems.map((item) => (
+              <li key={item.key} className="flex flex-col gap-3">
+                <div className="aspect-[4/5] rounded-sm bg-bg-muted" />
+                <p className="font-heading text-body-l font-semibold text-text-primary">{item.title}</p>
+                <p className="text-body-s text-text-muted">{item.body}</p>
+              </li>
+            ))}
+          </ul>
+          {tractor.body.trim() ? (
+            <p className="mt-10 max-w-3xl text-body-l text-text-muted">{tractor.body.trim()}</p>
+          ) : null}
+        </div>
+      </section>
+
+      {showAttachments ? (
+        <section id="attachments" className="bg-bg-soft">
+          <div className="mx-auto max-w-container px-4 py-20 sm:px-6 lg:px-10">
+            <div className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-end">
+              <div className="flex max-w-3xl flex-col gap-3">
+                <Eyebrow>04 · {tDetail('subNavAttachments')}</Eyebrow>
+                <h2 className="font-heading text-h2 text-text-primary">
+                  {tDetail('attachmentsTitle', { model: frontmatter.name })}
+                </h2>
+              </div>
+              <Link
+                href={`/${locale}/attachments`}
+                className="font-mono text-mono-label uppercase tracking-widest text-text-primary underline-offset-4 hover:text-brand-red hover:underline"
+              >
+                {tDetail('attachmentsViewAll')}
+              </Link>
+            </div>
+            <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {attachments.map((item) => (
+                <li key={item.slug}>
+                  <Link
+                    href={`/${locale}/attachments`}
+                    className="flex h-full flex-col gap-3 rounded-md border border-border bg-bg-default p-5 transition-all duration-fast hover:-translate-y-0.5 hover:border-border-strong"
+                  >
+                    <div className="aspect-square rounded-sm bg-bg-muted" />
+                    <p className="font-mono text-mono-label uppercase tracking-widest text-text-muted">
+                      {CATEGORY_LABEL_KEY[item.categoryKey]}
+                    </p>
+                    <p className="font-heading text-body-l font-semibold text-text-primary">
+                      {item.name}
+                    </p>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      ) : null}
+
+      <section id="warranty" className="bg-bg-default">
+        <div className="mx-auto max-w-container px-4 py-20 sm:px-6 lg:px-10">
+          <div className="grid gap-10 rounded-md border border-border bg-bg-soft p-10 lg:grid-cols-[1fr_1.2fr] lg:p-14">
+            <div>
+              <Eyebrow>05 · {tDetail('subNavWarranty')}</Eyebrow>
+              <div className="mt-6 font-heading text-display leading-none tracking-tight text-text-primary">
+                <span className="text-brand-red">{frontmatter.warrantyYears}</span>
+                <span className="text-text-faint"> · </span>
+                <span>{frontmatter.warrantyHours}</span>
+              </div>
+              <p className="mt-4 font-mono text-mono-label uppercase tracking-widest text-text-muted">
+                {tDetail('warrantyCaption')}
+              </p>
+            </div>
+            <ul className="flex flex-col">
+              {[1, 2, 3, 4].map((num) => (
+                <li
+                  key={num}
+                  className="grid grid-cols-[32px_1fr] gap-3 border-t border-border py-4 first:border-t-0"
+                >
+                  <span className="pt-1 font-mono text-mono-label uppercase tracking-widest text-text-muted">
+                    {String(num).padStart(2, '0')}
+                  </span>
+                  <div>
+                    <p className="font-heading text-body-l font-semibold text-text-primary">
+                      {tDetail(`warrantyItem${num}Title` as 'warrantyItem1Title')}
+                    </p>
+                    <p className="mt-1 text-body-m text-text-muted">
+                      {tDetail(`warrantyItem${num}Body` as 'warrantyItem1Body')}
+                    </p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="mt-6 flex flex-wrap items-center gap-3">
+            <Link
+              href={`/${locale}/dealers`}
+              className="font-mono text-mono-label uppercase tracking-widest text-text-primary underline-offset-4 hover:text-brand-red hover:underline"
+            >
+              {tDetail('warrantyDealers')} →
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {showCases ? (
+        <section id="cases" className="bg-bg-soft">
+          <div className="mx-auto max-w-container px-4 py-20 sm:px-6 lg:px-10">
+            <div className="flex max-w-3xl flex-col gap-3">
+              <Eyebrow>06 · {tDetail('subNavCases')}</Eyebrow>
+              <h2 className="font-heading text-h2 text-text-primary">
+                {tDetail('casesTitle', { model: frontmatter.name })}
+              </h2>
+            </div>
+            <div className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+              {relatedCases.map((item) => (
+                <CardCase
+                  key={item.slug}
+                  caseItem={item}
+                  locale={locale}
+                  labels={{
+                    hectares: t('cases.metricHectares'),
+                    motorHours: t('cases.metricMotorHours'),
+                    years: t('cases.metricYears'),
+                  }}
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+      ) : null}
+
+      <div id="kp">
+        <FinalCTA
+          locale={locale}
+          defaultModel={frontmatter.slug}
+          source={`tractor-${frontmatter.slug}-final`}
+        />
+      </div>
+
+      <TractorLeadBar modelName={`KAZKIOTI · ${frontmatter.name}`} power={frontmatter.power} kpHref={kpHref} />
+    </>
   )
 }

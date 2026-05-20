@@ -25,6 +25,16 @@ export function MapPin({ cx, cy, type, active, onClick, label }: MapPinProps) {
       transform={`translate(${cx} ${cy})`}
       className={cn('cursor-pointer transition-transform', active && 'scale-110')}
       onClick={onClick}
+      onKeyDown={
+        isInteractive
+          ? (e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                onClick?.()
+              }
+            }
+          : undefined
+      }
       role={isInteractive ? 'button' : undefined}
       tabIndex={isInteractive ? 0 : undefined}
       aria-label={label}
