@@ -1,0 +1,274 @@
+{
+  "nav": {
+    "tractors": "[kk] Тракторы",
+    "attachments": "[kk] Навесное",
+    "parts": "[kk] Запчасти и сервис",
+    "dealers": "[kk] Дилеры",
+    "about": "[kk] О заводе",
+    "news": "[kk] Новости",
+    "faq": "[kk] FAQ",
+    "contacts": "[kk] Контакты",
+    "cases": "[kk] Кейсы"
+  },
+  "header": {
+    "cta": "[kk] Оставить заявку",
+    "ctaShort": "[kk] Заявка",
+    "phone": "[kk] +7 747 876 44 44",
+    "menuOpen": "[kk] Меню",
+    "menuClose": "[kk] Закрыть",
+    "downloadCatalog": "[kk] Скачать каталог"
+  },
+  "hero": {
+    "location": "[kk] Бадам · Казахстан · сборка в режиме live",
+    "eyebrow": "[kk] Казахстанский завод · с 2016",
+    "h1": "[kk] Тракторы, собранные в Казахстане.",
+    "lede": "[kk] Полная линия сборки, собственная покраска, инженерные стандарты Euro 2 — и серьёзный сервис рядом с вашим хозяйством.",
+    "ctaCatalog": "[kk] Каталог тракторов →",
+    "ctaContact": "[kk] Связаться",
+    "metricYears": "[kk] лет на рынке",
+    "metricModels": "[kk] моделей · 40–210 л.с.",
+    "metricSubsidy": "[kk] скидка по субсидии",
+    "scrollHint": "[kk] прокрутите"
+  },
+  "utp": {
+    "eyebrow": "[kk] Почему KAZKIOTI",
+    "item1Title": "[kk] Скидка до 30% по госпрограммам",
+    "item1Body": "[kk] Субсидии и лизинг через KazAgroFinance — оформление под ключ.",
+    "item2Title": "[kk] Гарантия 1 год или 1000 м/ч",
+    "item2Body": "[kk] Реальная гарантия с выездом инженера. Запчасти со склада в Бадаме.",
+    "item3Title": "[kk] Сервис 24/7 по Казахстану",
+    "item3Body": "[kk] Сеть сервисных центров, удалённая диагностика, выездная бригада."
+  },
+  "tractors": {
+    "catalogHeader": "[kk] Линейка тракторов",
+    "catalogLede": "[kk] Шесть моделей от 40 до 210 л.с. — под любую задачу хозяйства.",
+    "filterAll": "[kk] Все",
+    "filter40": "[kk] До 50 л.с.",
+    "filter90": "[kk] 50–100",
+    "filter120": "[kk] 100–150",
+    "filter210": "[kk] 150+",
+    "viewAll": "[kk] Все тракторы →",
+    "powerLabel": "[kk] л.с.",
+    "compare": "[kk] Сравнить",
+    "details": "[kk] Подробнее →",
+    "compareTrayTitle": "[kk] Сравнить модели",
+    "compareTrayCta": "[kk] Перейти к сравнению →",
+    "compareTrayRemove": "[kk] Убрать из сравнения",
+    "comingSoon": "[kk] Скоро",
+    "specsTitle": "[kk] Технические характеристики",
+    "cabinTitle": "[kk] Кабина и комфорт",
+    "attachmentsTitle": "[kk] Совместимое навесное",
+    "warrantyTitle": "[kk] Гарантия и сервис",
+    "casesTitle": "[kk] Кейсы с этой моделью",
+    "ctaTitle": "[kk] Получить расчёт на эту модель"
+  },
+  "compare": {
+    "title": "[kk] Сравнение моделей",
+    "lede": "[kk] Выберите до трёх моделей — увидите разницу по ключевым параметрам.",
+    "addModel": "[kk] Добавить модель",
+    "removeModel": "[kk] Убрать"
+  },
+  "attachments": {
+    "title": "[kk] Навесное оборудование",
+    "lede": "[kk] Совместимо с линейкой тракторов KAZKIOTI.",
+    "tabSeeding": "[kk] Посевная",
+    "tabTillage": "[kk] Почвообработка",
+    "tabMowing": "[kk] Косилки",
+    "tabExtra": "[kk] Дополнительное",
+    "requestPrice": "[kk] Запросить цену"
+  },
+  "parts": {
+    "title": "[kk] Запчасти и сервис",
+    "lede": "[kk] Оригинальные запчасти, выездной сервис, удалённая диагностика.",
+    "requestService": "[kk] Заявка на ТО",
+    "whatWeDo": "[kk] Что мы делаем",
+    "serviceMapTitle": "[kk] Сервис рядом с вашим полем"
+  },
+  "dealers": {
+    "title": "[kk] Дилеры и сервис",
+    "lede": "[kk] Сеть дилеров и сервисных центров по Казахстану.",
+    "searchPlaceholder": "[kk] Поиск по городу",
+    "filterRegion": "[kk] Регион",
+    "filterAll": "[kk] Все",
+    "typeFactory": "[kk] Завод",
+    "typeDealer": "[kk] Дилер",
+    "typeService": "[kk] Сервис",
+    "mapAriaLabel": "[kk] Карта Казахстана с дилерами и сервисом"
+  },
+  "cases": {
+    "title": "[kk] Кейсы клиентов",
+    "lede": "[kk] Реальная техника в реальных хозяйствах Казахстана.",
+    "metricHectares": "[kk] га",
+    "metricMotorHours": "[kk] моточасов",
+    "metricYears": "[kk] лет в работе",
+    "metricMachines": "[kk] единиц",
+    "viewAll": "[kk] Все кейсы →",
+    "relatedTractors": "[kk] Связанные модели"
+  },
+  "news": {
+    "title": "[kk] Новости",
+    "lede": "[kk] Производство, поставки, партнёрства, обновления линейки.",
+    "tagAll": "[kk] Все",
+    "tagProduction": "[kk] Производство",
+    "tagDelivery": "[kk] Поставки",
+    "tagPartnership": "[kk] Партнёрства",
+    "tagLineup": "[kk] Обновления",
+    "readMore": "[kk] Читать →",
+    "viewAll": "[kk] Все новости →",
+    "related": "[kk] Похожие материалы",
+    "share": "[kk] Поделиться",
+    "minutes": "[kk] мин чтения"
+  },
+  "about": {
+    "title": "[kk] О заводе",
+    "lede": "[kk] Казахстанско-Турецкая индустриальная зона, с. Бадам — с 2016 года.",
+    "timelineTitle": "[kk] Хронология",
+    "goalsTitle": "[kk] Стратегические цели",
+    "factoryTitle": "[kk] Производство",
+    "factoryStats": {
+      "localization": "[kk] локализация",
+      "founded": "[kk] год основания",
+      "service": "[kk] сервис"
+    }
+  },
+  "faq": {
+    "title": "[kk] Частые вопросы",
+    "lede": "[kk] Гарантия, лизинг, доставка, документы, сервис.",
+    "searchPlaceholder": "[kk] Поиск по вопросам",
+    "noAnswer": "[kk] Не нашли ответ?",
+    "askCta": "[kk] Спросите нас напрямую",
+    "groupWarranty": "[kk] 01 · Гарантия",
+    "groupLeasing": "[kk] 02 · Лизинг",
+    "groupDelivery": "[kk] 03 · Доставка",
+    "groupDocs": "[kk] 04 · Документы",
+    "groupService": "[kk] 05 · Сервис"
+  },
+  "contacts": {
+    "title": "[kk] Контакты",
+    "lede": "[kk] Завод, офис, дилеры, форма обратной связи.",
+    "factoryTitle": "[kk] Завод",
+    "officeTitle": "[kk] Офис",
+    "requisitesTitle": "[kk] Реквизиты",
+    "messengersTitle": "[kk] Мессенджеры"
+  },
+  "forms": {
+    "name": "[kk] Имя",
+    "namePlaceholder": "[kk] Как к вам обращаться",
+    "phone": "[kk] Телефон",
+    "phonePlaceholder": "[kk] +7 (___) ___-__-__",
+    "email": "[kk] Email",
+    "region": "[kk] Регион",
+    "regionPlaceholder": "[kk] Выберите регион",
+    "model": "[kk] Модель",
+    "modelPlaceholder": "[kk] Выберите модель",
+    "comment": "[kk] Комментарий",
+    "commentPlaceholder": "[kk] Опишите задачу или площадь поля",
+    "submit": "[kk] Получить расчёт",
+    "submitTestDrive": "[kk] Заявка на тест-драйв",
+    "submitCallback": "[kk] Перезвоните мне",
+    "sending": "[kk] Отправляем…",
+    "successTitle": "[kk] Заявка принята",
+    "successBody": "[kk] Свяжемся в течение рабочего дня.",
+    "errorTitle": "[kk] Не удалось отправить",
+    "errorBody": "[kk] Попробуйте ещё раз или напишите в WhatsApp.",
+    "orMessenger": "[kk] или напишите в мессенджер",
+    "consent": "[kk] Отправляя заявку, вы соглашаетесь с обработкой персональных данных.",
+    "honeypotLabel": "[kk] Не заполняйте это поле",
+    "optional": "[kk] (не обязательно)"
+  },
+  "footer": {
+    "tagline": "[kk] Казахстанский тракторный завод",
+    "catalogTitle": "[kk] Каталог",
+    "companyTitle": "[kk] Компания",
+    "serviceTitle": "[kk] Сервис",
+    "contactsTitle": "[kk] Контакты",
+    "warranty": "[kk] Гарантия",
+    "leasing": "[kk] Лизинг",
+    "serviceCenters": "[kk] Сервисные центры",
+    "privacy": "[kk] Политика конфиденциальности",
+    "copyright": "[kk] © 2026 KAZKIOTI · Все права защищены"
+  },
+  "cookie": {
+    "text": "[kk] Мы используем cookies для аналитики. Продолжая, вы соглашаетесь с этим.",
+    "ok": "[kk] Хорошо",
+    "more": "[kk] Подробнее"
+  },
+  "messenger": {
+    "open": "[kk] Связь",
+    "close": "[kk] Закрыть",
+    "whatsapp": "[kk] WhatsApp",
+    "telegram": "[kk] Telegram"
+  },
+  "notFound": {
+    "title": "[kk] Страница не найдена"
+  },
+  "common": {
+    "learnMore": "[kk] Подробнее",
+    "allCases": "[kk] Все кейсы →",
+    "allNews": "[kk] Все новости →",
+    "openMap": "[kk] Открыть карту →",
+    "loading": "[kk] Загрузка…",
+    "backToList": "[kk] ← К списку",
+    "skipToContent": "[kk] Перейти к контенту",
+    "languageSwitch": "[kk] Переключить язык",
+    "close": "[kk] Закрыть"
+  },
+  "breadcrumbs": {
+    "home": "[kk] KAZKIOTI",
+    "tractors": "[kk] Тракторы",
+    "cases": "[kk] Кейсы",
+    "news": "[kk] Новости",
+    "compare": "[kk] Сравнение",
+    "attachments": "[kk] Навесное"
+  },
+  "meta": {
+    "home": {
+      "title": "[kk] KAZKIOTI — Тракторы, собранные в Казахстане",
+      "description": "[kk] Казахстанский завод тракторов с 2016. Линейка от 40 до 210 л.с., скидка до 30% по госпрограммам, сервис 24/7."
+    },
+    "tractors": {
+      "title": "[kk] Каталог тракторов — KAZKIOTI",
+      "description": "[kk] 6 моделей тракторов от 40 до 210 л.с. собственной сборки. Спецификации, фото, видео."
+    },
+    "tractorDetail": {
+      "title": "[kk] {model} — KAZKIOTI",
+      "description": "[kk] {model} — трактор {power} л.с. казахстанской сборки. Спецификации, гарантия, сервис."
+    },
+    "compare": {
+      "title": "[kk] Сравнение моделей — KAZKIOTI",
+      "description": "[kk] Сравните до трёх тракторов KAZKIOTI по ключевым параметрам."
+    },
+    "attachments": {
+      "title": "[kk] Навесное оборудование — KAZKIOTI",
+      "description": "[kk] Совместимое навесное оборудование для тракторов KAZKIOTI: сеялки, плуги, бороны, косилки."
+    },
+    "parts": {
+      "title": "[kk] Запчасти и сервис — KAZKIOTI",
+      "description": "[kk] Оригинальные запчасти, выездной сервис, ТО тракторов KAZKIOTI по Казахстану."
+    },
+    "dealers": {
+      "title": "[kk] Дилеры и сервис — KAZKIOTI",
+      "description": "[kk] Карта дилеров и сервисных центров KAZKIOTI по Казахстану."
+    },
+    "cases": {
+      "title": "[kk] Кейсы клиентов — KAZKIOTI",
+      "description": "[kk] Реальные хозяйства, реальная техника KAZKIOTI в работе."
+    },
+    "news": {
+      "title": "[kk] Новости — KAZKIOTI",
+      "description": "[kk] Производство, поставки, партнёрства KAZKIOTI."
+    },
+    "about": {
+      "title": "[kk] О заводе — KAZKIOTI",
+      "description": "[kk] Казахстанский тракторный завод в с. Бадам с 2016 года. Локализация до 50%."
+    },
+    "faq": {
+      "title": "[kk] FAQ — KAZKIOTI",
+      "description": "[kk] Гарантия, лизинг, доставка, документы — частые вопросы по технике KAZKIOTI."
+    },
+    "contacts": {
+      "title": "[kk] Контакты — KAZKIOTI",
+      "description": "[kk] Завод, офис, телефон, email и мессенджеры KAZKIOTI."
+    }
+  }
+}
