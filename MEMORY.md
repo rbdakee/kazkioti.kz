@@ -31,9 +31,13 @@
 - Radius: 4–8px on cards/inputs, 999px on pills/buttons.
 - Motion curve: `cubic-bezier(0.2, 0.8, 0.2, 1)`, 250–400ms default.
 
-## Stack
+## Stack (locked 2026-05-20)
 
-- **TBD** — to be decided with client before Phase 2 (see `PLAN.md` §2).
+- **Framework:** Next.js (App Router) + TypeScript + Tailwind CSS.
+- **Deploy:** Vercel (preview per PR, prod on `main`).
+- **CMS v1:** MDX-in-repo (`/content/news/*.mdx`, `/content/cases/*.mdx`, `/content/faq/*.mdx`, `/content/tractors/*.mdx` for specs). Migration to Sanity/Strapi possible later.
+- **i18n:** Next.js built-in `next-intl` or `next-i18next` (architect agent decides in Phase 2).
+- **Styling:** Tailwind theme mirrors tokens from `.handoff/kazkioti/project/theme.css`.
 
 ## Workflow rules (see `PLAN.md` for full)
 
@@ -52,4 +56,4 @@
 
 ## Decisions log
 
-(empty — append as decisions are made)
+- **2026-05-20** — Stack locked: Next.js + TS + Tailwind, deploy on Vercel, content as MDX-in-repo. Rationale: best SEO/i18n for KZ+RU site, zero-DevOps deploy, content fits in git for v1.

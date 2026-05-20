@@ -63,20 +63,13 @@
 
 ---
 
-## 2. Технологический стек (фиксируется до старта Фазы 2)
+## 2. Технологический стек (зафиксирован 2026-05-20)
 
-Решение принимает заказчик после короткой записки от главного агента. Кандидаты:
-
-- **Next.js (App Router) + TypeScript + Tailwind** — рекомендация по умолчанию: SEO, маршрутизация, i18n из коробки, легко лить статикой.
-- **Astro + TypeScript + Tailwind** — если сайт почти статический и нужна максимальная скорость.
-- **Vite + React + TS** — если по каким-то причинам отказываемся от SSR/SSG.
-
-CMS для новостей / кейсов / FAQ — выбор отложен (Sanity / Strapi / MDX в репо). По умолчанию **MDX-в-репо** на v1, чтобы не блокироваться.
-
-> **До старта Фазы 2 главный агент задаёт заказчику ровно три вопроса:**
-> 1. Стек (Next/Astro/Vite)?
-> 2. Деплой (Vercel / собственный VPS / другое)?
-> 3. CMS на v1 (MDX-в-репо / Sanity / Strapi)?
+- **Framework:** Next.js (App Router) + TypeScript + Tailwind CSS.
+- **Deploy:** Vercel (preview на каждый PR, prod на `main`).
+- **CMS v1:** MDX-в-репо (`/content/news/*.mdx`, `/content/cases/*.mdx`, `/content/faq/*.mdx`, `/content/tractors/*.mdx`). Возможна миграция на Sanity/Strapi позже.
+- **i18n:** `next-intl` или `next-i18next` — конкретику определяет архитектор в Фазе 2.
+- **Styling:** Tailwind theme отражает токены из `.handoff/kazkioti/project/theme.css`.
 
 ---
 
