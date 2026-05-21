@@ -47,5 +47,5 @@ export const SOCIAL_LINKS = {
 
 export const PDF_CATALOG_URL = '/docs/kazkioti-catalog.pdf'
 
-export const TRACTOR_SLUGS = ['df-404', 'df-904', 'tt-1004', 'ts-1204', 'ts-1404', 'mg-2104'] as const
+export const TRACTOR_SLUGS = ['df404', 'df404-cab', 'df904', 'ts1204', 'ts1404', 'ts2114'] as const
 export type TractorSlug = (typeof TRACTOR_SLUGS)[number]
