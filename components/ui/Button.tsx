@@ -20,7 +20,7 @@ const sizeStyles: Record<ButtonSize, string> = {
 }
 
 const baseStyles =
-  'inline-flex items-center justify-center gap-2 rounded-pill font-medium transition-all duration-250 ease-kk select-none disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 hover:-translate-y-px active:scale-[0.98]'
+  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-pill font-medium transition-all duration-250 ease-kk select-none disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 hover:-translate-y-px active:scale-[0.98]'
 
 interface CommonProps {
   variant?: ButtonVariant

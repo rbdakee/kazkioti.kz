@@ -31,6 +31,7 @@ export function useCountUp({ target, durationMs = 1200 }: CountUpOptions): {
     let started = false
     let startTime = 0
     const start = (timestamp: number) => {
+      if (startTime === 0) startTime = timestamp
       const elapsed = timestamp - startTime
       const progress = Math.min(1, elapsed / durationMs)
       const eased = 1 - Math.pow(1 - progress, 3)
@@ -38,24 +39,34 @@ export function useCountUp({ target, durationMs = 1200 }: CountUpOptions): {
       if (progress < 1) raf = requestAnimationFrame(start)
     }
 
+    const begin = () => {
+      if (started) return
+      started = true
+      startTime = 0
+      raf = requestAnimationFrame(start)
+    }
+
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
-          if (entry.isIntersecting && !started) {
-            started = true
-            startTime = performance.now()
-            raf = requestAnimationFrame(start)
+          if (entry.isIntersecting) {
+            begin()
             observer.unobserve(entry.target)
           }
         }
       },
-      { threshold: 0.3 },
+      { threshold: 0.1 },
     )
 
     observer.observe(node)
+
+    // Fallback: if IO never fires within 800ms, start the animation anyway
+    const fallback = window.setTimeout(begin, 800)
+
     return () => {
       observer.disconnect()
       cancelAnimationFrame(raf)
+      window.clearTimeout(fallback)
     }
   }, [target, durationMs])
 

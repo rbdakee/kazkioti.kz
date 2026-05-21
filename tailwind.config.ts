@@ -29,9 +29,9 @@ const config: Config = {
         },
       },
       fontFamily: {
-        heading: ['var(--font-space-grotesk)', 'system-ui', 'sans-serif'],
-        body: ['var(--font-inter)', 'system-ui', 'sans-serif'],
-        mono: ['var(--font-jetbrains-mono)', 'ui-monospace', 'monospace'],
+        heading: ['var(--font-montserrat)', 'system-ui', 'sans-serif'],
+        body: ['var(--font-manrope)', 'system-ui', 'sans-serif'],
+        mono: ['var(--font-geologica)', 'ui-monospace', 'monospace'],
       },
       fontSize: {
         display: ['clamp(48px,8vw,112px)', { lineHeight: '0.98', letterSpacing: '-0.035em' }],

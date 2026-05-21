@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import type { ReactNode } from 'react'
-import { Inter, JetBrains_Mono, Space_Grotesk } from 'next/font/google'
+import { Geologica, Manrope, Montserrat } from 'next/font/google'
 import { NextIntlClientProvider } from 'next-intl'
 import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server'
 import { notFound } from 'next/navigation'
@@ -12,28 +12,29 @@ import { MessengerFAB } from '@/components/forms/MessengerFAB'
 import { CookieBanner } from '@/components/sections/CookieBanner'
 import '@/styles/globals.css'
 
-const spaceGrotesk = Space_Grotesk({
-  subsets: ['latin', 'latin-ext'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-space-grotesk',
+const montserrat = Montserrat({
+  subsets: ['latin', 'latin-ext', 'cyrillic', 'cyrillic-ext'],
+  weight: ['500', '600', '700', '800'],
+  variable: '--font-montserrat',
   display: 'swap',
   preload: true,
 })
 
-const inter = Inter({
+const manrope = Manrope({
   subsets: ['latin', 'latin-ext', 'cyrillic', 'cyrillic-ext'],
   weight: ['400', '500', '600', '700'],
-  variable: '--font-inter',
+  variable: '--font-manrope',
   display: 'swap',
   preload: true,
 })
 
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ['latin', 'latin-ext'],
+const geologica = Geologica({
+  subsets: ['latin', 'latin-ext', 'cyrillic', 'cyrillic-ext'],
   weight: ['400', '500', '600'],
-  variable: '--font-jetbrains-mono',
+  variable: '--font-geologica',
   display: 'swap',
   preload: false,
+  adjustFontFallback: false,
 })
 
 export const viewport: Viewport = {
@@ -86,7 +87,7 @@ export default async function LocaleLayout({
   return (
     <html
       lang={locale}
-      className={`${spaceGrotesk.variable} ${inter.variable} ${jetbrainsMono.variable}`}
+      className={`${montserrat.variable} ${manrope.variable} ${geologica.variable}`}
     >
       <body className="bg-bg-default text-text-primary font-body antialiased">
         <NextIntlClientProvider locale={locale} messages={messages}>

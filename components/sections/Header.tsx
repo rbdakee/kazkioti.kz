@@ -74,12 +74,12 @@ export function Header({ locale }: HeaderProps) {
             </span>
             <span className="hidden sm:inline">KAZKIOTI</span>
           </Link>
-          <nav className="hidden items-center gap-7 lg:flex">
+          <nav className="hidden items-center gap-5 lg:flex">
             {NAV_ITEMS.map((item) => (
               <Link
                 key={item.key}
                 href={`/${locale}${item.href}`}
-                className="font-mono text-mono-label uppercase tracking-widest text-text-primary hover:text-brand-red"
+                className="whitespace-nowrap font-mono text-[12px] font-medium uppercase tracking-[0.08em] text-text-primary hover:text-brand-red"
               >
                 {t(`nav.${item.key}`)}
               </Link>
@@ -89,7 +89,7 @@ export function Header({ locale }: HeaderProps) {
             <LanguageSwitcher currentLocale={locale} className="hidden sm:inline-flex" />
             <a
               href={`tel:${COMPANY_PHONE_TEL}`}
-              className="hidden font-mono text-mono-label uppercase tracking-widest text-text-primary hover:text-brand-red xl:inline-block"
+              className="hidden whitespace-nowrap font-mono text-[12px] font-medium tracking-[0.04em] text-text-primary hover:text-brand-red xl:inline-block"
             >
               {COMPANY_PHONE_HUMAN}
             </a>
