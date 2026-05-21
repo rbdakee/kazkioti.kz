@@ -78,6 +78,11 @@
 - Vercel `fra1` region (revisit if KZ data residency is required — Vercel has no KZ edge).
 - Cookie banner legal text — placeholder; needs legal counsel review.
 
+## Security posture
+
+- `next-mdx-remote` v6 ships with `blockJS: true` by default, stripping all JSX attribute expressions (`hectares={380}`, `images={[...]}`) from MDX at compile time. KAZKIOTI's custom MDX components (`CaseStats`, `CaseGallery`, `NewsStats`, `NewsQuote`) rely on expression props. The `<MDXRemote>` call sites in `app/[locale]/{news,cases}/[slug]/page.tsx` pass `options={{ blockJS: false }}` to opt out. **This is safe because all MDX is authored in-repo, never user-submitted.** If user-submitted MDX is ever introduced (e.g. a CMS-driven editor), `blockJS` MUST be re-enabled and component APIs migrated to string/literal props.
+- `blockDangerousJS` is left at v6's default (`true`) — `eval`/`Function` access from MDX remains blocked.
+
 ## Decisions log
 
 - **2026-05-20** — Stack locked: Next.js 14 + React 18 + TS + Tailwind, deploy on Vercel, content as MDX-in-repo. Rationale: best SEO/i18n for KZ+RU site, zero-DevOps deploy, content fits in git for v1.

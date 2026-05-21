@@ -160,7 +160,7 @@ export default async function CaseDetailPage({
         <div className="mx-auto max-w-content px-4 py-16 sm:px-6 lg:px-10">
           <div className="grid gap-12 lg:grid-cols-[1fr_280px]">
             <article className="flex max-w-[72ch] flex-col gap-5">
-              <MDXRemote source={item.body} components={buildCaseArticleComponents()} />
+              <MDXRemote source={item.body} options={{ blockJS: false }} components={buildCaseArticleComponents()} />
               <Link
                 href={`/${locale}/cases`}
                 className="mt-8 border-t border-border pt-6 font-mono text-mono-label uppercase tracking-widest text-text-primary hover:text-brand-red"
