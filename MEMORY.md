@@ -42,7 +42,7 @@
 - **Email delivery:** Resend (assumption). Rate-limit via `@upstash/ratelimit` + `@upstash/redis`.
 - **Validation:** Zod everywhere — frontmatter, API routes, forms.
 - **Maps:** stylized inline SVG of Kazakhstan (no 3rd-party tile map in v1).
-- **Animation:** native CSS + Intersection Observer hooks; no Framer Motion (bundle weight).
+- **Animation:** native CSS + Intersection Observer hooks. Framer Motion is allowed if needed (the earlier "no FM" note was a hallucinated constraint — client never imposed it). Default to CSS for simple cases; reach for FM when timeline/orchestration is non-trivial.
 
 ## Workflow rules (see `PLAN.md` for full)
 

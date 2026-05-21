@@ -11,6 +11,7 @@ import { cn } from '@/lib/utils/cn'
 export interface LanguageSwitcherProps {
   currentLocale: Locale
   className?: string
+  dark?: boolean
 }
 
 export function LanguageSwitcher(props: LanguageSwitcherProps) {
@@ -21,7 +22,7 @@ export function LanguageSwitcher(props: LanguageSwitcherProps) {
   )
 }
 
-function Switcher({ currentLocale, className }: LanguageSwitcherProps) {
+function Switcher({ currentLocale, className, dark }: LanguageSwitcherProps) {
   const t = useTranslations('header')
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -37,7 +38,8 @@ function Switcher({ currentLocale, className }: LanguageSwitcherProps) {
   return (
     <div
       className={cn(
-        'inline-flex rounded-pill border border-border-strong',
+        'inline-flex rounded-pill border transition-colors duration-250',
+        dark ? 'border-white/40' : 'border-border-strong',
         className,
       )}
     >
@@ -51,9 +53,13 @@ function Switcher({ currentLocale, className }: LanguageSwitcherProps) {
             aria-current={active ? 'true' : undefined}
             className={cn(
               'px-3 py-1 font-mono text-mono-label uppercase tracking-widest transition-colors duration-200 first:rounded-l-pill last:rounded-r-pill',
-              active
-                ? 'bg-text-primary text-white'
-                : 'text-text-primary hover:text-brand-red',
+              dark
+                ? active
+                  ? 'bg-white text-text-primary'
+                  : 'text-white hover:text-white/70'
+                : active
+                  ? 'bg-text-primary text-white'
+                  : 'text-text-primary hover:text-brand-red',
             )}
           >
             {labels[locale]}
@@ -64,7 +70,7 @@ function Switcher({ currentLocale, className }: LanguageSwitcherProps) {
   )
 }
 
-function FallbackSwitcher({ currentLocale, className }: LanguageSwitcherProps) {
+function FallbackSwitcher({ currentLocale, className, dark }: LanguageSwitcherProps) {
   const locales: Locale[] = ['ru', 'kk']
   const labels: Record<Locale, string> = { ru: 'RU', kk: 'ҚАЗ' }
 
@@ -72,7 +78,8 @@ function FallbackSwitcher({ currentLocale, className }: LanguageSwitcherProps) {
     <div
       aria-hidden="true"
       className={cn(
-        'inline-flex rounded-pill border border-border-strong',
+        'inline-flex rounded-pill border transition-colors duration-250',
+        dark ? 'border-white/40' : 'border-border-strong',
         className,
       )}
     >
@@ -83,7 +90,13 @@ function FallbackSwitcher({ currentLocale, className }: LanguageSwitcherProps) {
             key={locale}
             className={cn(
               'px-3 py-1 font-mono text-mono-label uppercase tracking-widest first:rounded-l-pill last:rounded-r-pill',
-              active ? 'bg-text-primary text-white' : 'text-text-primary',
+              dark
+                ? active
+                  ? 'bg-white text-text-primary'
+                  : 'text-white'
+                : active
+                  ? 'bg-text-primary text-white'
+                  : 'text-text-primary',
             )}
           >
             {labels[locale]}

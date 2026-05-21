@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { useTranslations } from 'next-intl'
+import { usePathname } from 'next/navigation'
 import type { Locale } from '@/lib/i18n/routing'
 import {
   COMPANY_PHONE_HUMAN,
@@ -20,9 +21,12 @@ export interface HeaderProps {
 
 export function Header({ locale }: HeaderProps) {
   const t = useTranslations()
+  const pathname = usePathname()
+  const isHome = /^\/(ru|kk)\/?$/.test(pathname)
   const [isStuck, setIsStuck] = useState(false)
   const [isHidden, setIsHidden] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+  const darkMode = isHome && !isStuck
 
   useEffect(() => {
     const root = document.documentElement
@@ -57,8 +61,10 @@ export function Header({ locale }: HeaderProps) {
     <>
       <header
         className={cn(
-          'sticky top-0 z-50 w-full bg-bg-default/95 backdrop-blur transition-all duration-250 ease-kk',
-          isStuck && 'border-b border-border',
+          'sticky top-0 z-50 w-full transition-all duration-250 ease-kk',
+          darkMode
+            ? 'bg-black/85 backdrop-blur-md'
+            : cn('bg-bg-default/95 backdrop-blur', isStuck && 'border-b border-border'),
           isHidden && !menuOpen && '-translate-y-full',
         )}
       >
@@ -72,36 +78,61 @@ export function Header({ locale }: HeaderProps) {
             <span className="inline-flex h-9 w-9 items-center justify-center rounded-sm bg-brand-red font-bold text-white">
               K
             </span>
-            <span className="hidden sm:inline">KAZKIOTI</span>
+            <span className={cn('hidden sm:inline', darkMode ? 'text-white/85' : 'text-text-primary')}>
+              KAZKIOTI
+            </span>
           </Link>
           <nav className="hidden items-center gap-5 lg:flex">
             {NAV_ITEMS.map((item) => (
               <Link
                 key={item.key}
                 href={`/${locale}${item.href}`}
-                className="whitespace-nowrap font-mono text-[12px] font-medium uppercase tracking-[0.08em] text-text-primary hover:text-brand-red"
+                className={cn(
+                  'whitespace-nowrap font-mono text-[12px] font-medium uppercase tracking-[0.08em] transition-colors duration-250',
+                  darkMode
+                    ? 'text-white/85 hover:text-white'
+                    : 'text-text-primary hover:text-brand-red',
+                )}
               >
                 {t(`nav.${item.key}`)}
               </Link>
             ))}
           </nav>
           <div className="flex items-center gap-3">
-            <LanguageSwitcher currentLocale={locale} className="hidden sm:inline-flex" />
+            <LanguageSwitcher currentLocale={locale} className="hidden sm:inline-flex" dark={darkMode} />
             <a
               href={`tel:${COMPANY_PHONE_TEL}`}
-              className="hidden whitespace-nowrap font-mono text-[12px] font-medium tracking-[0.04em] text-text-primary hover:text-brand-red xl:inline-block"
+              className={cn(
+                'hidden whitespace-nowrap font-mono text-[12px] font-medium tracking-[0.04em] transition-colors duration-250 xl:inline-block',
+                darkMode ? 'text-white/85 hover:text-white' : 'text-text-primary hover:text-brand-red',
+              )}
             >
               {COMPANY_PHONE_HUMAN}
             </a>
-            <Button asLink href={PDF_CATALOG_URL} variant="ghost" size="sm" className="hidden xl:inline-flex">
+            <Button
+              asLink
+              href={PDF_CATALOG_URL}
+              variant={darkMode ? 'onDark' : 'ghost'}
+              size="sm"
+              className={cn('hidden xl:inline-flex', darkMode && 'font-semibold text-white')}
+            >
               {t('header.downloadCatalog')}
             </Button>
-            <Button asLink href={`/${locale}/contacts`} variant="primary" size="sm" className="hidden lg:inline-flex">
+            <Button
+              asLink
+              href={`/${locale}/contacts`}
+              variant="primary"
+              size="sm"
+              className="hidden font-semibold text-white lg:inline-flex"
+            >
               {t('header.cta')}
             </Button>
             <button
               type="button"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-border-strong text-text-primary lg:hidden"
+              className={cn(
+                'inline-flex h-10 w-10 items-center justify-center rounded-md border transition-colors duration-250 lg:hidden',
+                darkMode ? 'border-white/40 text-white/85' : 'border-border-strong text-text-primary',
+              )}
               onClick={() => setMenuOpen(true)}
               aria-label={t('header.menuOpen')}
             >
