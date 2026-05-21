@@ -25,15 +25,23 @@ export function Header({ locale }: HeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false)
 
   useEffect(() => {
+    const root = document.documentElement
+    root.style.setProperty('--header-offset', '72px')
     let lastY = 0
     function onScroll() {
       const y = window.scrollY
-      setIsStuck(y > 24)
-      setIsHidden(y > 120 && y > lastY)
+      const stuck = y > 24
+      const hidden = y > 120 && y > lastY
+      setIsStuck(stuck)
+      setIsHidden(hidden)
+      root.style.setProperty('--header-offset', hidden ? '0px' : stuck ? '58px' : '72px')
       lastY = y
     }
     window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      root.style.removeProperty('--header-offset')
+    }
   }, [])
 
   useEffect(() => {

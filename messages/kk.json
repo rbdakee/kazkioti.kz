@@ -11,6 +11,8 @@
     "cases": "[kk] Кейсы"
   },
   "header": {
+    "langRu": "RU",
+    "langKk": "ҚАЗ",
     "cta": "[kk] Оставить заявку",
     "ctaShort": "[kk] Заявка",
     "phone": "[kk] +7 747 876 44 44",

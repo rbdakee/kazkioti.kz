@@ -3,7 +3,8 @@
 import { Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { useTranslations } from 'next-intl'
-import { usePathname, useRouter } from '@/lib/i18n/routing'
+import { usePathname } from '@/lib/i18n/routing'
+import { Link } from '@/lib/i18n/routing'
 import type { Locale } from '@/lib/i18n/routing'
 import { cn } from '@/lib/utils/cn'
 
@@ -14,53 +15,81 @@ export interface LanguageSwitcherProps {
 
 export function LanguageSwitcher(props: LanguageSwitcherProps) {
   return (
-    <Suspense fallback={<FallbackButton {...props} />}>
+    <Suspense fallback={<FallbackSwitcher {...props} />}>
       <Switcher {...props} />
     </Suspense>
   )
 }
 
 function Switcher({ currentLocale, className }: LanguageSwitcherProps) {
-  const t = useTranslations('common')
-  const router = useRouter()
+  const t = useTranslations('header')
   const pathname = usePathname()
   const searchParams = useSearchParams()
-  const target: Locale = currentLocale === 'ru' ? 'kk' : 'ru'
-  const label = target === 'kk' ? 'ҚАЗ' : 'RU'
+  const query = searchParams.toString()
+  const destination = query ? `${pathname}?${query}` : pathname
 
-  function handleClick() {
-    const query = searchParams.toString()
-    const destination = query ? `${pathname}?${query}` : pathname
-    router.replace(destination, { locale: target })
+  const locales: Locale[] = ['ru', 'kk']
+  const labels: Record<Locale, string> = {
+    ru: t('langRu'),
+    kk: t('langKk'),
   }
 
   return (
-    <button
-      type="button"
-      onClick={handleClick}
-      aria-label={t('languageSwitch')}
+    <div
       className={cn(
-        'rounded-pill border border-border-strong px-3 py-1 font-mono text-mono-label uppercase tracking-widest text-text-primary hover:border-text-primary',
+        'inline-flex rounded-pill border border-border-strong',
         className,
       )}
     >
-      {label}
-    </button>
+      {locales.map((locale) => {
+        const active = locale === currentLocale
+        return (
+          <Link
+            key={locale}
+            href={destination}
+            locale={locale}
+            aria-current={active ? 'true' : undefined}
+            className={cn(
+              'px-3 py-1 font-mono text-mono-label uppercase tracking-widest transition-colors duration-200 first:rounded-l-pill last:rounded-r-pill',
+              active
+                ? 'bg-text-primary text-white'
+                : 'text-text-primary hover:text-brand-red',
+            )}
+          >
+            {labels[locale]}
+          </Link>
+        )
+      })}
+    </div>
   )
 }
 
-function FallbackButton({ currentLocale, className }: LanguageSwitcherProps) {
-  const target: Locale = currentLocale === 'ru' ? 'kk' : 'ru'
-  const label = target === 'kk' ? 'ҚАЗ' : 'RU'
+function FallbackSwitcher({ currentLocale, className }: LanguageSwitcherProps) {
+  const locales: Locale[] = ['ru', 'kk']
+  const labels: Record<Locale, string> = { ru: 'RU', kk: 'ҚАЗ' }
+
   return (
-    <span
+    <div
       aria-hidden="true"
       className={cn(
-        'inline-flex rounded-pill border border-border-strong px-3 py-1 font-mono text-mono-label uppercase tracking-widest text-text-primary',
+        'inline-flex rounded-pill border border-border-strong',
         className,
       )}
     >
-      {label}
-    </span>
+      {locales.map((locale) => {
+        const active = locale === currentLocale
+        return (
+          <span
+            key={locale}
+            className={cn(
+              'px-3 py-1 font-mono text-mono-label uppercase tracking-widest first:rounded-l-pill last:rounded-r-pill',
+              active ? 'bg-text-primary text-white' : 'text-text-primary',
+            )}
+          >
+            {labels[locale]}
+          </span>
+        )
+      })}
+    </div>
   )
 }

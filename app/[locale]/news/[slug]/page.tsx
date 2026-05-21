@@ -172,7 +172,7 @@ export default async function NewsDetailPage({
             </article>
             {toc.length > 0 ? (
               <aside className="hidden lg:block">
-                <div className="sticky top-24">
+                <div className="sticky transition-[top] duration-250 ease-out" style={{ top: 'calc(var(--header-offset, 58px) + 24px)' }}>
                   <ArticleToc
                     entries={toc}
                     title={tNews('tocTitle')}

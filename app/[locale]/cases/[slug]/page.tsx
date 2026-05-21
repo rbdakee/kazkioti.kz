@@ -169,7 +169,7 @@ export default async function CaseDetailPage({
               </Link>
             </article>
             <aside className="hidden lg:block">
-              <div className="sticky top-24 flex flex-col gap-6 rounded-md border border-border bg-bg-default p-6">
+              <div className="sticky flex flex-col gap-6 rounded-md border border-border bg-bg-default p-6 transition-[top] duration-250 ease-out" style={{ top: 'calc(var(--header-offset, 58px) + 24px)' }}>
                 <p className="font-mono text-mono-label uppercase tracking-widest text-text-muted">
                   {tCases('metaboxTitle')}
                 </p>

@@ -71,7 +71,8 @@ export function TractorSubNav({ showReview, showAttachments, showCases, kpHref }
   return (
     <nav
       aria-label={t('subNavAriaLabel')}
-      className="sticky top-[58px] z-30 border-b border-border bg-bg-default/90 backdrop-blur"
+      className="sticky z-30 border-b border-border bg-bg-default/90 backdrop-blur transition-[top] duration-250 ease-out"
+      style={{ top: 'var(--header-offset, 58px)' }}
     >
       <div className="mx-auto flex max-w-container items-center gap-1 overflow-x-auto px-4 py-3 sm:px-6 lg:px-10">
         {items.map((item) => (

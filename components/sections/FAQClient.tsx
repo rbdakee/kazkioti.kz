@@ -91,7 +91,8 @@ export function FAQClient({ groups, categoryLabels }: FAQClientProps) {
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-[240px_1fr] lg:gap-16">
         <nav
           aria-label="FAQ navigation"
-          className="flex flex-row flex-wrap gap-2 lg:sticky lg:top-24 lg:flex-col lg:gap-1 lg:self-start lg:border-l lg:border-border lg:pl-5"
+          className="flex flex-row flex-wrap gap-2 lg:sticky lg:flex-col lg:gap-1 lg:self-start lg:border-l lg:border-border lg:pl-5 lg:transition-[top] lg:duration-250 lg:ease-out"
+          style={{ top: 'calc(var(--header-offset, 58px) + 24px)' }}
         >
           {groups.map((g) => {
             const filtered = filteredGroups.find((fg) => fg.group.category === g.group.category)
