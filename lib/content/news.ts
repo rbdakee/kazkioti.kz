@@ -7,15 +7,30 @@ export interface NewsRecord {
   body: string
 }
 
-export async function getAllNews(locale: Locale, limit?: number): Promise<NewsRecord[]> {
+export type NewsTag = NewsFrontmatter['tag']
+
+export interface NewsQueryOptions {
+  tag?: NewsTag
+  limit?: number
+}
+
+export async function getAllNews(
+  locale: Locale,
+  options?: NewsQueryOptions | number,
+): Promise<NewsRecord[]> {
+  const opts: NewsQueryOptions =
+    typeof options === 'number' ? { limit: options } : options ?? {}
   const files = await listMdx('news', locale)
   const records = await Promise.all(
     files.map((file) => readMdx('news', file, (data) => NewsFrontmatterSchema.parse(data))),
   )
-  const sorted = records
+  const filtered = opts.tag
+    ? records.filter((r) => r.frontmatter.tag === opts.tag)
+    : records
+  const sorted = filtered
     .map(({ frontmatter, body }) => ({ frontmatter, body }))
     .sort((a, b) => b.frontmatter.date.localeCompare(a.frontmatter.date))
-  return typeof limit === 'number' ? sorted.slice(0, limit) : sorted
+  return typeof opts.limit === 'number' ? sorted.slice(0, opts.limit) : sorted
 }
 
 export async function getNews(slug: string, locale: Locale): Promise<NewsRecord | null> {

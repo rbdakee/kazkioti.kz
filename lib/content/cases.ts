@@ -7,15 +7,28 @@ export interface CaseRecord {
   body: string
 }
 
-export async function getAllCases(locale: Locale, limit?: number): Promise<CaseRecord[]> {
+export interface CaseQueryOptions {
+  region?: string
+  limit?: number
+}
+
+export async function getAllCases(
+  locale: Locale,
+  options?: CaseQueryOptions | number,
+): Promise<CaseRecord[]> {
+  const opts: CaseQueryOptions =
+    typeof options === 'number' ? { limit: options } : options ?? {}
   const files = await listMdx('cases', locale)
   const records = await Promise.all(
     files.map((file) => readMdx('cases', file, (data) => CaseFrontmatterSchema.parse(data))),
   )
-  const sorted = records
+  const filtered = opts.region
+    ? records.filter((r) => r.frontmatter.region === opts.region)
+    : records
+  const sorted = filtered
     .map(({ frontmatter, body }) => ({ frontmatter, body }))
     .sort((a, b) => b.frontmatter.date.localeCompare(a.frontmatter.date))
-  return typeof limit === 'number' ? sorted.slice(0, limit) : sorted
+  return typeof opts.limit === 'number' ? sorted.slice(0, opts.limit) : sorted
 }
 
 export async function getCase(slug: string, locale: Locale): Promise<CaseRecord | null> {
