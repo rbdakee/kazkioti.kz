@@ -12,6 +12,7 @@ export interface VideoPlayerProps {
   type?: VideoPlayerType
   aspectRatio?: string
   className?: string
+  fill?: boolean
 }
 
 export function VideoPlayer({
@@ -21,6 +22,7 @@ export function VideoPlayer({
   type = 'loop',
   aspectRatio = '16 / 9',
   className,
+  fill = false,
 }: VideoPlayerProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
@@ -63,8 +65,12 @@ export function VideoPlayer({
     return (
       <div
         ref={containerRef}
-        className={cn('relative overflow-hidden rounded-lg bg-bg-muted', className)}
-        style={{ aspectRatio }}
+        className={
+          fill
+            ? cn('absolute inset-0 h-full w-full overflow-hidden', className)
+            : cn('relative overflow-hidden rounded-lg bg-bg-muted', className)
+        }
+        style={fill ? undefined : { aspectRatio }}
       >
         {activated ? (
           <iframe
@@ -96,8 +102,12 @@ export function VideoPlayer({
   return (
     <div
       ref={containerRef}
-      className={cn('relative overflow-hidden rounded-lg bg-bg-muted', className)}
-      style={{ aspectRatio }}
+      className={
+        fill
+          ? cn('absolute inset-0 h-full w-full overflow-hidden', className)
+          : cn('relative overflow-hidden rounded-lg bg-bg-muted', className)
+      }
+      style={fill ? undefined : { aspectRatio }}
     >
       {reduced ? (
         <img src={poster} alt={alt} className="h-full w-full object-cover" />

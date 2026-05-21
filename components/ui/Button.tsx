@@ -1,7 +1,7 @@
 import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ReactNode } from 'react'
 import { cn } from '@/lib/utils/cn'
 
-export type ButtonVariant = 'primary' | 'secondary' | 'ghost'
+export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'onDark'
 export type ButtonSize = 'sm' | 'md' | 'lg'
 
 const variantStyles: Record<ButtonVariant, string> = {
@@ -11,6 +11,8 @@ const variantStyles: Record<ButtonVariant, string> = {
     'bg-transparent text-text-primary border border-border-strong hover:border-text-primary hover:bg-bg-muted focus-visible:ring-text-primary',
   ghost:
     'bg-transparent text-text-primary border border-transparent hover:bg-bg-muted focus-visible:ring-text-primary',
+  onDark:
+    'bg-transparent text-white border border-white/40 hover:bg-white/10 hover:border-white focus-visible:ring-white',
 }
 
 const sizeStyles: Record<ButtonSize, string> = {
