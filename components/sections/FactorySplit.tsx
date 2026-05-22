@@ -1,8 +1,8 @@
+import Image from 'next/image'
 import Link from 'next/link'
 import { getTranslations } from 'next-intl/server'
 import type { Locale } from '@/lib/i18n/routing'
 import { Eyebrow } from '@/components/ui/Eyebrow'
-import { VideoPlayer } from '@/components/ui/VideoPlayer'
 
 export interface FactorySplitProps {
   locale: Locale
@@ -29,14 +29,13 @@ export async function FactorySplit({ locale }: FactorySplitProps) {
             {t('common.learnMore')} →
           </Link>
         </div>
-        <div>
-          <VideoPlayer
-            type="loop"
-            src="/videos/factory-loop.mp4"
-            poster="/posters/factory-loop.jpg"
-            alt="KAZKIOTI factory"
-            aspectRatio="4 / 5"
-            className="lg:aspect-[4/5]"
+        <div className="relative aspect-[4/3] w-full overflow-hidden rounded">
+          <Image
+            src="/images/factory.jpg"
+            alt="KAZKIOTI — завод в с. Бадам"
+            fill
+            sizes="(min-width: 1024px) 50vw, 100vw"
+            className="object-cover"
           />
         </div>
       </div>
