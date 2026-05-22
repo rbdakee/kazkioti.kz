@@ -36,6 +36,7 @@
       "discount": "субсидия бойынша жеңілдік"
     },
     "scrollHint": "айналдырыңыз",
+    "videoAlt": "Дала жұмысындағы KAZKIOTI тракторы",
     "slides": [
       {
         "eyebrow": "Қазақстандық зауыт · 2016 жылдан",
@@ -80,6 +81,7 @@
     "subNavAriaLabel": "Трактор карточкасының бөлімдері",
     "cellPower": "Қуат",
     "angleAriaLabel": "{tractor} — {n} ракурс",
+    "heroImageAlt": "{name} — трактор фотосы",
     "cellEngine": "Қозғалтқыш",
     "cellTransmission": "Трансмиссия",
     "cellDrive": "Жетек",
@@ -521,7 +523,16 @@
     "telegram": "Telegram"
   },
   "notFound": {
-    "title": "Бет табылмады"
+    "title": "Бет табылмады",
+    "metaTitle": "Бет табылмады · KAZKIOTI",
+    "metaDescription": "Сұралған бет табылмады. Басты бетке оралыңыз немесе мәзірден бөлімді таңдаңыз."
+  },
+  "error": {
+    "eyebrow": "ERROR · 500",
+    "title": "Бір нәрсе дұрыс болмады",
+    "description": "Мәселе бізге белгілі — оны шешіп жатырмыз. Бетті жаңартып көріңіз немесе басты бетке оралыңыз.",
+    "retry": "Қайта көру",
+    "home": "Басты бетке"
   },
   "common": {
     "learnMore": "Толығырақ",
@@ -538,6 +549,10 @@
     "phone": "Телефон",
     "hours": "Кесте",
     "placeholderBadge": "Плейсхолдер"
+  },
+  "cards": {
+    "tractorAlt": "{name} — {power} а.к. тракторы",
+    "tractorCta": "{name} — сипаттамалары"
   },
   "breadcrumbs": {
     "home": "KAZKIOTI",

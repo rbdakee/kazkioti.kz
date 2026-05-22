@@ -1,12 +1,16 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import type { Locale } from '@/lib/i18n/routing'
+import { localizedAlternates } from '@/lib/seo/alternates'
+import { breadcrumbListJsonLd } from '@/lib/seo/jsonLd'
 import {
   COMPANY_PHONE_HUMAN,
   COMPANY_PHONE_TEL,
   COMPANY_EMAIL,
+  SITE_URL,
   SOCIAL_LINKS,
   whatsappUrl,
 } from '@/lib/constants'
+import { JsonLd } from '@/components/seo/JsonLd'
 import { DEALERS } from '@/lib/data/dealers'
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs'
 import { Eyebrow } from '@/components/ui/Eyebrow'
@@ -20,7 +24,11 @@ export async function generateMetadata({
 }) {
   const { locale } = await params
   const t = await getTranslations({ locale, namespace: 'meta.contacts' })
-  return { title: t('title'), description: t('description') }
+  return {
+    title: t('title'),
+    description: t('description'),
+    alternates: localizedAlternates('/contacts', locale),
+  }
 }
 
 export default async function ContactsPage({
@@ -78,8 +86,14 @@ export default async function ContactsPage({
     { label: t('requisitesBank'), value: t('requisitesBankValue') },
   ]
 
+  const breadcrumbs = breadcrumbListJsonLd([
+    { name: tBc('home'), url: `${SITE_URL}/${locale}` },
+    { name: tBc('contacts'), url: `${SITE_URL}/${locale}/contacts` },
+  ])
+
   return (
     <>
+      <JsonLd data={breadcrumbs} />
       <div className="mx-auto max-w-container px-4 pt-8 sm:px-6 lg:px-10">
         <Breadcrumbs
           items={[

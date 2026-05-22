@@ -36,6 +36,7 @@
       "discount": "скидка по субсидии"
     },
     "scrollHint": "прокрутите",
+    "videoAlt": "Трактор KAZKIOTI на полевых работах",
     "slides": [
       {
         "eyebrow": "Казахстанский завод · с 2016",
@@ -80,6 +81,7 @@
     "subNavAriaLabel": "Разделы карточки трактора",
     "cellPower": "Мощность",
     "angleAriaLabel": "{tractor} — ракурс {n}",
+    "heroImageAlt": "{name} — фото трактора",
     "cellEngine": "Двигатель",
     "cellTransmission": "Трансмиссия",
     "cellDrive": "Привод",
@@ -521,7 +523,16 @@
     "telegram": "Telegram"
   },
   "notFound": {
-    "title": "Страница не найдена"
+    "title": "Страница не найдена",
+    "metaTitle": "Страница не найдена · KAZKIOTI",
+    "metaDescription": "Запрошенная страница не найдена. Вернитесь на главную или выберите раздел из меню."
+  },
+  "error": {
+    "eyebrow": "ERROR · 500",
+    "title": "Что-то пошло не так",
+    "description": "Мы уже знаем о проблеме и работаем над ней. Попробуйте обновить страницу или вернуться на главную.",
+    "retry": "Повторить",
+    "home": "На главную"
   },
   "common": {
     "learnMore": "Подробнее",
@@ -538,6 +549,10 @@
     "phone": "Телефон",
     "hours": "График",
     "placeholderBadge": "Плейсхолдер"
+  },
+  "cards": {
+    "tractorAlt": "{name} — трактор {power} л.с.",
+    "tractorCta": "{name} — характеристики"
   },
   "breadcrumbs": {
     "home": "KAZKIOTI",

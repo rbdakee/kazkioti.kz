@@ -1,6 +1,7 @@
 import { Suspense } from 'react'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import type { Locale } from '@/lib/i18n/routing'
+import { localizedAlternates } from '@/lib/seo/alternates'
 import { getAllTractors } from '@/lib/content/tractors'
 import { Eyebrow } from '@/components/ui/Eyebrow'
 import { CompareTable } from '@/components/sections/CompareTable'
@@ -12,7 +13,11 @@ export async function generateMetadata({
 }) {
   const { locale } = await params
   const t = await getTranslations({ locale, namespace: 'meta.compare' })
-  return { title: t('title'), description: t('description') }
+  return {
+    title: t('title'),
+    description: t('description'),
+    alternates: localizedAlternates('/tractors/compare', locale),
+  }
 }
 
 export default async function ComparePage({

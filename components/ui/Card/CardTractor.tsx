@@ -24,6 +24,7 @@ export function CardTractor({
   className,
 }: CardTractorProps) {
   const t = useTranslations('tractors')
+  const tCards = useTranslations('cards')
   const videoRef = useRef<HTMLVideoElement>(null)
   const [hovering, setHovering] = useState(false)
   const [reduced, setReduced] = useState(false)
@@ -71,7 +72,7 @@ export function CardTractor({
       <div className="relative aspect-[4/3] overflow-hidden rounded-md bg-white">
         <img
           src={tractor.heroImage}
-          alt={tractor.name}
+          alt={tCards('tractorAlt', { name: tractor.name, power: tractor.power })}
           className={cn(
             'absolute inset-0 h-full w-full object-contain transition-opacity duration-250 ease-kk',
             hovering && hasVideoLoop ? 'opacity-0' : 'opacity-100',
@@ -146,7 +147,7 @@ export function CardTractor({
           href={detailHref}
           className="font-mono text-mono-label uppercase tracking-widest text-text-primary hover:text-brand-red"
         >
-          {t('details')}
+          {tCards('tractorCta', { name: tractor.name })}
         </Link>
         {onToggleCompare ? (
           <button

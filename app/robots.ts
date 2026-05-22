@@ -7,7 +7,13 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/api/', '/*/dev'],
+        disallow: ['/api/', '/ru/dev', '/kk/dev'],
+      },
+      {
+        userAgent: 'Yandex',
+        allow: '/',
+        disallow: ['/api/', '/ru/dev', '/kk/dev'],
+        crawlDelay: 1,
       },
     ],
     sitemap: `${SITE_URL}/sitemap.xml`,

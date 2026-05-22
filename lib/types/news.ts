@@ -11,6 +11,7 @@ export const NewsFrontmatterSchema = z.object({
   relatedNews: z.array(z.string()).optional(),
   metaTitle: z.string().optional(),
   metaDescription: z.string().optional(),
+  ogImage: z.string().optional(),
 })
 
 export type NewsFrontmatter = z.infer<typeof NewsFrontmatterSchema>

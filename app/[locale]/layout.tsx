@@ -6,10 +6,12 @@ import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server
 import { notFound } from 'next/navigation'
 import { routing, type Locale } from '@/lib/i18n/routing'
 import { SITE_URL } from '@/lib/constants'
+import { localizedAlternates } from '@/lib/seo/alternates'
 import { Header } from '@/components/sections/Header'
 import { Footer } from '@/components/sections/Footer'
 import { MessengerFAB } from '@/components/forms/MessengerFAB'
 import { CookieBanner } from '@/components/sections/CookieBanner'
+import { Analytics } from '@/components/seo/Analytics'
 import '@/styles/globals.css'
 
 const montserrat = Montserrat({
@@ -59,13 +61,10 @@ export async function generateMetadata({
     metadataBase: new URL(SITE_URL),
     title: { default: t('title'), template: '%s — KAZKIOTI' },
     description: t('description'),
-    alternates: {
-      canonical: `${SITE_URL}/${locale}`,
-      languages: {
-        ru: `${SITE_URL}/ru`,
-        kk: `${SITE_URL}/kk`,
-        'x-default': `${SITE_URL}/ru`,
-      },
+    alternates: localizedAlternates('', locale as Locale),
+    verification: {
+      google: process.env.GOOGLE_SITE_VERIFICATION || undefined,
+      yandex: process.env.YANDEX_VERIFICATION || undefined,
     },
   }
 }
@@ -105,6 +104,7 @@ export default async function LocaleLayout({
           <MessengerFAB locale={locale as Locale} />
           <CookieBanner />
         </NextIntlClientProvider>
+        <Analytics />
       </body>
     </html>
   )

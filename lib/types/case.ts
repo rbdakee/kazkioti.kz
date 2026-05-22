@@ -19,6 +19,7 @@ export const CaseFrontmatterSchema = z.object({
   relatedTractors: z.array(z.string()).optional(),
   metaTitle: z.string().optional(),
   metaDescription: z.string().optional(),
+  ogImage: z.string().optional(),
 })
 
 export type CaseFrontmatter = z.infer<typeof CaseFrontmatterSchema>

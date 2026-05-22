@@ -129,7 +129,11 @@ export function TractorProductHero({ tractor, locale }: TractorProductHeroProps)
           <div className="overflow-hidden rounded-md bg-white" style={{ aspectRatio: '5 / 4' }}>
             <img
               src={angles[activeImage] ?? tractor.heroImage}
-              alt={`${tractor.name} — ${activeImage === 0 ? '3/4' : 'angle ' + (activeImage + 1)}`}
+              alt={
+                activeImage === 0
+                  ? tDetail('heroImageAlt', { name: tractor.name })
+                  : tDetail('angleAriaLabel', { tractor: tractor.name, n: activeImage + 1 })
+              }
               className="h-full w-full object-contain transition-opacity duration-250 ease-kk"
               loading="eager"
             />

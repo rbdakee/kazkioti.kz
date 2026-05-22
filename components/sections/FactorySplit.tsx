@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { getTranslations } from 'next-intl/server'
 import type { Locale } from '@/lib/i18n/routing'
 import { Eyebrow } from '@/components/ui/Eyebrow'
+import { NEUTRAL_BLUR_DATA_URL } from '@/lib/seo/blurDataURL'
 
 export interface FactorySplitProps {
   locale: Locale
@@ -44,6 +45,8 @@ export async function FactorySplit({ locale }: FactorySplitProps) {
               sizes="(min-width: 1024px) 50vw, 100vw"
               className="object-cover"
               priority={false}
+              placeholder="blur"
+              blurDataURL={NEUTRAL_BLUR_DATA_URL}
             />
           </div>
           <ul className="grid grid-cols-3 gap-3">

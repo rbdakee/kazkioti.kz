@@ -13,6 +13,8 @@ export const AttachmentFrontmatterSchema = z.object({
   subsidy: z.number().optional(),
   priceWithSubsidy: z.number().optional(),
   metaTitle: z.string().optional(),
+  metaDescription: z.string().optional(),
+  ogImage: z.string().optional(),
 })
 
 export type AttachmentFrontmatter = z.infer<typeof AttachmentFrontmatterSchema>
