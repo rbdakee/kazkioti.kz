@@ -89,6 +89,7 @@ export function AttachmentsCatalog({ locale, attachments }: AttachmentsCatalogPr
         requestLabel={t('requestPrice')}
         groupNumber={CATEGORY_NUMBER[category]}
         groupTitle={groupTitles[category]}
+        categoryLabel={groupTitles[category]}
         onRequest={setActiveAttachment}
         locale={locale}
         priceLabels={priceLabels}
@@ -122,6 +123,7 @@ interface AttachmentGridProps {
   items: readonly AttachmentFrontmatter[]
   groupNumber: string
   groupTitle: string
+  categoryLabel: string
   emptyLabel: string
   compatibleLabel: string
   requestLabel: string
@@ -134,6 +136,7 @@ function AttachmentGrid({
   items,
   groupNumber,
   groupTitle,
+  categoryLabel,
   emptyLabel,
   compatibleLabel,
   requestLabel,
@@ -159,6 +162,7 @@ function AttachmentGrid({
           <AttachmentCard
             key={attachment.slug}
             attachment={attachment}
+            categoryLabel={categoryLabel}
             compatibleLabel={compatibleLabel}
             requestLabel={requestLabel}
             onRequest={() => onRequest(attachment)}
@@ -173,6 +177,7 @@ function AttachmentGrid({
 
 interface AttachmentCardProps {
   attachment: AttachmentFrontmatter
+  categoryLabel: string
   compatibleLabel: string
   requestLabel: string
   onRequest: () => void
@@ -182,6 +187,7 @@ interface AttachmentCardProps {
 
 function AttachmentCard({
   attachment,
+  categoryLabel,
   compatibleLabel,
   requestLabel,
   onRequest,
@@ -196,7 +202,7 @@ function AttachmentCard({
         {hasPhoto ? (
           <img
             src={attachment.heroImage}
-            alt={attachment.name}
+            alt={`${attachment.name} — ${categoryLabel}`}
             loading="lazy"
             className="h-full w-full object-contain"
           />

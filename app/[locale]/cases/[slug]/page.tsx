@@ -4,9 +4,13 @@ import { MDXRemote } from 'next-mdx-remote/rsc'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import type { Locale } from '@/lib/i18n/routing'
 import { routing } from '@/lib/i18n/routing'
+import { localizedAlternates } from '@/lib/seo/alternates'
+import { breadcrumbListJsonLd } from '@/lib/seo/jsonLd'
+import { SITE_URL } from '@/lib/constants'
 import { getAllCases, getCase } from '@/lib/content/cases'
 import { getTractor } from '@/lib/content/tractors'
 import type { TractorFrontmatter } from '@/lib/types/tractor'
+import { JsonLd } from '@/components/seo/JsonLd'
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs'
 import { Eyebrow } from '@/components/ui/Eyebrow'
 import { CardTractor } from '@/components/ui/Card/CardTractor'
@@ -43,8 +47,9 @@ export async function generateMetadata({
       title,
       description,
       type: 'article',
-      images: fm.coverImage ? [fm.coverImage] : [],
+      images: fm.ogImage ? [fm.ogImage] : fm.coverImage ? [fm.coverImage] : [],
     },
+    alternates: localizedAlternates(`/cases/${slug}`, locale),
   }
 }
 
@@ -103,8 +108,18 @@ export default async function CaseDetailPage({
     { label: tCases('metaCardDate'), value: formatDate(fm.date, locale) },
   ]
 
+  const breadcrumbs = breadcrumbListJsonLd([
+    { name: t('breadcrumbs.home'), url: `${SITE_URL}/${locale}` },
+    { name: t('breadcrumbs.cases'), url: `${SITE_URL}/${locale}/cases` },
+    {
+      name: fm.farmName,
+      url: `${SITE_URL}/${locale}/cases/${fm.slug}`,
+    },
+  ])
+
   return (
     <>
+      <JsonLd data={breadcrumbs} />
       <div className="mx-auto max-w-container px-4 pt-24 sm:px-6 lg:px-10">
         <Breadcrumbs
           items={[

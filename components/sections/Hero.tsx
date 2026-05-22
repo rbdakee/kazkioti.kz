@@ -84,7 +84,7 @@ export function Hero({ locale }: HeroProps) {
           type="loop"
           src="/videos/hero-loop.mp4"
           poster="/posters/hero-loop.jpg"
-          alt="KAZKIOTI tractor at work"
+          alt={t('videoAlt')}
           fill
         />
         {/* Dark gradient overlay for text readability */}

@@ -1,5 +1,21 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { getTranslations } from 'next-intl/server'
+import type { Locale } from '@/lib/i18n/routing'
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: Locale }>
+}): Promise<Metadata> {
+  const { locale } = await params
+  const t = await getTranslations({ locale, namespace: 'notFound' })
+  return {
+    title: t('metaTitle'),
+    description: t('metaDescription'),
+    robots: { index: false, follow: true },
+  }
+}
 
 export default async function NotFound() {
   const tCommon = await getTranslations('common')

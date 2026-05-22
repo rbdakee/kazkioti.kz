@@ -1,5 +1,8 @@
 import { setRequestLocale } from 'next-intl/server'
 import type { Locale } from '@/lib/i18n/routing'
+import { localizedAlternates } from '@/lib/seo/alternates'
+import { organizationJsonLd, websiteJsonLd } from '@/lib/seo/jsonLd'
+import { JsonLd } from '@/components/seo/JsonLd'
 import { Hero } from '@/components/sections/Hero'
 import { UTPStripe } from '@/components/sections/UTPStripe'
 import { TractorGrid } from '@/components/sections/TractorGrid'
@@ -14,6 +17,15 @@ import { getAllTractors } from '@/lib/content/tractors'
 // import { getAllCases } from '@/lib/content/cases'
 // import { getAllNews } from '@/lib/content/news'
 
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: Locale }>
+}) {
+  const { locale } = await params
+  return { alternates: localizedAlternates('', locale) }
+}
+
 export default async function HomePage({
   params,
 }: {
@@ -26,6 +38,7 @@ export default async function HomePage({
 
   return (
     <>
+      <JsonLd data={[organizationJsonLd(locale), websiteJsonLd(locale)]} />
       <Hero locale={locale} />
       <UTPStripe locale={locale} />
       <TractorGrid

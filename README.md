@@ -40,6 +40,10 @@ pnpm lint
    - `RESEND_API_KEY`, `RESEND_FROM`, `RESEND_TO` — required for `/api/lead` to deliver email.
    - `KV_REST_API_URL`, `KV_REST_API_TOKEN` — optional; enables rate-limiting on `/api/lead`. Provision Vercel KV from the **Storage** tab and it will inject these automatically.
    - `WHATSAPP_NUMBER`, `TELEGRAM_USERNAME` — messenger deep-link configuration.
+   - `NEXT_PUBLIC_YANDEX_METRICA_ID` — Yandex.Metrica counter ID. When unset, the tracker is not loaded.
+   - `NEXT_PUBLIC_GA4_MEASUREMENT_ID` — GA4 measurement ID (e.g. `G-XXXXXXX`). When unset, the tracker is not loaded.
+   - `GOOGLE_SITE_VERIFICATION` — value of the Google Search Console verification meta tag. Omitted from `<head>` when unset.
+   - `YANDEX_VERIFICATION` — value of the Yandex Webmaster verification meta tag. Omitted from `<head>` when unset.
 4. Deploy. Every push to `main` ships to production; every PR gets a preview URL.
 
 ### DNS

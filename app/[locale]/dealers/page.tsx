@@ -1,5 +1,9 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import type { Locale } from '@/lib/i18n/routing'
+import { localizedAlternates } from '@/lib/seo/alternates'
+import { breadcrumbListJsonLd, localBusinessJsonLd } from '@/lib/seo/jsonLd'
+import { SITE_URL } from '@/lib/constants'
+import { JsonLd } from '@/components/seo/JsonLd'
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs'
 import { Eyebrow } from '@/components/ui/Eyebrow'
 import { Button } from '@/components/ui/Button'
@@ -14,7 +18,11 @@ export async function generateMetadata({
 }) {
   const { locale } = await params
   const t = await getTranslations({ locale, namespace: 'meta.dealers' })
-  return { title: t('title'), description: t('description') }
+  return {
+    title: t('title'),
+    description: t('description'),
+    alternates: localizedAlternates('/dealers', locale),
+  }
 }
 
 export default async function DealersPage({
@@ -28,8 +36,17 @@ export default async function DealersPage({
   const tCrumbs = await getTranslations({ locale, namespace: 'breadcrumbs' })
   const tNav = await getTranslations({ locale, namespace: 'nav' })
 
+  const jsonLdPayload = [
+    breadcrumbListJsonLd([
+      { name: tCrumbs('home'), url: `${SITE_URL}/${locale}` },
+      { name: tNav('dealers'), url: `${SITE_URL}/${locale}/dealers` },
+    ]),
+    ...DEALERS.map((dealer) => localBusinessJsonLd(dealer, locale)),
+  ]
+
   return (
     <>
+      <JsonLd data={jsonLdPayload} />
       <section className="border-b border-border bg-bg-default">
         <div className="mx-auto flex max-w-container flex-col gap-6 px-4 pb-12 pt-24 sm:px-6 lg:px-10">
           <Breadcrumbs

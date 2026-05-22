@@ -4,9 +4,12 @@ import { MDXRemote } from 'next-mdx-remote/rsc'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import type { Locale } from '@/lib/i18n/routing'
 import { routing } from '@/lib/i18n/routing'
+import { localizedAlternates } from '@/lib/seo/alternates'
+import { breadcrumbListJsonLd } from '@/lib/seo/jsonLd'
 import { getAllNews, getNews } from '@/lib/content/news'
 import type { NewsFrontmatter } from '@/lib/types/news'
 import { SITE_URL } from '@/lib/constants'
+import { JsonLd } from '@/components/seo/JsonLd'
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs'
 import { Eyebrow } from '@/components/ui/Eyebrow'
 import { CardNews } from '@/components/ui/Card/CardNews'
@@ -52,8 +55,9 @@ export async function generateMetadata({
       title,
       description,
       type: 'article',
-      images: fm.coverImage ? [fm.coverImage] : [],
+      images: fm.ogImage ? [fm.ogImage] : fm.coverImage ? [fm.coverImage] : [],
     },
+    alternates: localizedAlternates(`/news/${slug}`, locale),
   }
 }
 
@@ -96,8 +100,15 @@ export default async function NewsDetailPage({
   const articleUrl = `${SITE_URL}/${locale}/news/${fm.slug}`
   const tagLabel = tNews(TAG_KEY[fm.tag])
 
+  const breadcrumbs = breadcrumbListJsonLd([
+    { name: t('breadcrumbs.home'), url: `${SITE_URL}/${locale}` },
+    { name: t('breadcrumbs.news'), url: `${SITE_URL}/${locale}/news` },
+    { name: fm.title, url: articleUrl },
+  ])
+
   return (
     <>
+      <JsonLd data={breadcrumbs} />
       <div className="mx-auto max-w-container px-4 pt-24 sm:px-6 lg:px-10">
         <Breadcrumbs
           items={[

@@ -2,6 +2,10 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import type { Locale } from '@/lib/i18n/routing'
+import { localizedAlternates } from '@/lib/seo/alternates'
+import { breadcrumbListJsonLd, productJsonLd } from '@/lib/seo/jsonLd'
+import { SITE_URL } from '@/lib/constants'
+import { JsonLd } from '@/components/seo/JsonLd'
 import { getTractor, getAllTractors } from '@/lib/content/tractors'
 import { getAllAttachments } from '@/lib/content/attachments'
 import type { AttachmentFrontmatter } from '@/lib/types/attachment'
@@ -39,24 +43,22 @@ export async function generateMetadata({
   const tractor = await getTractor(model, locale)
   if (!tractor) return {}
   const t = await getTranslations({ locale, namespace: 'meta.tractorDetail' })
+  const titleArgs = {
+    model: tractor.frontmatter.name,
+    power: tractor.frontmatter.power,
+  }
+  const resolvedTitle = tractor.frontmatter.metaTitle ?? t('title', titleArgs)
+  const resolvedDescription =
+    tractor.frontmatter.metaDescription ?? t('description', titleArgs)
   return {
-    title: tractor.frontmatter.metaTitle ?? t('title', { model: tractor.frontmatter.name }),
-    description:
-      tractor.frontmatter.metaDescription ??
-      t('description', {
-        model: tractor.frontmatter.name,
-        power: tractor.frontmatter.power,
-      }),
+    title: resolvedTitle,
+    description: resolvedDescription,
     openGraph: {
-      title: tractor.frontmatter.metaTitle ?? t('title', { model: tractor.frontmatter.name }),
-      description:
-        tractor.frontmatter.metaDescription ??
-        t('description', {
-          model: tractor.frontmatter.name,
-          power: tractor.frontmatter.power,
-        }),
+      title: resolvedTitle,
+      description: resolvedDescription,
       images: [tractor.frontmatter.ogImage ?? tractor.frontmatter.heroImage],
     },
+    alternates: localizedAlternates(`/tractors/${model}`, locale),
   }
 }
 
@@ -215,8 +217,21 @@ export default async function TractorDetailPage({
   const showCases = false
   const kpHref = '#kp'
 
+  const jsonLdPayload = [
+    productJsonLd(frontmatter, locale),
+    breadcrumbListJsonLd([
+      { name: t('breadcrumbs.home'), url: `${SITE_URL}/${locale}` },
+      { name: t('breadcrumbs.tractors'), url: `${SITE_URL}/${locale}/tractors` },
+      {
+        name: frontmatter.name,
+        url: `${SITE_URL}/${locale}/tractors/${frontmatter.slug}`,
+      },
+    ]),
+  ]
+
   return (
     <>
+      <JsonLd data={jsonLdPayload} />
       <div className="mx-auto max-w-container px-4 pt-24 sm:px-6 lg:px-10">
         <Breadcrumbs
           items={[
@@ -328,7 +343,7 @@ export default async function TractorDetailPage({
                       {item.heroImage ? (
                         <img
                           src={item.heroImage}
-                          alt={item.name}
+                          alt={`${item.name} — ${CATEGORY_LABEL_KEY[item.categoryKey]}`}
                           loading="lazy"
                           className="h-full w-full object-contain"
                         />

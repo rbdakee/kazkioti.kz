@@ -1,5 +1,6 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import type { Locale } from '@/lib/i18n/routing'
+import { localizedAlternates } from '@/lib/seo/alternates'
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs'
 import { Eyebrow } from '@/components/ui/Eyebrow'
 import { Button } from '@/components/ui/Button'
@@ -17,7 +18,11 @@ export async function generateMetadata({
 }) {
   const { locale } = await params
   const t = await getTranslations({ locale, namespace: 'meta.parts' })
-  return { title: t('title'), description: t('description') }
+  return {
+    title: t('title'),
+    description: t('description'),
+    alternates: localizedAlternates('/parts', locale),
+  }
 }
 
 function dealerToMapPoint(dealer: (typeof DEALERS)[number]): DealerPoint {
