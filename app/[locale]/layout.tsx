@@ -66,6 +66,15 @@ export async function generateMetadata({
       google: process.env.GOOGLE_SITE_VERIFICATION || undefined,
       yandex: process.env.YANDEX_VERIFICATION || undefined,
     },
+    // Geo targeting: the factory is in Бадам, Ордабасынский район,
+    // Туркестанская область. `KZ-13` is the ISO 3166-2 code for
+    // Туркестанская обл. Yandex still consumes these legacy meta tags.
+    other: {
+      'geo.region': 'KZ-13',
+      'geo.placename': 'Бадам, Туркестанская область, Казахстан',
+      'geo.position': '42.5333;69.3833',
+      ICBM: '42.5333, 69.3833',
+    },
   }
 }
 

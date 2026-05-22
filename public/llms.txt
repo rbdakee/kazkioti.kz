@@ -1,0 +1,59 @@
+# KAZKIOTI
+
+> KAZKIOTI — assembler and dealer of agricultural tractors in Kazakhstan, founded 2016. Factory in Бадам, Туркестанская область. Produces and sells Dongfeng and Wuzheng tractors (40–210 hp) plus attachments, eligible for Kazakhstan state subsidy.
+
+## Company
+- Legal name: KAZKIOTI
+- Founded: 2016
+- Factory: Бадам, Ордабасынский район, Туркестанская область, Казахстанско-Турецкая индустриальная зона
+- Service: 24/7
+- Phone: +7 747 876 44 44
+- Email: info@kazkioti.kz
+- Languages: Russian (ru), Kazakh (kk)
+- Areas served: All of Kazakhstan, with dealers in Шымкент, Актобе, Тараз, Астана, Караганда, Уральск, Кызылорда
+- Site map: https://kazkioti.kz/sitemap.xml
+
+## Products
+
+### Tractors — Dongfeng (assembled in Kazakhstan)
+- [Dongfeng DF404](https://kazkioti.kz/ru/tractors/df404): 40 hp, compact utility tractor
+- [Dongfeng DF404 (with cabin)](https://kazkioti.kz/ru/tractors/df404-cab): 40 hp, cabin variant
+- [Dongfeng DF904](https://kazkioti.kz/ru/tractors/df904): 90 hp, mid-range universal tractor
+
+### Tractors — Wuzheng (assembled in Kazakhstan)
+- [Wuzheng TS1204](https://kazkioti.kz/ru/tractors/ts1204): 120 hp
+- [Wuzheng TS1404](https://kazkioti.kz/ru/tractors/ts1404): 140 hp
+- [Wuzheng TS2114](https://kazkioti.kz/ru/tractors/ts2114): 210 hp, top-of-line
+
+### Attachments
+- [Full attachments catalog](https://kazkioti.kz/ru/attachments)
+- Categories: seeding, tillage, mowing, hay/forage, extra implements
+- Examples: plows (4-corpus, disc plow), seeders (2BXF-14, 2BXF-16, 2SBX-8 vegetable seeder), sprayers (3MZ-650), balers, disc harrows (BD-30, BD-53), GPS land levelers (KAZ K-800, GPS-leveler 3.5), front loaders, potato diggers (PDJ-39, PDJ-50), mulchers (KH-AG-140, KH-AG-200, KH-EF-155, KH-FM-180), cargo trailers, KPV, AM-8, PN-300/400/600
+- [Spare parts](https://kazkioti.kz/ru/parts)
+
+## Key information
+
+### State subsidy
+Tractors qualify for the Kazakhstan agricultural machinery subsidy program — up to 30% off list price. The site shows both list and subsidised prices on every tractor page.
+
+### Dealer network
+[Dealers map and directory](https://kazkioti.kz/ru/dealers) — 7 cities across Kazakhstan: Шымкент, Актобе, Тараз, Астана, Караганда, Уральск, Кызылорда.
+
+### Comparison tool
+[Compare tractor specs side-by-side](https://kazkioti.kz/ru/tractors/compare).
+
+## Pages (canonical Russian URLs — Kazakh versions at /kk/...)
+
+- [Home](https://kazkioti.kz/ru)
+- [Tractor catalog](https://kazkioti.kz/ru/tractors)
+- [Attachments](https://kazkioti.kz/ru/attachments)
+- [Parts](https://kazkioti.kz/ru/parts)
+- [Dealers](https://kazkioti.kz/ru/dealers)
+- [About / Factory](https://kazkioti.kz/ru/about)
+- [FAQ](https://kazkioti.kz/ru/faq)
+- [Contacts](https://kazkioti.kz/ru/contacts)
+
+## Optional
+
+- [Sitemap (XML)](https://kazkioti.kz/sitemap.xml)
+- Schema.org structured data on all key pages: Organization, AutoDealer, Product, BreadcrumbList, FAQPage.

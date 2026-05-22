@@ -14,6 +14,22 @@ type JsonLdObject = Record<string, unknown>
 
 const SCHEMA_CONTEXT = 'https://schema.org' as const
 
+export const MANUFACTURER_BY_SLUG: Record<
+  string,
+  { name: string; alternateName: string[]; url?: string }
+> = {
+  df404: { name: 'Dongfeng', alternateName: ['Dong Feng', 'Дунфэн'] },
+  'df404-cab': { name: 'Dongfeng', alternateName: ['Dong Feng', 'Дунфэн'] },
+  df904: { name: 'Dongfeng', alternateName: ['Dong Feng', 'Дунфэн'] },
+  ts1204: { name: 'Wuzheng', alternateName: ['Ву Чжэн', 'Wu Zheng'] },
+  ts1404: { name: 'Wuzheng', alternateName: ['Ву Чжэн', 'Wu Zheng'] },
+  ts2114: { name: 'Wuzheng', alternateName: ['Ву Чжэн', 'Wu Zheng'] },
+}
+
+function getManufacturer(slug: string) {
+  return MANUFACTURER_BY_SLUG[slug] ?? null
+}
+
 function abs(locale: Locale, path: string): string {
   const cleanPath = path.startsWith('/') ? path : path ? `/${path}` : ''
   return `${SITE_URL}/${locale}${cleanPath}`
@@ -28,18 +44,73 @@ function toAbsoluteAsset(image: string): string {
 export function organizationJsonLd(locale: Locale): JsonLdObject {
   return {
     '@context': SCHEMA_CONTEXT,
-    '@type': 'Organization',
+    // Dual-type: AutoDealer alone loses generic Organization signals,
+    // so we emit both. Google and major LLMs accept arrays for @type.
+    '@type': ['Organization', 'AutoDealer'],
+    '@id': `${SITE_URL}/#organization`,
     name: SITE_NAME,
+    alternateName: [
+      'KazKioti',
+      'Каз КИОТИ',
+      'КАЗ-КИОТИ',
+      'Каз-Киоти',
+      'Қаз КИОТИ',
+      'KAZKIOTI Tractors',
+    ],
     url: abs(locale, ''),
     logo: `${SITE_URL}/logo.png`,
     email: COMPANY_EMAIL,
     telephone: COMPANY_PHONE_TEL,
-    sameAs: [SOCIAL_LINKS.instagram, SOCIAL_LINKS.youtube],
+    slogan:
+      locale === 'kk'
+        ? 'Қазақстанда құрастырылған тракторлар'
+        : 'Тракторы, собранные в Казахстане',
+    foundingDate: '2016',
+    foundingLocation: {
+      '@type': 'Place',
+      name: 'Бадам, Туркестанская область, Казахстан',
+    },
+    areaServed: [
+      { '@type': 'Country', name: 'Kazakhstan' },
+      { '@type': 'AdministrativeArea', name: 'Туркестанская область' },
+      { '@type': 'AdministrativeArea', name: 'Алматинская область' },
+      { '@type': 'AdministrativeArea', name: 'Карагандинская область' },
+      { '@type': 'AdministrativeArea', name: 'Акмолинская область' },
+      { '@type': 'AdministrativeArea', name: 'Костанайская область' },
+      { '@type': 'AdministrativeArea', name: 'Восточно-Казахстанская область' },
+      { '@type': 'AdministrativeArea', name: 'Жамбылская область' },
+      { '@type': 'AdministrativeArea', name: 'Кызылординская область' },
+    ],
+    knowsAbout: [
+      'Сельскохозяйственная техника',
+      'Тракторы',
+      'Dongfeng',
+      'Wuzheng',
+      'KIOTI',
+      'Навесное оборудование',
+      'Сельхозтехника в Казахстане',
+      'Субсидируемая техника',
+      'Лизинг сельхозтехники',
+    ],
+    sameAs: [SOCIAL_LINKS.instagram, SOCIAL_LINKS.youtube].filter(Boolean),
+    inLanguage: ['ru', 'kk'],
     address: {
       '@type': 'PostalAddress',
       streetAddress: COMPANY_ADDRESS,
       addressCountry: 'KZ',
     },
+  }
+}
+
+export function websiteJsonLd(_locale: Locale): JsonLdObject {
+  return {
+    '@context': SCHEMA_CONTEXT,
+    '@type': 'WebSite',
+    '@id': `${SITE_URL}/#website`,
+    url: SITE_URL,
+    name: SITE_NAME,
+    inLanguage: ['ru', 'kk'],
+    publisher: { '@id': `${SITE_URL}/#organization` },
   }
 }
 
@@ -57,27 +128,63 @@ export function productJsonLd(
     ),
   )
 
+  const manufacturer = getManufacturer(tractor.slug)
+  const productUrl = abs(locale, `/tractors/${tractor.slug}`)
+  const modelCode = tractor.slug.toUpperCase()
+
   const data: JsonLdObject = {
     '@context': SCHEMA_CONTEXT,
     '@type': 'Product',
+    '@id': `${productUrl}#product`,
     name: `${SITE_NAME} ${tractor.name}`,
     description: tractor.subtitle,
     image: images,
     sku: tractor.slug,
-    brand: {
-      '@type': 'Brand',
-      name: SITE_NAME,
+    mpn: modelCode,
+    model: modelCode,
+    category: 'Сельскохозяйственная техника / Тракторы',
+    audience: {
+      '@type': 'Audience',
+      audienceType: 'Фермеры, агрохозяйства',
     },
+    inLanguage: locale === 'kk' ? 'kk' : 'ru',
+    brand: manufacturer
+      ? {
+          '@type': 'Brand',
+          name: manufacturer.name,
+          alternateName: manufacturer.alternateName,
+        }
+      : {
+          '@type': 'Brand',
+          name: SITE_NAME,
+        },
+  }
+
+  if (manufacturer) {
+    data.manufacturer = {
+      '@type': 'Organization',
+      name: manufacturer.name,
+      alternateName: manufacturer.alternateName,
+    }
   }
 
   const offerPrice = tractor.priceWithSubsidy ?? tractor.price
   if (typeof offerPrice === 'number') {
+    const now = new Date()
+    const priceValidUntil = `${now.getUTCFullYear() + 1}-12-31`
     data.offers = {
       '@type': 'Offer',
       priceCurrency: 'KZT',
       price: offerPrice,
+      priceValidUntil,
       availability: 'https://schema.org/InStock',
-      url: abs(locale, `/tractors/${tractor.slug}`),
+      itemCondition: 'https://schema.org/NewCondition',
+      url: productUrl,
+      seller: {
+        '@type': 'Organization',
+        name: SITE_NAME,
+        url: SITE_URL,
+      },
     }
   }
 
@@ -145,4 +252,37 @@ export function faqPageJsonLd(items: FAQEntry[]): JsonLdObject {
       },
     })),
   }
+}
+
+export interface BrandJsonLdArgs {
+  brandName: string
+  alternateName: string[]
+  hubUrl: string
+  modelUrls: string[]
+  description?: string
+}
+
+export function brandJsonLd(args: BrandJsonLdArgs): JsonLdObject {
+  const data: JsonLdObject = {
+    '@context': SCHEMA_CONTEXT,
+    '@type': 'Brand',
+    name: args.brandName,
+    alternateName: args.alternateName,
+    url: args.hubUrl,
+    subjectOf: { '@type': 'WebPage', url: args.hubUrl },
+    makesOffer: {
+      '@type': 'OfferCatalog',
+      name: `${args.brandName} tractors at ${SITE_NAME}`,
+      itemListElement: args.modelUrls.map((url, i) => ({
+        '@type': 'Offer',
+        position: i + 1,
+        itemOffered: { '@type': 'Product', url },
+        url,
+      })),
+    },
+  }
+  if (args.description) {
+    data.description = args.description
+  }
+  return data
 }

@@ -43,22 +43,19 @@ export async function generateMetadata({
   const tractor = await getTractor(model, locale)
   if (!tractor) return {}
   const t = await getTranslations({ locale, namespace: 'meta.tractorDetail' })
+  const titleArgs = {
+    model: tractor.frontmatter.name,
+    power: tractor.frontmatter.power,
+  }
+  const resolvedTitle = tractor.frontmatter.metaTitle ?? t('title', titleArgs)
+  const resolvedDescription =
+    tractor.frontmatter.metaDescription ?? t('description', titleArgs)
   return {
-    title: tractor.frontmatter.metaTitle ?? t('title', { model: tractor.frontmatter.name }),
-    description:
-      tractor.frontmatter.metaDescription ??
-      t('description', {
-        model: tractor.frontmatter.name,
-        power: tractor.frontmatter.power,
-      }),
+    title: resolvedTitle,
+    description: resolvedDescription,
     openGraph: {
-      title: tractor.frontmatter.metaTitle ?? t('title', { model: tractor.frontmatter.name }),
-      description:
-        tractor.frontmatter.metaDescription ??
-        t('description', {
-          model: tractor.frontmatter.name,
-          power: tractor.frontmatter.power,
-        }),
+      title: resolvedTitle,
+      description: resolvedDescription,
       images: [tractor.frontmatter.ogImage ?? tractor.frontmatter.heroImage],
     },
     alternates: localizedAlternates(`/tractors/${model}`, locale),

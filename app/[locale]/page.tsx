@@ -1,7 +1,7 @@
 import { setRequestLocale } from 'next-intl/server'
 import type { Locale } from '@/lib/i18n/routing'
 import { localizedAlternates } from '@/lib/seo/alternates'
-import { organizationJsonLd } from '@/lib/seo/jsonLd'
+import { organizationJsonLd, websiteJsonLd } from '@/lib/seo/jsonLd'
 import { JsonLd } from '@/components/seo/JsonLd'
 import { Hero } from '@/components/sections/Hero'
 import { UTPStripe } from '@/components/sections/UTPStripe'
@@ -38,7 +38,7 @@ export default async function HomePage({
 
   return (
     <>
-      <JsonLd data={organizationJsonLd(locale)} />
+      <JsonLd data={[organizationJsonLd(locale), websiteJsonLd(locale)]} />
       <Hero locale={locale} />
       <UTPStripe locale={locale} />
       <TractorGrid

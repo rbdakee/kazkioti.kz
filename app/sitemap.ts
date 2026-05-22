@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next'
 import { routing } from '@/lib/i18n/routing'
 import { SITE_URL } from '@/lib/constants'
+import { HREFLANG_BY_LOCALE } from '@/lib/seo/alternates'
 import { getAllTractors } from '@/lib/content/tractors'
 
 type ChangeFrequency = NonNullable<MetadataRoute.Sitemap[number]['changeFrequency']>
@@ -19,6 +20,8 @@ const STATIC_ROUTES: readonly RouteMeta[] = [
   { path: '', priority: 1.0, changeFrequency: 'weekly' },
   { path: '/tractors', priority: 0.9, changeFrequency: 'monthly' },
   { path: '/tractors/compare', priority: 0.5, changeFrequency: 'monthly' },
+  { path: '/dongfeng', priority: 0.8, changeFrequency: 'monthly' },
+  { path: '/wuzheng', priority: 0.8, changeFrequency: 'monthly' },
   { path: '/attachments', priority: 0.7, changeFrequency: 'monthly' },
   { path: '/parts', priority: 0.7, changeFrequency: 'monthly' },
   { path: '/dealers', priority: 0.9, changeFrequency: 'monthly' },
@@ -34,8 +37,8 @@ function buildEntry(
   priority: number,
 ): MetadataRoute.Sitemap[number] {
   const languages = Object.fromEntries(
-    routing.locales.map((locale) => [locale, `${SITE_URL}/${locale}${path}`]),
-  ) as Record<(typeof routing.locales)[number], string>
+    routing.locales.map((locale) => [HREFLANG_BY_LOCALE[locale], `${SITE_URL}/${locale}${path}`]),
+  ) as Record<(typeof HREFLANG_BY_LOCALE)[(typeof routing.locales)[number]], string>
 
   return {
     url: `${SITE_URL}/${routing.defaultLocale}${path}`,

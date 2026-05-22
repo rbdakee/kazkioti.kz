@@ -52,6 +52,8 @@ export async function Footer({ locale }: FooterProps) {
         </div>
         <FooterColumn title={t('footer.catalogTitle')}>
           <Link href={`/${locale}/tractors`}>{t('nav.tractors')}</Link>
+          <Link href={`/${locale}/dongfeng`}>{t('nav.dongfeng')}</Link>
+          <Link href={`/${locale}/wuzheng`}>{t('nav.wuzheng')}</Link>
           <Link href={`/${locale}/attachments`}>{t('nav.attachments')}</Link>
           <Link href={`/${locale}/parts`}>{t('nav.parts')}</Link>
           <Link href={`/${locale}/tractors/compare`}>{t('breadcrumbs.compare')}</Link>
