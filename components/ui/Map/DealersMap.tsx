@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { MapPin, type MapPinType } from './MapPin'
 import { cn } from '@/lib/utils/cn'
+import { KZ_PATH_LAKE, KZ_PATH_MAIN, KZ_PATH_TRANSFORM, KZ_VIEWBOX } from '@/lib/data/kz-map'
 
 export interface DealerPoint {
   id: string
@@ -26,9 +27,6 @@ export interface DealersMapProps {
   className?: string
   variant?: DealersMapVariant
 }
-
-const KZ_PATH =
-  'M60 220 L120 150 L220 130 L320 110 L420 100 L520 110 L620 130 L700 160 L760 200 L800 250 L780 310 L720 350 L640 370 L540 380 L440 380 L340 370 L240 350 L160 320 L100 280 Z'
 
 export function DealersMap({
   dealers,
@@ -57,17 +55,15 @@ export function DealersMap({
   return (
     <div className={cn('relative w-full', className)}>
       <svg
-        viewBox="0 0 860 460"
+        viewBox={KZ_VIEWBOX}
         className="h-auto w-full"
         role="img"
         aria-label={t('mapAriaLabel')}
       >
-        <path
-          d={KZ_PATH}
-          fill="#f6f5f2"
-          stroke="rgba(15,15,15,0.18)"
-          strokeWidth={1.5}
-        />
+        <g transform={KZ_PATH_TRANSFORM} fill="#f6f5f2" stroke="rgba(15,15,15,0.18)" strokeWidth={6}>
+          <path d={KZ_PATH_MAIN} />
+          <path d={KZ_PATH_LAKE} fill="#dfe9f4" />
+        </g>
         {visible.map((dealer) => (
           <MapPin
             key={dealer.id}

@@ -14,8 +14,6 @@ export interface CompareTableProps {
   locale: Locale
 }
 
-type BestDirection = 'higher' | 'lower' | 'none'
-
 interface RowConfig {
   key: string
   labelKey:
@@ -32,8 +30,6 @@ interface RowConfig {
     | 'rowWarranty'
   getRaw: (t: TractorFrontmatter) => string
   getFormatted?: (t: TractorFrontmatter, fmt: (key: string) => string) => string
-  numeric?: (t: TractorFrontmatter) => number | null
-  bestDirection: BestDirection
 }
 
 interface GroupConfig {
@@ -50,27 +46,21 @@ const GROUPS: readonly GroupConfig[] = [
         labelKey: 'rowPower',
         getRaw: (t) => String(t.power),
         getFormatted: (t, u) => `${t.power} ${u('hp')}`,
-        numeric: (t) => t.power,
-        bestDirection: 'higher',
       },
       {
         key: 'engine-model',
         labelKey: 'rowEngineModel',
         getRaw: (t) => t.engineModel,
-        bestDirection: 'none',
       },
       {
         key: 'cylinders',
         labelKey: 'rowCylinders',
         getRaw: (t) => String(t.engineCylinders),
-        numeric: (t) => t.engineCylinders,
-        bestDirection: 'higher',
       },
       {
         key: 'eco',
         labelKey: 'rowEco',
         getRaw: (t) => t.engineEcoClass,
-        bestDirection: 'none',
       },
     ],
   },
@@ -81,19 +71,16 @@ const GROUPS: readonly GroupConfig[] = [
         key: 'gears',
         labelKey: 'rowGears',
         getRaw: (t) => t.transmission,
-        bestDirection: 'none',
       },
       {
         key: 'drive',
         labelKey: 'rowDrive',
         getRaw: (t) => t.driveType,
-        bestDirection: 'none',
       },
       {
         key: 'pto',
         labelKey: 'rowPto',
         getRaw: (t) => t.pto,
-        bestDirection: 'none',
       },
     ],
   },
@@ -105,24 +92,18 @@ const GROUPS: readonly GroupConfig[] = [
         labelKey: 'rowMass',
         getRaw: (t) => String(t.weight),
         getFormatted: (t, u) => `${t.weight} ${u('kg')}`,
-        numeric: (t) => t.weight,
-        bestDirection: 'lower',
       },
       {
         key: 'length',
         labelKey: 'rowLength',
         getRaw: (t) => String(t.lengthMm),
         getFormatted: (t, u) => `${t.lengthMm} ${u('mm')}`,
-        numeric: (t) => t.lengthMm,
-        bestDirection: 'none',
       },
       {
         key: 'tank',
         labelKey: 'rowTank',
         getRaw: (t) => String(t.fuelTank),
         getFormatted: (t, u) => `${t.fuelTank} ${u('liters')}`,
-        numeric: (t) => t.fuelTank,
-        bestDirection: 'higher',
       },
     ],
   },
@@ -134,7 +115,6 @@ const GROUPS: readonly GroupConfig[] = [
         labelKey: 'rowWarranty',
         getRaw: (t) => `${t.warrantyYears} / ${t.warrantyHours}`,
         getFormatted: (t, u) => `${t.warrantyYears} ${u('years')} / ${t.warrantyHours} ${u('hours')}`,
-        bestDirection: 'none',
       },
     ],
   },
@@ -187,6 +167,13 @@ export function CompareTable({ tractors, locale }: CompareTableProps) {
     (slug) => tractors.find((tractor) => tractor.slug === slug) ?? null,
   )
 
+  const activeIndices = selected
+    .map((tractor, index) => (tractor ? index : -1))
+    .filter((index) => index !== -1)
+  const activeCount = activeIndices.length
+  const gridStyleMobile = `130px ${Array(activeCount).fill('minmax(150px,1fr)').join(' ')}`
+  const gridStyleDesktop = `24ch ${Array(activeCount).fill('1fr').join(' ')}`
+
   return (
     <div className="flex flex-col gap-6">
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -204,42 +191,41 @@ export function CompareTable({ tractors, locale }: CompareTableProps) {
         ))}
       </div>
 
-      <div className="overflow-x-auto rounded-md border border-border bg-bg-default">
-        <div className="min-w-[760px]">
+      {activeCount === 0 ? null : (
+      <div
+        className="overflow-x-auto rounded-md border border-border bg-bg-default"
+        style={{ ['--cmp-cols-m' as never]: gridStyleMobile, ['--cmp-cols-d' as never]: gridStyleDesktop }}
+      >
+        <div className="min-w-max">
           {GROUPS.map((group) => (
             <div key={group.titleKey}>
-              <div className="grid grid-cols-[24ch_1fr_1fr_1fr] gap-4 border-t border-border bg-bg-soft px-5 py-4 font-mono text-mono-label uppercase tracking-widest text-text-muted first:border-t-0">
-                <span>{t(group.titleKey)}</span>
-                <span />
-                <span />
-                <span />
+              <div className="grid grid-cols-[var(--cmp-cols-m)] gap-2 border-t border-border bg-bg-soft px-3 py-4 font-mono text-mono-label uppercase tracking-widest text-text-muted first:border-t-0 sm:grid-cols-[var(--cmp-cols-d)] sm:gap-4 sm:px-5">
+                <span className="sticky left-0 z-20 -ml-3 flex items-center self-stretch bg-bg-soft pl-3 pr-2 sm:ml-0 sm:pl-0">
+                  {t(group.titleKey)}
+                </span>
+                {activeIndices.map((_, idx) => (
+                  <span key={idx} />
+                ))}
               </div>
               {group.rows.map((row) => {
-                const cells = selected.map((tractor) =>
-                  tractor
-                    ? (row.getFormatted?.(tractor, tUnits) ?? row.getRaw(tractor))
-                    : null,
-                )
-                const bestIndex = computeBest(row, selected)
+                const cells = activeIndices.map((selectedIdx) => {
+                  const tractor = selected[selectedIdx]!
+                  return row.getFormatted?.(tractor, tUnits) ?? row.getRaw(tractor)
+                })
                 return (
                   <div
                     key={row.key}
-                    className="grid grid-cols-[24ch_1fr_1fr_1fr] items-center gap-4 border-t border-dashed border-border px-5 py-3.5"
+                    className="grid grid-cols-[var(--cmp-cols-m)] items-center gap-2 border-t border-dashed border-border px-3 py-3.5 sm:grid-cols-[var(--cmp-cols-d)] sm:gap-4 sm:px-5"
                   >
-                    <span className="text-body-s text-text-muted">{t(row.labelKey)}</span>
+                    <span className="sticky left-0 z-20 -ml-3 flex items-center self-stretch bg-bg-default pl-3 pr-2 text-body-s text-text-muted sm:ml-0 sm:pl-0">
+                      {t(row.labelKey)}
+                    </span>
                     {cells.map((value, idx) => (
                       <span
                         key={idx}
-                        className={cn(
-                          'font-heading text-body-l font-medium tracking-tight',
-                          value === null
-                            ? 'text-text-faint font-normal text-body-s'
-                            : bestIndex === idx
-                              ? 'rounded-sm bg-brand-red/10 px-2 py-1 text-brand-red'
-                              : 'text-text-primary',
-                        )}
+                        className="justify-self-center whitespace-nowrap text-center font-heading text-body-m font-medium tracking-tight text-text-primary sm:text-body-l"
                       >
-                        {value ?? '—'}
+                        {value}
                       </span>
                     ))}
                   </div>
@@ -248,51 +234,17 @@ export function CompareTable({ tractors, locale }: CompareTableProps) {
             </div>
           ))}
 
-          <div className="grid grid-cols-[24ch_1fr_1fr_1fr] items-center gap-4 bg-bg-soft px-5 py-6">
-            <span />
-            {selected.map((tractor, idx) => (
-              <div key={idx}>
-                {tractor ? (
-                  <Button
-                    asLink
-                    href={`/${locale}/contacts?model=${tractor.slug}`}
-                    variant={idx === 1 ? 'primary' : 'secondary'}
-                    size="sm"
-                  >
-                    {t('ctaContactModel')}
-                  </Button>
-                ) : null}
-              </div>
-            ))}
-          </div>
         </div>
       </div>
+      )}
 
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <p className="text-body-s text-text-muted">
-          <span className="mr-2 inline-block rounded-sm bg-brand-red/10 px-2 py-1 font-mono text-mono-label uppercase tracking-widest text-brand-red">
-            {t('legendBest')}
-          </span>
-          {t('legendBestHint')}
-        </p>
-        <Button asLink href={`/${locale}/contacts`} variant="primary" size="lg">
+      <div className="flex justify-end">
+        <Button asLink href={`/${locale}/contacts`} variant="primary" size="lg" className="font-semibold text-white">
           {tForms('submit')}
         </Button>
       </div>
     </div>
   )
-}
-
-function computeBest(
-  row: RowConfig,
-  selected: Array<TractorFrontmatter | null>,
-): number | null {
-  if (row.bestDirection === 'none' || !row.numeric) return null
-  const numbers = selected.map((tractor) => (tractor ? (row.numeric?.(tractor) ?? null) : null))
-  const defined = numbers.filter((value): value is number => value !== null)
-  if (defined.length < 2) return null
-  const target = row.bestDirection === 'higher' ? Math.max(...defined) : Math.min(...defined)
-  return numbers.findIndex((value) => value === target)
 }
 
 interface SlotCardProps {

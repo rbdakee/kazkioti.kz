@@ -12,7 +12,7 @@ const variantStyles: Record<ButtonVariant, string> = {
   ghost:
     'bg-transparent text-text-primary border border-transparent hover:bg-bg-muted focus-visible:ring-text-primary',
   onDark:
-    'bg-transparent text-white border border-white/40 hover:bg-white/10 hover:border-white focus-visible:ring-white',
+    'bg-transparent text-white border border-white/70 hover:bg-white/10 hover:border-white focus-visible:ring-white',
 }
 
 const sizeStyles: Record<ButtonSize, string> = {

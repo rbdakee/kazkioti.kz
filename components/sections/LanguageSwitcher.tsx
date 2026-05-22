@@ -52,7 +52,7 @@ function Switcher({ currentLocale, className, dark }: LanguageSwitcherProps) {
             locale={locale}
             aria-current={active ? 'true' : undefined}
             className={cn(
-              'px-3 py-1 font-mono text-mono-label uppercase tracking-widest transition-colors duration-200 first:rounded-l-pill last:rounded-r-pill',
+              'inline-flex min-w-[2.75rem] items-center justify-center px-2.5 py-1 font-mono text-[11px] uppercase tracking-widest transition-colors duration-200 first:rounded-l-pill last:rounded-r-pill',
               dark
                 ? active
                   ? 'bg-white text-text-primary'
@@ -72,7 +72,7 @@ function Switcher({ currentLocale, className, dark }: LanguageSwitcherProps) {
 
 function FallbackSwitcher({ currentLocale, className, dark }: LanguageSwitcherProps) {
   const locales: Locale[] = ['ru', 'kk']
-  const labels: Record<Locale, string> = { ru: 'RU', kk: 'ҚАЗ' }
+  const labels: Record<Locale, string> = { ru: 'RU', kk: 'KZ' }
 
   return (
     <div
@@ -89,7 +89,7 @@ function FallbackSwitcher({ currentLocale, className, dark }: LanguageSwitcherPr
           <span
             key={locale}
             className={cn(
-              'px-3 py-1 font-mono text-mono-label uppercase tracking-widest first:rounded-l-pill last:rounded-r-pill',
+              'inline-flex min-w-[2.75rem] items-center justify-center px-2.5 py-1 font-mono text-[11px] uppercase tracking-widest first:rounded-l-pill last:rounded-r-pill',
               dark
                 ? active
                   ? 'bg-white text-text-primary'

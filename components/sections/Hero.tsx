@@ -77,7 +77,7 @@ export function Hero({ locale }: HeroProps) {
   }
 
   return (
-    <section className="relative isolate overflow-hidden bg-bg-invert">
+    <section className="relative isolate -mt-[72px] overflow-hidden bg-bg-invert">
       {/* Video background */}
       <div className="absolute inset-0 -z-10">
         <VideoPlayer
@@ -95,7 +95,7 @@ export function Hero({ locale }: HeroProps) {
       </div>
 
       {/* Content */}
-      <div className="relative mx-auto flex min-h-[88vh] max-w-container flex-col px-4 py-16 sm:px-6 lg:px-10 lg:py-24">
+      <div className="relative mx-auto flex min-h-[88vh] max-w-container flex-col px-4 pb-16 pt-[136px] sm:px-6 lg:px-10 lg:pb-24 lg:pt-[168px]">
         {/* Location strip */}
         <div className="flex items-center justify-between font-mono text-mono-label uppercase tracking-widest text-white/60">
           <span>{t('location')}</span>

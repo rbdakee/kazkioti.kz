@@ -2,19 +2,15 @@ import { getTranslations } from 'next-intl/server'
 import type { Locale } from '@/lib/i18n/routing'
 import { Button } from '@/components/ui/Button'
 import { DealersMap, type DealerPoint } from '@/components/ui/Map/DealersMap'
+import { DEALERS } from '@/lib/data/dealers'
 
-const PREVIEW_POINTS: readonly DealerPoint[] = [
-  { id: 'factory-badam', city: 'Бадам', type: 'factory', cx: 420, cy: 320 },
-  { id: 'aktobe', city: 'Актобе', type: 'dealer', cx: 220, cy: 200 },
-  { id: 'uralsk', city: 'Уральск', type: 'dealer', cx: 160, cy: 160 },
-  { id: 'kostanay', city: 'Костанай', type: 'dealer', cx: 340, cy: 140 },
-  { id: 'astana', city: 'Астана', type: 'dealer', cx: 460, cy: 170 },
-  { id: 'karagandy', city: 'Караганда', type: 'service', cx: 520, cy: 220 },
-  { id: 'semey', city: 'Семей', type: 'dealer', cx: 640, cy: 180 },
-  { id: 'kyzylorda', city: 'Кызылорда', type: 'service', cx: 360, cy: 300 },
-  { id: 'almaty', city: 'Алматы', type: 'dealer', cx: 600, cy: 340 },
-  { id: 'taraz', city: 'Тараз', type: 'service', cx: 500, cy: 340 },
-]
+const PREVIEW_POINTS: readonly DealerPoint[] = DEALERS.map((dealer) => ({
+  id: dealer.id,
+  city: dealer.name,
+  type: 'dealer',
+  cx: dealer.cx,
+  cy: dealer.cy,
+}))
 
 export interface DealersMapPreviewProps {
   locale: Locale

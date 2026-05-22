@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { useTranslations } from 'next-intl'
@@ -38,7 +39,7 @@ export function Header({ locale }: HeaderProps) {
       const hidden = y > 120 && y > lastY
       setIsStuck(stuck)
       setIsHidden(hidden)
-      root.style.setProperty('--header-offset', hidden ? '0px' : stuck ? '58px' : '72px')
+      root.style.setProperty('--header-offset', hidden ? '0px' : '72px')
       lastY = y
     }
     window.addEventListener('scroll', onScroll, { passive: true })
@@ -63,24 +64,23 @@ export function Header({ locale }: HeaderProps) {
         className={cn(
           'sticky top-0 z-50 w-full transition-all duration-250 ease-kk',
           darkMode
-            ? 'bg-black/85 backdrop-blur-md'
+            ? 'bg-black/15 backdrop-blur-md'
             : cn('bg-bg-default/95 backdrop-blur', isStuck && 'border-b border-border'),
           isHidden && !menuOpen && '-translate-y-full',
         )}
       >
         <div
-          className={cn(
-            'mx-auto flex max-w-container items-center justify-between gap-6 px-4 transition-all duration-250 ease-kk sm:px-6 lg:px-10',
-            isStuck ? 'h-[58px]' : 'h-[72px]',
-          )}
+          className="mx-auto flex h-[72px] max-w-container items-center justify-between gap-6 px-4 sm:px-6 lg:px-10"
         >
-          <Link href={`/${locale}`} className="flex items-center gap-3 font-heading text-h3">
-            <span className="inline-flex h-9 w-9 items-center justify-center rounded-sm bg-brand-red font-bold text-white">
-              K
-            </span>
-            <span className={cn('hidden sm:inline', darkMode ? 'text-white/85' : 'text-text-primary')}>
-              KAZKIOTI
-            </span>
+          <Link href={`/${locale}`} className="flex items-center" aria-label="KAZKIOTI">
+            <Image
+              src="/logo.png"
+              alt="KAZKIOTI"
+              width={420}
+              height={96}
+              priority
+              className="h-7 w-auto"
+            />
           </Link>
           <nav className="hidden items-center gap-5 lg:flex">
             {NAV_ITEMS.map((item) => (
@@ -103,7 +103,7 @@ export function Header({ locale }: HeaderProps) {
             <a
               href={`tel:${COMPANY_PHONE_TEL}`}
               className={cn(
-                'hidden whitespace-nowrap font-mono text-[12px] font-medium tracking-[0.04em] transition-colors duration-250 xl:inline-block',
+                'hidden whitespace-nowrap font-mono text-[15px] font-medium tracking-[0.04em] transition-colors duration-250 xl:inline-block',
                 darkMode ? 'text-white/85 hover:text-white' : 'text-text-primary hover:text-brand-red',
               )}
             >
@@ -112,9 +112,12 @@ export function Header({ locale }: HeaderProps) {
             <Button
               asLink
               href={PDF_CATALOG_URL}
-              variant={darkMode ? 'onDark' : 'ghost'}
+              variant={darkMode ? 'onDark' : 'secondary'}
               size="sm"
-              className={cn('hidden xl:inline-flex', darkMode && 'font-semibold text-white')}
+              className={cn(
+                'hidden h-8 px-3 text-[13px] font-medium leading-none xl:inline-flex',
+                darkMode && 'text-white',
+              )}
             >
               {t('header.downloadCatalog')}
             </Button>
@@ -123,7 +126,7 @@ export function Header({ locale }: HeaderProps) {
               href={`/${locale}/contacts`}
               variant="primary"
               size="sm"
-              className="hidden font-semibold text-white lg:inline-flex"
+              className="hidden h-8 px-3 text-[13px] font-semibold leading-none text-white lg:inline-flex"
             >
               {t('header.cta')}
             </Button>
@@ -145,21 +148,26 @@ export function Header({ locale }: HeaderProps) {
       </header>
       {menuOpen ? (
         <div className="fixed inset-0 z-[60] flex flex-col bg-bg-default lg:hidden">
-          <div className="flex items-center justify-between px-4 py-4 sm:px-6">
-            <Link href={`/${locale}`} onClick={() => setMenuOpen(false)} className="flex items-center gap-3 font-heading text-h3">
-              <span className="inline-flex h-9 w-9 items-center justify-center rounded-sm bg-brand-red font-bold text-white">
-                K
-              </span>
-              KAZKIOTI
-            </Link>
-            <button
-              type="button"
+          <div className="flex items-center justify-between gap-3 px-4 py-4 sm:px-6">
+            <Link
+              href={`/${locale}`}
               onClick={() => setMenuOpen(false)}
-              aria-label={t('header.menuClose')}
-              className="inline-flex h-10 w-10 items-center justify-center text-2xl"
+              className="flex items-center"
+              aria-label="KAZKIOTI"
             >
-              ×
-            </button>
+              <Image src="/logo.png" alt="KAZKIOTI" width={420} height={96} className="h-8 w-auto" />
+            </Link>
+            <div className="flex items-center gap-3">
+              <LanguageSwitcher currentLocale={locale} />
+              <button
+                type="button"
+                onClick={() => setMenuOpen(false)}
+                aria-label={t('header.menuClose')}
+                className="inline-flex h-10 w-10 items-center justify-center text-2xl"
+              >
+                ×
+              </button>
+            </div>
           </div>
           <nav className="flex flex-col gap-4 px-6 py-8">
             {NAV_ITEMS.map((item) => (
@@ -187,17 +195,16 @@ export function Header({ locale }: HeaderProps) {
               {t('nav.contacts')}
             </Link>
           </nav>
-          <div className="mt-auto flex flex-col gap-3 border-t border-border px-6 py-6">
+          <div className="mt-auto flex flex-col items-stretch gap-3 border-t border-border px-6 py-6">
             <a
               href={`tel:${COMPANY_PHONE_TEL}`}
-              className="font-mono text-mono-label uppercase tracking-widest text-text-primary"
+              className="text-center font-mono text-[15px] font-medium tracking-[0.04em] text-text-primary"
             >
               {COMPANY_PHONE_HUMAN}
             </a>
             <Button asLink href={`/${locale}/contacts`} variant="primary" size="lg" onClick={() => setMenuOpen(false)}>
               {t('header.cta')}
             </Button>
-            <LanguageSwitcher currentLocale={locale} />
           </div>
         </div>
       ) : null}

@@ -6,11 +6,10 @@ import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { PhoneInput } from '@/components/ui/PhoneInput'
 import { Select } from '@/components/ui/Select'
-import { Textarea } from '@/components/ui/Textarea'
 import { FormField } from '@/components/ui/FormField'
 import { Toast } from '@/components/ui/Toast'
 import { PHONE_REGEX } from '@/lib/utils/formatPhone'
-import { TRACTOR_SLUGS, telegramUrl, whatsappUrl } from '@/lib/constants'
+import { telegramUrl, whatsappUrl } from '@/lib/constants'
 import type { Locale } from '@/lib/i18n/routing'
 
 const REGIONS = [
@@ -44,8 +43,6 @@ export function LeadForm({ locale, defaultModel, source = 'lead-form' }: LeadFor
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
   const [region, setRegion] = useState('')
-  const [model, setModel] = useState(defaultModel ?? '')
-  const [comment, setComment] = useState('')
   const [website, setWebsite] = useState('')
   const [errors, setErrors] = useState<{ name?: string; phone?: string }>({})
   const [status, setStatus] = useState<Status>('idle')
@@ -68,8 +65,7 @@ export function LeadForm({ locale, defaultModel, source = 'lead-form' }: LeadFor
           name,
           phone,
           region: region || undefined,
-          model: model || undefined,
-          comment: comment || undefined,
+          model: defaultModel || undefined,
           website,
           source,
           locale,
@@ -83,7 +79,6 @@ export function LeadForm({ locale, defaultModel, source = 'lead-form' }: LeadFor
       setToast({ type: 'success', message: t('successBody') })
       setName('')
       setPhone('')
-      setComment('')
     } catch {
       setStatus('error')
       setToast({ type: 'error', message: t('errorBody') })
@@ -127,26 +122,6 @@ export function LeadForm({ locale, defaultModel, source = 'lead-form' }: LeadFor
             />
           </FormField>
         </div>
-        <FormField id="lead-model" label={t('model')} optional>
-          <Select
-            id="lead-model"
-            name="model"
-            value={model}
-            onChange={(event) => setModel(event.target.value)}
-            placeholder={t('modelPlaceholder')}
-            options={TRACTOR_SLUGS.map((slug) => ({ value: slug, label: slug.toUpperCase() }))}
-          />
-        </FormField>
-        <FormField id="lead-comment" label={t('comment')} optional>
-          <Textarea
-            id="lead-comment"
-            name="comment"
-            value={comment}
-            onChange={(event) => setComment(event.target.value)}
-            placeholder={t('commentPlaceholder')}
-            rows={4}
-          />
-        </FormField>
         <input
           type="text"
           name="website"
