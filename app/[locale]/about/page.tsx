@@ -30,8 +30,8 @@ export default async function AboutPage({
     { year: '2018', title: t('timeline.2018title'), body: t('timeline.2018body'), accent: false },
     { year: '2020', title: t('timeline.2020title'), body: t('timeline.2020body'), accent: false },
     { year: '2022', title: t('timeline.2022title'), body: t('timeline.2022body'), accent: false },
-    { year: '2024', title: t('timeline.2024title'), body: t('timeline.2024body'), accent: true },
-    { year: '2026', title: t('timeline.2026title'), body: t('timeline.2026body'), accent: false },
+    { year: '2024', title: t('timeline.2024title'), body: t('timeline.2024body'), accent: false },
+    { year: '2026', title: t('timeline.2026title'), body: t('timeline.2026body'), accent: true },
   ]
 
   const goals = [
@@ -44,12 +44,6 @@ export default async function AboutPage({
     { num: t('goals.g7num'), title: t('goals.g7title'), body: t('goals.g7body') },
     { num: t('goals.g8num'), title: t('goals.g8title'), body: t('goals.g8body') },
     { num: t('goals.g9num'), title: t('goals.g9title'), body: t('goals.g9body') },
-  ]
-
-  const heroMetrics = [
-    { value: '2016', label: t('metricFounded') },
-    { value: '6', label: t('metricModels') },
-    { value: '9', label: t('metricRegions') },
   ]
 
   return (
@@ -67,17 +61,6 @@ export default async function AboutPage({
         <Eyebrow>{t('heroEyebrow')}</Eyebrow>
         <h1 className="mt-4 max-w-[16ch] font-heading text-h1 text-text-primary">{t('h1')}</h1>
         <p className="mt-5 max-w-[60ch] text-lede text-text-muted">{t('heroLede')}</p>
-        <dl className="mt-10 grid grid-cols-3 gap-6 border-t border-border pt-8 sm:grid-cols-3">
-          {heroMetrics.map(({ value, label }) => (
-            <div key={label}>
-              <dt className="sr-only">{label}</dt>
-              <dd className="font-heading text-h2 text-text-primary">{value}</dd>
-              <p className="mt-1 font-mono text-mono-label uppercase tracking-widest text-text-muted">
-                {label}
-              </p>
-            </div>
-          ))}
-        </dl>
       </section>
 
       <section className="border-y border-border bg-bg-soft py-14">
