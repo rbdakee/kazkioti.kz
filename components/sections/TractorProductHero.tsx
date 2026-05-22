@@ -82,7 +82,7 @@ export function TractorProductHero({ tractor, locale }: TractorProductHeroProps)
           </dl>
 
           <div className="mt-8 flex flex-wrap gap-3">
-            <Button variant="primary" size="lg" onClick={() => setKpSheetOpen(true)} className="font-semibold text-white">
+            <Button variant="primary" size="lg" onClick={() => setKpSheetOpen(true)}>
               {tDetail('ctaKp')}
             </Button>
             <Button variant="secondary" size="lg" onClick={() => setTdModalOpen(true)}>
