@@ -12,22 +12,22 @@ import { PHONE_REGEX } from '@/lib/utils/formatPhone'
 import { whatsappUrl } from '@/lib/constants'
 import type { Locale } from '@/lib/i18n/routing'
 
-const REGIONS = [
-  'Туркестанская',
-  'Алматинская',
-  'Жамбылская',
-  'Кызылординская',
-  'Актюбинская',
-  'Костанайская',
-  'Карагандинская',
-  'Акмолинская',
-  'Восточно-Казахстанская',
-  'Западно-Казахстанская',
-  'Атырауская',
-  'Мангистауская',
-  'Павлодарская',
-  'Северо-Казахстанская',
-] as const
+const REGIONS: Array<{ value: string; labels: Record<Locale, string> }> = [
+  { value: 'Туркестанская', labels: { ru: 'Туркестанская', kk: 'Түркістан облысы' } },
+  { value: 'Алматинская', labels: { ru: 'Алматинская', kk: 'Алматы облысы' } },
+  { value: 'Жамбылская', labels: { ru: 'Жамбылская', kk: 'Жамбыл облысы' } },
+  { value: 'Кызылординская', labels: { ru: 'Кызылординская', kk: 'Қызылорда облысы' } },
+  { value: 'Актюбинская', labels: { ru: 'Актюбинская', kk: 'Ақтөбе облысы' } },
+  { value: 'Костанайская', labels: { ru: 'Костанайская', kk: 'Қостанай облысы' } },
+  { value: 'Карагандинская', labels: { ru: 'Карагандинская', kk: 'Қарағанды облысы' } },
+  { value: 'Акмолинская', labels: { ru: 'Акмолинская', kk: 'Ақмола облысы' } },
+  { value: 'Восточно-Казахстанская', labels: { ru: 'Восточно-Казахстанская', kk: 'Шығыс Қазақстан облысы' } },
+  { value: 'Западно-Казахстанская', labels: { ru: 'Западно-Казахстанская', kk: 'Батыс Қазақстан облысы' } },
+  { value: 'Атырауская', labels: { ru: 'Атырауская', kk: 'Атырау облысы' } },
+  { value: 'Мангистауская', labels: { ru: 'Мангистауская', kk: 'Маңғыстау облысы' } },
+  { value: 'Павлодарская', labels: { ru: 'Павлодарская', kk: 'Павлодар облысы' } },
+  { value: 'Северо-Казахстанская', labels: { ru: 'Северо-Казахстанская', kk: 'Солтүстік Қазақстан облысы' } },
+]
 
 export interface LeadFormProps {
   locale: Locale
@@ -118,7 +118,7 @@ export function LeadForm({ locale, defaultModel, source = 'lead-form' }: LeadFor
               value={region}
               onChange={(event) => setRegion(event.target.value)}
               placeholder={t('regionPlaceholder')}
-              options={REGIONS.map((value) => ({ value, label: value }))}
+              options={REGIONS.map(({ value, labels }) => ({ value, label: labels[locale] }))}
             />
           </FormField>
         </div>
