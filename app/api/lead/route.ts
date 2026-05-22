@@ -3,6 +3,7 @@ import { Ratelimit } from '@upstash/ratelimit'
 import { Redis } from '@upstash/redis'
 import { Resend } from 'resend'
 import { z } from 'zod'
+import { createBitrixLead } from '@/lib/integrations/bitrix'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -107,24 +108,63 @@ export async function POST(request: NextRequest) {
   const apiKey = process.env.RESEND_API_KEY
   const from = process.env.RESEND_FROM
   const to = process.env.RESEND_TO
+  const bitrixUrl = process.env.BITRIX_WEBHOOK_URL
 
-  if (apiKey && from && to) {
-    const resend = new Resend(apiKey)
-    const { error } = await resend.emails.send({
-      from,
-      to,
-      subject: `${emailSubject[lead.locale]} · ${lead.source ?? 'site'} · ${lead.model ?? '—'}`,
-      text: formatLead(lead),
-    })
-    if (error) {
-      console.error('[lead] resend failed', error)
-      return NextResponse.json(
-        { success: false, error: 'Email delivery failed' },
-        { status: 502 },
-      )
-    }
-  } else {
-    console.warn('[lead] Resend not configured — logging only', formatLead(lead))
+  const resendConfigured = Boolean(apiKey && from && to)
+  const bitrixConfigured = Boolean(bitrixUrl)
+
+  if (!resendConfigured && !bitrixConfigured) {
+    console.warn('[lead] no delivery channel configured — logging only', formatLead(lead))
+    return NextResponse.json({ success: true }, { status: 200 })
+  }
+
+  const tasks: Promise<{ channel: 'resend' | 'bitrix'; ok: boolean; error?: string }>[] = []
+
+  if (resendConfigured) {
+    const resend = new Resend(apiKey!)
+    tasks.push(
+      resend.emails
+        .send({
+          from: from!,
+          to: to!,
+          subject: `${emailSubject[lead.locale]} · ${lead.source ?? 'site'} · ${lead.model ?? '—'}`,
+          text: formatLead(lead),
+        })
+        .then(({ error }) =>
+          error
+            ? { channel: 'resend' as const, ok: false, error: error.message }
+            : { channel: 'resend' as const, ok: true },
+        )
+        .catch((error: unknown) => ({
+          channel: 'resend' as const,
+          ok: false,
+          error: error instanceof Error ? error.message : 'Unknown error',
+        })),
+    )
+  }
+
+  if (bitrixConfigured) {
+    tasks.push(
+      createBitrixLead(lead).then((result) => ({
+        channel: 'bitrix' as const,
+        ok: result.ok,
+        error: result.error,
+      })),
+    )
+  }
+
+  const results = await Promise.all(tasks)
+  const failures = results.filter((r) => !r.ok)
+  for (const failure of failures) {
+    console.error(`[lead] ${failure.channel} failed`, failure.error)
+  }
+
+  const anyDelivered = results.some((r) => r.ok)
+  if (!anyDelivered) {
+    return NextResponse.json(
+      { success: false, error: 'Lead delivery failed' },
+      { status: 502 },
+    )
   }
 
   return NextResponse.json({ success: true }, { status: 200 })
