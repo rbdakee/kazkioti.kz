@@ -24,7 +24,7 @@ export async function FinalCTA({ locale, defaultModel, source }: FinalCTAProps) 
           <h2 className="font-heading text-h2 text-text-primary">
             {t('tractors.ctaTitle')}
           </h2>
-          <p className="max-w-lg text-lede text-text-muted">{t('contacts.lede')}</p>
+          <p className="max-w-lg text-lede text-text-muted">{t('tractors.ctaLede')}</p>
           <div className="mt-6 flex flex-col gap-3 border-t border-border pt-6">
             <a
               href={`tel:${COMPANY_PHONE_TEL}`}

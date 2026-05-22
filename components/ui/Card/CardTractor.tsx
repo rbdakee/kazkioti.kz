@@ -6,6 +6,7 @@ import type { TractorFrontmatter } from '@/lib/types/tractor'
 import type { Locale } from '@/lib/i18n/routing'
 import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils/cn'
+import { formatTenge } from '@/lib/utils/formatPrice'
 
 export interface CardTractorProps {
   tractor: TractorFrontmatter
@@ -114,6 +115,32 @@ export function CardTractor({
         <li className="rounded-pill border border-border px-3 py-1">{tractor.transmission}</li>
         <li className="rounded-pill border border-border px-3 py-1">{tractor.fuelTank} л</li>
       </ul>
+      {tractor.price ? (
+        <div className="flex flex-col gap-1 border-t border-dashed border-border pt-4">
+          {tractor.priceWithSubsidy ? (
+            <>
+              <span className="font-mono text-mono-label uppercase tracking-widest text-text-faint">
+                {t('priceFromLabel')} · {t('priceWithSubsidyLabel')}
+              </span>
+              <span className="font-heading text-h3 font-semibold text-brand-red">
+                {formatTenge(tractor.priceWithSubsidy, locale)}
+              </span>
+              <span className="font-mono text-mono-label uppercase tracking-widest text-text-faint line-through">
+                {formatTenge(tractor.price, locale)} · {t('priceWithoutVat')}
+              </span>
+            </>
+          ) : (
+            <>
+              <span className="font-mono text-mono-label uppercase tracking-widest text-text-faint">
+                {t('priceLabel')} · {t('priceWithoutVat')}
+              </span>
+              <span className="font-heading text-h3 font-semibold text-text-primary">
+                {formatTenge(tractor.price, locale)}
+              </span>
+            </>
+          )}
+        </div>
+      ) : null}
       <div className="mt-auto flex items-center justify-between gap-3">
         <Link
           href={detailHref}

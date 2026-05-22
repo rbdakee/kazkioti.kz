@@ -112,10 +112,12 @@ export function Header({ locale }: HeaderProps) {
             <Button
               asLink
               href={PDF_CATALOG_URL}
+              target="_blank"
+              rel="noopener noreferrer"
               variant={darkMode ? 'onDark' : 'secondary'}
               size="sm"
               className={cn(
-                'hidden h-8 px-3 text-[13px] font-medium leading-none xl:inline-flex',
+                'hidden h-8 px-3 text-[13px] font-medium leading-none lg:inline-flex',
                 darkMode && 'text-white',
               )}
             >
@@ -204,6 +206,17 @@ export function Header({ locale }: HeaderProps) {
             </a>
             <Button asLink href={`/${locale}/contacts`} variant="primary" size="lg" onClick={() => setMenuOpen(false)}>
               {t('header.cta')}
+            </Button>
+            <Button
+              asLink
+              href={PDF_CATALOG_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              variant="secondary"
+              size="lg"
+              onClick={() => setMenuOpen(false)}
+            >
+              {t('header.downloadCatalog')}
             </Button>
           </div>
         </div>

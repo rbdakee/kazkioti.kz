@@ -28,6 +28,7 @@ export function VideoPlayer({
   const videoRef = useRef<HTMLVideoElement>(null)
   const [activated, setActivated] = useState(false)
   const [reduced, setReduced] = useState(false)
+  const [videoFailed, setVideoFailed] = useState(false)
 
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -109,7 +110,7 @@ export function VideoPlayer({
       }
       style={fill ? undefined : { aspectRatio }}
     >
-      {reduced ? (
+      {reduced || videoFailed ? (
         <img src={poster} alt={alt} className="h-full w-full object-cover" />
       ) : (
         <video
@@ -122,6 +123,7 @@ export function VideoPlayer({
           loop
           playsInline
           preload="metadata"
+          onError={() => setVideoFailed(true)}
           className="h-full w-full object-cover"
         />
       )}

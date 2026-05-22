@@ -5,8 +5,7 @@ import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
-import { Pill } from '@/components/ui/Pill'
-import { DealersMap, type DealerPoint, type DealersMapVariant } from '@/components/ui/Map/DealersMap'
+import { DealersMap, type DealerPoint } from '@/components/ui/Map/DealersMap'
 import { cn } from '@/lib/utils/cn'
 import type { Dealer } from '@/lib/data/dealers'
 
@@ -16,12 +15,10 @@ export interface DealersDirectoryProps {
 }
 
 function dealerToPoint(dealer: Dealer): DealerPoint {
-  const type: DealerPoint['type'] =
-    dealer.id === 'badam' ? 'factory' : dealer.dealer && !dealer.service ? 'dealer' : dealer.service && !dealer.dealer ? 'service' : 'dealer'
   return {
     id: dealer.id,
     city: dealer.name,
-    type,
+    type: dealer.id === 'badam' ? 'factory' : 'dealer',
     cx: dealer.cx,
     cy: dealer.cy,
     address: dealer.address,
@@ -35,15 +32,12 @@ export function DealersDirectory({ dealers, regions }: DealersDirectoryProps) {
   const tCommon = useTranslations('common')
   const [query, setQuery] = useState('')
   const [region, setRegion] = useState('')
-  const [variant, setVariant] = useState<DealersMapVariant>('all')
   const [activeId, setActiveId] = useState<string | undefined>(dealers[0]?.id)
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
     return dealers.filter((dealer) => {
       if (region && dealer.region !== region) return false
-      if (variant === 'dealer' && !dealer.dealer && dealer.id !== 'badam') return false
-      if (variant === 'service' && !dealer.service && dealer.id !== 'badam') return false
       if (!q) return true
       return (
         dealer.name.toLowerCase().includes(q) ||
@@ -51,7 +45,7 @@ export function DealersDirectory({ dealers, regions }: DealersDirectoryProps) {
         dealer.address.toLowerCase().includes(q)
       )
     })
-  }, [dealers, query, region, variant])
+  }, [dealers, query, region])
 
   const active = dealers.find((dealer) => dealer.id === activeId) ?? null
   const mapPoints = filtered.map(dealerToPoint)
@@ -61,7 +55,6 @@ export function DealersDirectory({ dealers, regions }: DealersDirectoryProps) {
   function resetFilters() {
     setQuery('')
     setRegion('')
-    setVariant('all')
   }
 
   return (
@@ -89,17 +82,6 @@ export function DealersDirectory({ dealers, regions }: DealersDirectoryProps) {
           onChange={(event) => setRegion(event.target.value)}
           options={regionOptions}
         />
-        <div className="flex flex-wrap gap-2">
-          <Pill active={variant === 'all'} onClick={() => setVariant('all')}>
-            {t('filterAll')}
-          </Pill>
-          <Pill active={variant === 'dealer'} onClick={() => setVariant('dealer')}>
-            {t('filterDealers')}
-          </Pill>
-          <Pill active={variant === 'service'} onClick={() => setVariant('service')}>
-            {t('filterService')}
-          </Pill>
-        </div>
         {filtered.length === 0 ? (
           <div className="rounded-md border border-dashed border-border p-4 text-body-s text-text-muted">
             <p>{t('listEmpty')}</p>
@@ -116,12 +98,6 @@ export function DealersDirectory({ dealers, regions }: DealersDirectoryProps) {
             {filtered.map((dealer) => {
               const isActive = dealer.id === activeId
               const isFactory = dealer.id === 'badam'
-              const kindLabel = isFactory ? t('typeFactory') : dealer.service && !dealer.dealer ? t('typeService') : t('typeDealer')
-              const kindClass = isFactory
-                ? 'bg-brand-red text-white'
-                : dealer.service && !dealer.dealer
-                  ? 'bg-brand-blue text-white'
-                  : 'bg-text-primary text-white'
               return (
                 <li key={dealer.id}>
                   <button
@@ -134,18 +110,8 @@ export function DealersDirectory({ dealers, regions }: DealersDirectoryProps) {
                       isFactory && 'bg-gradient-to-r from-brand-red/10 to-transparent',
                     )}
                   >
-                    <span className="flex items-baseline justify-between gap-3">
-                      <span className="font-heading text-body-l font-semibold uppercase text-text-primary">
-                        {dealer.name}
-                      </span>
-                      <span
-                        className={cn(
-                          'rounded-pill px-2 py-1 font-mono text-[10px] uppercase tracking-widest',
-                          kindClass,
-                        )}
-                      >
-                        {kindLabel}
-                      </span>
+                    <span className="font-heading text-body-l font-semibold uppercase text-text-primary">
+                      {dealer.name}
                     </span>
                     <span className="text-body-s text-text-muted">{dealer.address}</span>
                     <span className="font-mono text-[11px] text-text-faint">
@@ -161,33 +127,15 @@ export function DealersDirectory({ dealers, regions }: DealersDirectoryProps) {
 
       <div className="relative flex flex-col gap-6 bg-bg-muted p-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <ul className="flex flex-wrap gap-4 font-mono text-mono-label uppercase tracking-widest text-text-muted">
-            <li className="flex items-center gap-2">
-              <span className="h-3 w-3 rounded-full bg-brand-red" aria-hidden="true" />
-              {t('typeFactory')}
-            </li>
-            <li className="flex items-center gap-2">
-              <span className="h-3 w-3 rounded-full bg-text-primary" aria-hidden="true" />
-              {t('typeDealer')}
-            </li>
-            <li className="flex items-center gap-2">
-              <span className="h-3 w-3 rounded-full bg-brand-blue" aria-hidden="true" />
-              {t('typeService')}
-            </li>
-            <li className="flex items-center gap-2 text-text-faint">
-              {t('legendCombined')}
-            </li>
-          </ul>
+          <span className="font-mono text-mono-label uppercase tracking-widest text-text-muted">
+            <span className="mr-2 inline-block h-3 w-3 rounded-full bg-brand-red align-middle" aria-hidden="true" />
+            {t('listHeading')}
+          </span>
           <span className="font-mono text-mono-label uppercase tracking-widest text-text-faint">
             KZ · {regions.length} {tCommon('region')}
           </span>
         </div>
-        <DealersMap
-          dealers={mapPoints}
-          activeId={activeId}
-          onSelect={setActiveId}
-          variant={variant}
-        />
+        <DealersMap dealers={mapPoints} activeId={activeId} onSelect={setActiveId} />
         {active ? <DealerCard dealer={active} onClose={() => setActiveId(undefined)} /> : null}
       </div>
     </div>
@@ -202,21 +150,14 @@ interface DealerCardProps {
 function DealerCard({ dealer, onClose }: DealerCardProps) {
   const t = useTranslations('dealers')
   const tCommon = useTranslations('common')
-  const kindLabel =
-    dealer.id === 'badam'
-      ? t('typeFactory')
-      : dealer.dealer && dealer.service
-        ? `${t('typeDealer')} + ${t('typeService')}`
-        : dealer.service
-          ? t('typeService')
-          : t('typeDealer')
+  const label = dealer.id === 'badam' ? t('typeFactory') : t('listHeading')
 
   return (
     <article className="rounded-lg border border-border bg-bg-default p-5 shadow-card lg:absolute lg:bottom-6 lg:left-6 lg:w-[340px] lg:max-w-[calc(100%-3rem)]">
       <div className="flex items-start justify-between gap-3">
         <div>
           <span className="font-mono text-[10px] uppercase tracking-widest text-text-muted">
-            {kindLabel}
+            {label}
           </span>
           <h3 className="mt-1 font-heading text-h3 text-text-primary">{dealer.name}</h3>
         </div>
