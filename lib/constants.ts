@@ -41,8 +41,9 @@ export const NAV_ITEMS: readonly NavItem[] = [
 ] as const
 
 export const SOCIAL_LINKS = {
-  instagram: 'https://instagram.com/kazkioti',
-  youtube: 'https://youtube.com/@kazkioti',
+  instagram: process.env.INSTAGRAM_URL ?? 'https://instagram.com/kazkioti',
+  youtube: process.env.YOUTUBE_URL ?? 'https://youtube.com/@kazkioti',
+  telegram: process.env.TELEGRAM_CHANNEL_URL ?? `https://t.me/${TELEGRAM_USERNAME}`,
 } as const
 
 export const PDF_CATALOG_URL = '/docs/kazkioti-catalog.pdf'

@@ -48,6 +48,17 @@ export async function Footer({ locale }: FooterProps) {
                 <path d="M21.6 7.2a2.4 2.4 0 0 0-1.7-1.7C18.3 5 12 5 12 5s-6.3 0-7.9.5A2.4 2.4 0 0 0 2.4 7.2 25 25 0 0 0 2 12a25 25 0 0 0 .4 4.8 2.4 2.4 0 0 0 1.7 1.7C5.7 19 12 19 12 19s6.3 0 7.9-.5a2.4 2.4 0 0 0 1.7-1.7A25 25 0 0 0 22 12a25 25 0 0 0-.4-4.8zM10 15V9l5 3-5 3z" />
               </svg>
             </a>
+            <a
+              href={SOCIAL_LINKS.telegram}
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Telegram"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-pill border border-white/15 hover:bg-white/10"
+            >
+              <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
+                <path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z" />
+              </svg>
+            </a>
           </div>
         </div>
         <FooterColumn title={t('footer.catalogTitle')}>
