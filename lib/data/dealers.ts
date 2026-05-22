@@ -98,6 +98,20 @@ export const DEALERS: readonly Dealer[] = [
     service: true,
     placeholder: true,
   },
+  {
+    id: 'kyzylorda',
+    name: 'Кызылорда',
+    region: 'Кызылординская',
+    address: 'г. Кызылорда, ул. Қорқыт Ата 123, БЦ «Самғау», кабинет 6',
+    phone: '+7 777 058 18 82',
+    phoneHref: 'tel:+77770581882',
+    hours: 'пн–пт · 09:00–18:00',
+    cx: 470,
+    cy: 580,
+    dealer: true,
+    service: true,
+    placeholder: true,
+  },
 ]
 
 export const DEALER_REGIONS: readonly string[] = Array.from(

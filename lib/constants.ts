@@ -37,13 +37,12 @@ export const NAV_ITEMS: readonly NavItem[] = [
   { key: 'parts', href: '/parts' },
   { key: 'dealers', href: '/dealers' },
   { key: 'about', href: '/about' },
-  { key: 'news', href: '/news' },
+  // News and Cases are temporarily hidden — keep the routes available for direct access only.
 ] as const
 
 export const SOCIAL_LINKS = {
-  instagram: process.env.INSTAGRAM_URL ?? 'https://instagram.com/kazkioti',
+  instagram: process.env.INSTAGRAM_URL ?? 'https://www.instagram.com/dong_feng_kz',
   youtube: process.env.YOUTUBE_URL ?? 'https://youtube.com/@kazkioti',
-  telegram: process.env.TELEGRAM_CHANNEL_URL ?? `https://t.me/${TELEGRAM_USERNAME}`,
 } as const
 
 export const PDF_CATALOG_URL = '/docs/kazkioti-catalog.pdf'

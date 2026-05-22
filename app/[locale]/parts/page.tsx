@@ -21,15 +21,15 @@ export async function generateMetadata({
 }
 
 function dealerToMapPoint(dealer: (typeof DEALERS)[number]): DealerPoint {
-  const type: DealerPoint['type'] = dealer.id === 'badam' ? 'factory' : dealer.service ? 'service' : 'dealer'
   return {
     id: dealer.id,
     city: dealer.name,
-    type,
+    type: dealer.id === 'badam' ? 'factory' : 'dealer',
     cx: dealer.cx,
     cy: dealer.cy,
     address: dealer.address,
     phone: dealer.phone,
+    phoneHref: dealer.phoneHref,
     hours: dealer.hours,
   }
 }
@@ -47,9 +47,7 @@ export default async function PartsPage({
   const tCommon = await getTranslations({ locale, namespace: 'common' })
   const tUnits = await getTranslations({ locale, namespace: 'units' })
 
-  const servicePoints = DEALERS.filter((dealer) => dealer.service || dealer.id === 'badam').map(
-    dealerToMapPoint,
-  )
+  const servicePoints = DEALERS.map(dealerToMapPoint)
 
   const services = [
     { num: '01', title: t('item1Title'), body: t('item1Body') },
@@ -171,22 +169,15 @@ export default async function PartsPage({
               <p className="max-w-2xl text-lede text-text-muted">{t('serviceMapLede')}</p>
             </div>
             <div className="rounded-lg border border-border bg-bg-default p-6">
-              <DealersMap
-                dealers={servicePoints}
-                variant="service"
-                interactive={false}
-              />
+              <DealersMap dealers={servicePoints} embedSelectedCard />
               <div className="mt-4 flex flex-wrap items-center justify-between gap-4">
-                <ul className="flex flex-wrap gap-4 font-mono text-mono-label uppercase tracking-widest text-text-muted">
-                  <li className="flex items-center gap-2">
-                    <span className="h-3 w-3 rounded-full bg-brand-red" aria-hidden="true" />
-                    {tNav('parts')}
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="h-3 w-3 rounded-full bg-brand-blue" aria-hidden="true" />
-                    {t('serviceMapTitle')}
-                  </li>
-                </ul>
+                <span className="font-mono text-mono-label uppercase tracking-widest text-text-muted">
+                  <span
+                    className="mr-2 inline-block h-3 w-3 rounded-full bg-brand-red align-middle"
+                    aria-hidden="true"
+                  />
+                  {t('serviceMapTitle')}
+                </span>
                 <Button asLink href={`/${locale}/dealers`} variant="secondary" size="md">
                   {tCommon('openMap')}
                 </Button>

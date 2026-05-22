@@ -3,8 +3,11 @@ import { createNavigation } from 'next-intl/navigation'
 
 export const routing = defineRouting({
   locales: ['ru', 'kk'],
-  defaultLocale: 'ru',
+  defaultLocale: 'kk',
   localePrefix: 'always',
+  // Always land first-time visitors on the Kazakh locale; the language switcher
+  // and cookie still let users move to RU.
+  localeDetection: false,
 })
 
 export type Locale = (typeof routing.locales)[number]

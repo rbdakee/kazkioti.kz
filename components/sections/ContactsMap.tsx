@@ -5,22 +5,15 @@ import { DealersMap, type DealerPoint } from '@/components/ui/Map/DealersMap'
 import type { Dealer } from '@/lib/data/dealers'
 
 function dealerToPoint(dealer: Dealer): DealerPoint {
-  const type: DealerPoint['type'] =
-    dealer.id === 'badam'
-      ? 'factory'
-      : dealer.dealer && dealer.service
-        ? 'dealer'
-        : dealer.dealer
-          ? 'dealer'
-          : 'service'
   return {
     id: dealer.id,
     city: dealer.name,
-    type,
+    type: dealer.id === 'badam' ? 'factory' : 'dealer',
     cx: dealer.cx,
     cy: dealer.cy,
     address: dealer.address,
     phone: dealer.phone,
+    phoneHref: dealer.phoneHref,
     hours: dealer.hours,
   }
 }
@@ -40,7 +33,6 @@ export function ContactsMap({ dealers }: ContactsMapProps) {
         dealers={points}
         activeId={activeId}
         onSelect={setActiveId}
-        variant="all"
         className="rounded"
       />
       {activeDealer ? (

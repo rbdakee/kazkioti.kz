@@ -6,7 +6,6 @@ import {
   COMPANY_EMAIL,
   SOCIAL_LINKS,
   whatsappUrl,
-  telegramUrl,
 } from '@/lib/constants'
 import { DEALERS } from '@/lib/data/dealers'
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs'
@@ -64,15 +63,8 @@ export default async function ContactsPage({
       highlight: false,
     },
     {
-      label: t('telegramLabel'),
-      value: 'Telegram',
-      desc: t('telegramDesc'),
-      href: telegramUrl(),
-      highlight: false,
-    },
-    {
       label: t('dealersLabel'),
-      value: `${dealerCount} / ${serviceCount} / ${factoryCount}`,
+      value: String(dealerCount + serviceCount + factoryCount),
       desc: t('dealersDesc'),
       href: `/${locale}/dealers`,
       highlight: false,
@@ -216,29 +208,12 @@ export default async function ContactsPage({
                 {t('socialInstagram')}
               </a>
               <a
-                href={SOCIAL_LINKS.youtube}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-pill border border-border-strong px-5 py-2.5 font-mono text-mono-label uppercase tracking-widest hover:border-text-primary"
-              >
-                <YoutubeIcon />
-                {t('socialYoutube')}
-              </a>
-              <a
                 href={whatsappUrl(locale)}
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex items-center gap-2 rounded-pill border border-border-strong px-5 py-2.5 font-mono text-mono-label uppercase tracking-widest hover:border-text-primary"
               >
                 WhatsApp
-              </a>
-              <a
-                href={telegramUrl()}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-pill border border-border-strong px-5 py-2.5 font-mono text-mono-label uppercase tracking-widest hover:border-text-primary"
-              >
-                Telegram
               </a>
             </div>
           </div>
@@ -265,18 +240,3 @@ function InstagramIcon() {
   )
 }
 
-function YoutubeIcon() {
-  return (
-    <svg
-      aria-hidden="true"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      className="h-4 w-4"
-    >
-      <path d="M22.54 6.42A2.78 2.78 0 0 0 20.59 4.4C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 2A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58Z" />
-      <polygon fill="currentColor" stroke="none" points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" />
-    </svg>
-  )
-}

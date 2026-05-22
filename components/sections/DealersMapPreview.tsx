@@ -7,9 +7,13 @@ import { DEALERS } from '@/lib/data/dealers'
 const PREVIEW_POINTS: readonly DealerPoint[] = DEALERS.map((dealer) => ({
   id: dealer.id,
   city: dealer.name,
-  type: 'dealer',
+  type: dealer.id === 'badam' ? 'factory' : 'dealer',
   cx: dealer.cx,
   cy: dealer.cy,
+  address: dealer.address,
+  phone: dealer.phone,
+  phoneHref: dealer.phoneHref,
+  hours: dealer.hours,
 }))
 
 export interface DealersMapPreviewProps {
@@ -27,22 +31,15 @@ export async function DealersMapPreview({ locale }: DealersMapPreviewProps) {
             <p className="mt-3 max-w-2xl text-lede text-text-muted">{t('dealers.lede')}</p>
           </div>
           <div className="relative rounded-lg border border-border bg-bg-default p-6">
-            <DealersMap dealers={PREVIEW_POINTS} interactive={false} />
+            <DealersMap dealers={PREVIEW_POINTS} embedSelectedCard />
             <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
-              <ul className="flex flex-wrap gap-4 font-mono text-mono-label uppercase tracking-widest text-text-muted">
-                <li className="flex items-center gap-2">
-                  <span className="h-3 w-3 rounded-full bg-brand-red" aria-hidden="true" />
-                  {t('dealers.typeFactory')}
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="h-3 w-3 rounded-full bg-text-primary" aria-hidden="true" />
-                  {t('dealers.typeDealer')}
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="h-3 w-3 rounded-full bg-brand-blue" aria-hidden="true" />
-                  {t('dealers.typeService')}
-                </li>
-              </ul>
+              <span className="font-mono text-mono-label uppercase tracking-widest text-text-muted">
+                <span
+                  className="mr-2 inline-block h-3 w-3 rounded-full bg-brand-red align-middle"
+                  aria-hidden="true"
+                />
+                {t('dealers.listHeading')}
+              </span>
               <Button asLink href={`/${locale}/dealers`} variant="primary" size="md">
                 {t('common.openMap')}
               </Button>

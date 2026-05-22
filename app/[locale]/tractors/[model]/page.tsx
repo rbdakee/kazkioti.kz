@@ -3,14 +3,17 @@ import { notFound } from 'next/navigation'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import type { Locale } from '@/lib/i18n/routing'
 import { getTractor, getAllTractors } from '@/lib/content/tractors'
-import { getAttachment } from '@/lib/content/attachments'
-import { getAllCases } from '@/lib/content/cases'
+import { getAllAttachments } from '@/lib/content/attachments'
+import type { AttachmentFrontmatter } from '@/lib/types/attachment'
+// Cases section is temporarily disabled until we have published cases.
+// import { getAllCases } from '@/lib/content/cases'
 import { routing } from '@/lib/i18n/routing'
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs'
 import { SpecTable, type SpecGroup } from '@/components/ui/SpecTable'
 import { VideoPlayer } from '@/components/ui/VideoPlayer'
 import { Eyebrow } from '@/components/ui/Eyebrow'
-import { CardCase } from '@/components/ui/Card/CardCase'
+import { ImagePlaceholder } from '@/components/ui/ImagePlaceholder'
+// import { CardCase } from '@/components/ui/Card/CardCase'
 import { TractorProductHero } from '@/components/sections/TractorProductHero'
 import { TractorSubNav } from '@/components/sections/TractorSubNav'
 import { TractorLeadBar } from '@/components/sections/TractorLeadBar'
@@ -60,7 +63,52 @@ export async function generateMetadata({
 interface AttachmentPreview {
   slug: string
   name: string
-  categoryKey: 'seeding' | 'tillage' | 'mowing' | 'extra'
+  categoryKey: AttachmentFrontmatter['category']
+  heroImage: string
+}
+
+const ATTACHMENT_CATEGORY_ORDER: ReadonlyArray<AttachmentFrontmatter['category']> = [
+  'seeding',
+  'tillage',
+  'mowing',
+  'extra',
+]
+
+/**
+ * Order so the top of the grid showcases a "best-of" mix:
+ *   - prefer attachments that ship with a real product photo
+ *   - round-robin across categories so the first row is one of each kind
+ *   - fall back to the remaining items in category order
+ */
+function sortAttachmentsForTractorPage(
+  items: readonly AttachmentPreview[],
+): AttachmentPreview[] {
+  const groups: Record<AttachmentFrontmatter['category'], AttachmentPreview[]> = {
+    seeding: [],
+    tillage: [],
+    mowing: [],
+    extra: [],
+  }
+  for (const item of items) groups[item.categoryKey].push(item)
+  // Inside each group, items with a photo come first
+  for (const key of ATTACHMENT_CATEGORY_ORDER) {
+    groups[key].sort((a, b) => {
+      const aHas = Boolean(a.heroImage)
+      const bHas = Boolean(b.heroImage)
+      if (aHas !== bHas) return aHas ? -1 : 1
+      return 0
+    })
+  }
+  // Round-robin interleave
+  const out: AttachmentPreview[] = []
+  const maxLen = Math.max(...ATTACHMENT_CATEGORY_ORDER.map((k) => groups[k].length))
+  for (let i = 0; i < maxLen; i += 1) {
+    for (const key of ATTACHMENT_CATEGORY_ORDER) {
+      const item = groups[key][i]
+      if (item) out.push(item)
+    }
+  }
+  return out
 }
 
 export default async function TractorDetailPage({
@@ -77,23 +125,18 @@ export default async function TractorDetailPage({
   const tDetail = await getTranslations({ locale, namespace: 'tractorDetail' })
   const frontmatter = tractor.frontmatter
 
-  const attachmentSlugs: readonly string[] = frontmatter.compatibleAttachments ?? []
-  const attachmentResults = await Promise.all(
-    attachmentSlugs.map(async (slug): Promise<AttachmentPreview | null> => {
-      try {
-        const record = await getAttachment(slug, locale)
-        if (!record) {
-          console.warn(`[tractor-detail] attachment slug not found: ${slug}`)
-          return null
-        }
-        return { slug, name: record.frontmatter.name, categoryKey: record.frontmatter.category }
-      } catch (err) {
-        console.warn(`[tractor-detail] failed to load attachment ${slug}:`, err)
-        return null
-      }
-    }),
+  // Show the full catalogue — no compatibility filter. Better-looking items
+  // (those with product photos) bubble to the top and we interleave categories
+  // so the first row showcases variety.
+  const allAttachmentRecords = await getAllAttachments(locale)
+  const attachments = sortAttachmentsForTractorPage(
+    allAttachmentRecords.map<AttachmentPreview>((record) => ({
+      slug: record.frontmatter.slug,
+      name: record.frontmatter.name,
+      categoryKey: record.frontmatter.category,
+      heroImage: record.frontmatter.heroImage,
+    })),
   )
-  const attachments = attachmentResults.filter((a): a is AttachmentPreview => a !== null)
 
   const CATEGORY_LABEL_KEY: Record<AttachmentPreview['categoryKey'], string> = {
     seeding: t('attachments.groupSeedingTitle'),
@@ -102,16 +145,7 @@ export default async function TractorDetailPage({
     extra: t('attachments.groupExtraTitle'),
   }
 
-  const allCases = await getAllCases(locale)
-  const relatedCases = allCases
-    .map((record) => record.frontmatter)
-    .filter(
-      (item) =>
-        item.tractorModel === frontmatter.slug ||
-        (frontmatter.relatedCases ?? []).includes(item.slug) ||
-        (item.relatedTractors ?? []).includes(frontmatter.slug),
-    )
-    .slice(0, 3)
+  // Cases lookup disabled while the section is hidden site-wide.
 
   const specGroups: SpecGroup[] = [
     {
@@ -178,7 +212,7 @@ export default async function TractorDetailPage({
 
   const showReview = Boolean(frontmatter.videoUrl)
   const showAttachments = attachments.length > 0
-  const showCases = relatedCases.length > 0
+  const showCases = false
   const kpHref = '#kp'
 
   return (
@@ -220,7 +254,7 @@ export default async function TractorDetailPage({
                 aspectRatio="16 / 9"
               />
               <div className="mt-3 font-mono text-mono-label uppercase tracking-widest text-text-muted">
-                <span>{tDetail('reviewCaption')}</span>
+                <span>{frontmatter.videoCaption ?? tDetail('reviewCaption')}</span>
               </div>
             </div>
           </div>
@@ -247,9 +281,14 @@ export default async function TractorDetailPage({
             <h2 className="font-heading text-h2 text-text-primary">{tDetail('cabinTitle')}</h2>
           </div>
           <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {cabinItems.map((item) => (
-              <li key={item.key} className="flex flex-col gap-3">
-                <div className="aspect-[4/5] rounded-sm bg-bg-muted" />
+            {cabinItems.map((item, index) => (
+              <li
+                key={item.key}
+                className="flex h-full flex-col gap-3 rounded-md border border-border bg-bg-soft p-6"
+              >
+                <span className="font-mono text-mono-label uppercase tracking-widest text-text-faint">
+                  {String(index + 1).padStart(2, '0')}
+                </span>
                 <p className="font-heading text-body-l font-semibold text-text-primary">{item.title}</p>
                 <p className="text-body-s text-text-muted">{item.body}</p>
               </li>
@@ -268,7 +307,7 @@ export default async function TractorDetailPage({
               <div className="flex max-w-3xl flex-col gap-3">
                 <Eyebrow>04 · {tDetail('subNavAttachments')}</Eyebrow>
                 <h2 className="font-heading text-h2 text-text-primary">
-                  {tDetail('attachmentsTitle', { model: frontmatter.name })}
+                  {tDetail('attachmentsTitle')}
                 </h2>
               </div>
               <Link
@@ -283,9 +322,20 @@ export default async function TractorDetailPage({
                 <li key={item.slug}>
                   <Link
                     href={`/${locale}/attachments`}
-                    className="flex h-full flex-col gap-3 rounded-md border border-border bg-bg-default p-5 transition-all duration-fast hover:-translate-y-0.5 hover:border-border-strong"
+                    className="flex h-full flex-col gap-3 rounded-md border border-border bg-bg-default p-5 transition-all duration-fast hover:-translate-y-0.5 hover:border-border-strong hover:shadow-card"
                   >
-                    <div className="aspect-square rounded-sm bg-bg-muted" />
+                    <div className="aspect-square overflow-hidden rounded-sm bg-white">
+                      {item.heroImage ? (
+                        <img
+                          src={item.heroImage}
+                          alt={item.name}
+                          loading="lazy"
+                          className="h-full w-full object-contain"
+                        />
+                      ) : (
+                        <ImagePlaceholder />
+                      )}
+                    </div>
                     <p className="font-mono text-mono-label uppercase tracking-widest text-text-muted">
                       {CATEGORY_LABEL_KEY[item.categoryKey]}
                     </p>
@@ -346,32 +396,7 @@ export default async function TractorDetailPage({
         </div>
       </section>
 
-      {showCases ? (
-        <section id="cases" className="bg-bg-soft">
-          <div className="mx-auto max-w-container px-4 py-20 sm:px-6 lg:px-10">
-            <div className="flex max-w-3xl flex-col gap-3">
-              <Eyebrow>06 · {tDetail('subNavCases')}</Eyebrow>
-              <h2 className="font-heading text-h2 text-text-primary">
-                {tDetail('casesTitle', { model: frontmatter.name })}
-              </h2>
-            </div>
-            <div className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-              {relatedCases.map((item) => (
-                <CardCase
-                  key={item.slug}
-                  caseItem={item}
-                  locale={locale}
-                  labels={{
-                    hectares: t('cases.metricHectares'),
-                    motorHours: t('cases.metricMotorHours'),
-                    years: t('cases.metricYears'),
-                  }}
-                />
-              ))}
-            </div>
-          </div>
-        </section>
-      ) : null}
+      {/* Cases section temporarily hidden until we have published cases. */}
 
       <div id="kp">
         <FinalCTA

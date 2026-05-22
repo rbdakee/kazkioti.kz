@@ -37,10 +37,20 @@ export const TractorFrontmatterSchema = z.object({
   heroImage: z.string(),
   galleryImages: z.array(z.string()).optional(),
   videoUrl: z.string().optional(),
+  // Optional per-tractor caption shown under the embedded review video
+  // (e.g., "Снято в Караганде"). Falls back to the generic i18n caption.
+  videoCaption: z.string().optional(),
   videoLoop: z.string().optional(),
 
   compatibleAttachments: z.array(z.string()),
   relatedCases: z.array(z.string()).optional(),
+
+  // Pricing in KZT, без НДС. Subsidy is the absolute KZT deduction available
+  // under government programmes (АПК); priceWithSubsidy = price - subsidy.
+  // All three fields are optional so models without published prices still parse.
+  price: z.number().optional(),
+  subsidy: z.number().optional(),
+  priceWithSubsidy: z.number().optional(),
 
   metaTitle: z.string().optional(),
   metaDescription: z.string().optional(),

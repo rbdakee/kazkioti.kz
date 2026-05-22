@@ -7,6 +7,11 @@ export const AttachmentFrontmatterSchema = z.object({
   compatibleModels: z.array(z.string()),
   heroImage: z.string(),
   specs: z.record(z.string()).optional(),
+  // KZT pricing from the official 2026 price list (без НДС). Subsidy is the
+  // absolute deduction under АПК programmes when applicable.
+  price: z.number().optional(),
+  subsidy: z.number().optional(),
+  priceWithSubsidy: z.number().optional(),
   metaTitle: z.string().optional(),
 })
 

@@ -5,16 +5,27 @@ import { useTranslations } from 'next-intl'
 import { Tabs, type Tab } from '@/components/ui/Tabs'
 import { Sheet } from '@/components/ui/Sheet'
 import { Button } from '@/components/ui/Button'
+import { ImagePlaceholder } from '@/components/ui/ImagePlaceholder'
 import { MiniContactForm } from '@/components/forms/MiniContactForm'
 import { Reveal } from '@/components/ui/Reveal'
 import type { Locale } from '@/lib/i18n/routing'
 import type { AttachmentFrontmatter } from '@/lib/types/attachment'
+import { formatTenge } from '@/lib/utils/formatPrice'
 
 export type AttachmentCategory = AttachmentFrontmatter['category']
 
 export interface AttachmentsCatalogProps {
   locale: Locale
   attachments: readonly AttachmentFrontmatter[]
+}
+
+interface PriceLabels {
+  priceLabel: string
+  priceWithoutVat: string
+  subsidyLabel: string
+  priceWithSubsidyLabel: string
+  priceFromLabel: string
+  priceOnRequest: string
 }
 
 const CATEGORY_ORDER: readonly AttachmentCategory[] = [
@@ -33,6 +44,7 @@ const CATEGORY_NUMBER: Record<AttachmentCategory, string> = {
 
 export function AttachmentsCatalog({ locale, attachments }: AttachmentsCatalogProps) {
   const t = useTranslations('attachments')
+  const tTractors = useTranslations('tractors')
   const [activeAttachment, setActiveAttachment] = useState<AttachmentFrontmatter | null>(null)
 
   const tabLabels: Record<AttachmentCategory, string> = {
@@ -47,6 +59,15 @@ export function AttachmentsCatalog({ locale, attachments }: AttachmentsCatalogPr
     tillage: t('groupTillageTitle'),
     mowing: t('groupMowingTitle'),
     extra: t('groupExtraTitle'),
+  }
+
+  const priceLabels: PriceLabels = {
+    priceLabel: tTractors('priceLabel'),
+    priceWithoutVat: tTractors('priceWithoutVat'),
+    subsidyLabel: tTractors('subsidyLabel'),
+    priceWithSubsidyLabel: tTractors('priceWithSubsidyLabel'),
+    priceFromLabel: tTractors('priceFromLabel'),
+    priceOnRequest: tTractors('priceOnRequest'),
   }
 
   const grouped = CATEGORY_ORDER.reduce<Record<AttachmentCategory, AttachmentFrontmatter[]>>(
@@ -65,11 +86,12 @@ export function AttachmentsCatalog({ locale, attachments }: AttachmentsCatalogPr
         items={grouped[category]}
         emptyLabel={t('emptyState')}
         compatibleLabel={t('compatibleLabel')}
-        priceLabel={t('priceOnRequest')}
         requestLabel={t('requestPrice')}
         groupNumber={CATEGORY_NUMBER[category]}
         groupTitle={groupTitles[category]}
         onRequest={setActiveAttachment}
+        locale={locale}
+        priceLabels={priceLabels}
       />
     ),
   }))
@@ -102,9 +124,10 @@ interface AttachmentGridProps {
   groupTitle: string
   emptyLabel: string
   compatibleLabel: string
-  priceLabel: string
   requestLabel: string
   onRequest: (attachment: AttachmentFrontmatter) => void
+  locale: Locale
+  priceLabels: PriceLabels
 }
 
 function AttachmentGrid({
@@ -113,9 +136,10 @@ function AttachmentGrid({
   groupTitle,
   emptyLabel,
   compatibleLabel,
-  priceLabel,
   requestLabel,
   onRequest,
+  locale,
+  priceLabels,
 }: AttachmentGridProps) {
   if (items.length === 0) {
     return <p className="rounded-md border border-dashed border-border p-8 text-center text-body-m text-text-muted">{emptyLabel}</p>
@@ -136,9 +160,10 @@ function AttachmentGrid({
             key={attachment.slug}
             attachment={attachment}
             compatibleLabel={compatibleLabel}
-            priceLabel={priceLabel}
             requestLabel={requestLabel}
             onRequest={() => onRequest(attachment)}
+            locale={locale}
+            priceLabels={priceLabels}
           />
         ))}
       </Reveal>
@@ -149,25 +174,36 @@ function AttachmentGrid({
 interface AttachmentCardProps {
   attachment: AttachmentFrontmatter
   compatibleLabel: string
-  priceLabel: string
   requestLabel: string
   onRequest: () => void
+  locale: Locale
+  priceLabels: PriceLabels
 }
 
 function AttachmentCard({
   attachment,
   compatibleLabel,
-  priceLabel,
   requestLabel,
   onRequest,
+  locale,
+  priceLabels,
 }: AttachmentCardProps): ReactNode {
   const compat = attachment.specs?.compatibility ?? null
+  const hasPhoto = Boolean(attachment.heroImage)
   return (
     <article className="flex flex-col gap-4 rounded-md border border-border bg-bg-default p-5 transition-all duration-fast ease-kk hover:-translate-y-0.5 hover:border-border-strong hover:shadow-card">
-      <div
-        aria-hidden="true"
-        className="aspect-[5/4] rounded-md bg-bg-muted"
-      />
+      <div className="aspect-[5/4] overflow-hidden rounded-md bg-white">
+        {hasPhoto ? (
+          <img
+            src={attachment.heroImage}
+            alt={attachment.name}
+            loading="lazy"
+            className="h-full w-full object-contain"
+          />
+        ) : (
+          <ImagePlaceholder />
+        )}
+      </div>
       <div className="flex flex-col gap-2">
         <h3 className="font-heading text-h3 leading-tight text-text-primary">
           {attachment.name}
@@ -188,10 +224,28 @@ function AttachmentCard({
           ))}
         </div>
       </div>
-      <div className="mt-auto flex items-center justify-between gap-3 border-t border-dashed border-border pt-4">
-        <span className="font-mono text-mono-label uppercase tracking-widest text-text-faint">
-          {priceLabel}
-        </span>
+      <div className="mt-auto flex items-end justify-between gap-3 border-t border-dashed border-border pt-4">
+        {attachment.price ? (
+          <div className="flex flex-col gap-0.5">
+            <span className="font-mono text-[10px] uppercase tracking-widest text-text-faint">
+              {attachment.priceWithSubsidy
+                ? `${priceLabels.priceFromLabel} · ${priceLabels.priceWithSubsidyLabel}`
+                : `${priceLabels.priceLabel} · ${priceLabels.priceWithoutVat}`}
+            </span>
+            <span className="font-heading text-body-l font-semibold text-brand-red">
+              {formatTenge(attachment.priceWithSubsidy ?? attachment.price, locale)}
+            </span>
+            {attachment.priceWithSubsidy ? (
+              <span className="font-mono text-[10px] uppercase tracking-widest text-text-faint line-through">
+                {formatTenge(attachment.price, locale)}
+              </span>
+            ) : null}
+          </div>
+        ) : (
+          <span className="font-mono text-mono-label uppercase tracking-widest text-text-faint">
+            {priceLabels.priceOnRequest}
+          </span>
+        )}
         <Button type="button" variant="secondary" size="sm" onClick={onRequest}>
           {requestLabel}
         </Button>

@@ -10,6 +10,7 @@ import { Sheet } from '@/components/ui/Sheet'
 import { MiniContactForm } from '@/components/forms/MiniContactForm'
 import { LeadForm } from '@/components/forms/LeadForm'
 import { cn } from '@/lib/utils/cn'
+import { formatTenge } from '@/lib/utils/formatPrice'
 
 export interface TractorProductHeroProps {
   tractor: TractorFrontmatter
@@ -80,6 +81,39 @@ export function TractorProductHero({ tractor, locale }: TractorProductHeroProps)
               </div>
             ))}
           </dl>
+
+          {tractor.price ? (
+            <div className="mt-8 flex flex-col gap-1 rounded-md border border-border bg-bg-soft p-5">
+              <div className="flex flex-wrap items-baseline justify-between gap-2">
+                <span className="font-mono text-mono-label uppercase tracking-widest text-text-muted">
+                  {t('tractors.priceLabel')} · {t('tractors.priceWithoutVat')}
+                </span>
+                <span className="font-heading text-h2 font-semibold text-text-primary">
+                  {formatTenge(tractor.price, locale)}
+                </span>
+              </div>
+              {tractor.subsidy ? (
+                <div className="mt-1 flex flex-wrap items-baseline justify-between gap-2 border-t border-dashed border-border pt-2">
+                  <span className="font-mono text-mono-label uppercase tracking-widest text-text-muted">
+                    {t('tractors.subsidyLabel')}
+                  </span>
+                  <span className="font-mono text-body-m text-text-muted">
+                    − {formatTenge(tractor.subsidy, locale)}
+                  </span>
+                </div>
+              ) : null}
+              {tractor.priceWithSubsidy ? (
+                <div className="mt-1 flex flex-wrap items-baseline justify-between gap-2">
+                  <span className="font-mono text-mono-label uppercase tracking-widest text-brand-red">
+                    {t('tractors.priceWithSubsidyLabel')}
+                  </span>
+                  <span className="font-heading text-h2 font-semibold text-brand-red">
+                    {formatTenge(tractor.priceWithSubsidy, locale)}
+                  </span>
+                </div>
+              ) : null}
+            </div>
+          ) : null}
 
           <div className="mt-8 flex flex-wrap gap-3">
             <Button variant="primary" size="lg" onClick={() => setKpSheetOpen(true)}>

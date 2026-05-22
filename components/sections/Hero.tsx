@@ -96,14 +96,9 @@ export function Hero({ locale }: HeroProps) {
 
       {/* Content */}
       <div className="relative mx-auto flex min-h-[88vh] max-w-container flex-col px-4 pb-16 pt-[136px] sm:px-6 lg:px-10 lg:pb-24 lg:pt-[168px]">
-        {/* Location strip */}
-        <div className="flex items-center justify-between font-mono text-mono-label uppercase tracking-widest text-white/60">
-          <span>{t('location')}</span>
-        </div>
-
         {/* Slides */}
         <div
-          className="mt-10 flex max-w-4xl flex-col gap-6"
+          className="flex max-w-4xl flex-col gap-6"
           onMouseEnter={pause}
           onMouseLeave={resume}
           onFocus={pause}

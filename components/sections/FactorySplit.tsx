@@ -8,6 +8,12 @@ export interface FactorySplitProps {
   locale: Locale
 }
 
+const FACTORY_THUMBS = [
+  '/images/factory/1.jpg',
+  '/images/factory/2.jpg',
+  '/images/factory/3.jpg',
+] as const
+
 export async function FactorySplit({ locale }: FactorySplitProps) {
   const t = await getTranslations({ locale })
   return (
@@ -29,14 +35,30 @@ export async function FactorySplit({ locale }: FactorySplitProps) {
             {t('common.learnMore')} →
           </Link>
         </div>
-        <div className="relative aspect-[4/3] w-full overflow-hidden rounded">
-          <Image
-            src="/images/factory.jpg"
-            alt="KAZKIOTI — завод в с. Бадам"
-            fill
-            sizes="(min-width: 1024px) 50vw, 100vw"
-            className="object-cover"
-          />
+        <div className="flex flex-col gap-3">
+          <div className="relative aspect-[4/3] w-full overflow-hidden rounded">
+            <Image
+              src="/images/factory/main.jpg"
+              alt="KAZKIOTI — завод в с. Бадам"
+              fill
+              sizes="(min-width: 1024px) 50vw, 100vw"
+              className="object-cover"
+              priority={false}
+            />
+          </div>
+          <ul className="grid grid-cols-3 gap-3">
+            {FACTORY_THUMBS.map((src, index) => (
+              <li key={src} className="relative aspect-[4/3] overflow-hidden rounded">
+                <Image
+                  src={src}
+                  alt={`KAZKIOTI — производство, кадр ${index + 1}`}
+                  fill
+                  sizes="(min-width: 1024px) 16vw, 33vw"
+                  className="object-cover"
+                />
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </section>
