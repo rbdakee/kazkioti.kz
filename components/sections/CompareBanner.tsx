@@ -18,7 +18,7 @@ export async function CompareBanner({ locale }: CompareBannerProps) {
             <h2 className="font-heading text-h2 text-text-primary">{t('compare.title')}</h2>
             <p className="max-w-2xl text-lede text-text-muted">{t('compare.lede')}</p>
           </div>
-          <Button asLink href={`/${locale}/tractors/compare`} variant="primary" size="lg">
+          <Button asLink href={`/${locale}/tractors/compare`} variant="primary" size="lg" className="font-semibold text-white">
             {t('tractors.compareTrayCta')}
           </Button>
         </div>

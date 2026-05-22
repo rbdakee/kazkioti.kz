@@ -67,12 +67,12 @@ export function CardTractor({
       onMouseEnter={handleEnter}
       onMouseLeave={handleLeave}
     >
-      <div className="relative aspect-[4/3] overflow-hidden rounded-md bg-bg-muted">
+      <div className="relative aspect-[4/3] overflow-hidden rounded-md bg-white">
         <img
           src={tractor.heroImage}
           alt={tractor.name}
           className={cn(
-            'absolute inset-0 h-full w-full object-cover transition-opacity duration-250 ease-kk',
+            'absolute inset-0 h-full w-full object-contain transition-opacity duration-250 ease-kk',
             hovering && hasVideoLoop ? 'opacity-0' : 'opacity-100',
           )}
           loading="lazy"

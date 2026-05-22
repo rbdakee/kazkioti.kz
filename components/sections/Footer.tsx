@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import Link from 'next/link'
 import { getTranslations } from 'next-intl/server'
 import type { Locale } from '@/lib/i18n/routing'
@@ -18,11 +19,8 @@ export async function Footer({ locale }: FooterProps) {
     <footer className="bg-bg-invert text-white">
       <div className="mx-auto grid max-w-container gap-12 px-4 py-16 sm:px-6 lg:grid-cols-5 lg:px-10">
         <div className="flex flex-col gap-4 lg:col-span-2">
-          <Link href={`/${locale}`} className="flex items-center gap-3 font-heading text-h3">
-            <span className="inline-flex h-9 w-9 items-center justify-center rounded-sm bg-brand-red font-bold">
-              K
-            </span>
-            KAZKIOTI
+          <Link href={`/${locale}`} className="flex items-center" aria-label="KAZKIOTI">
+            <Image src="/logo.png" alt="KAZKIOTI" width={420} height={96} className="h-8 w-auto" />
           </Link>
           <p className="max-w-sm text-body-m text-white/70">{t('footer.tagline')}</p>
           <div className="flex gap-3">

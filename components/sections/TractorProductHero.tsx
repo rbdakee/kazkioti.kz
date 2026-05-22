@@ -82,7 +82,7 @@ export function TractorProductHero({ tractor, locale }: TractorProductHeroProps)
           </dl>
 
           <div className="mt-8 flex flex-wrap gap-3">
-            <Button variant="primary" size="lg" onClick={() => setKpSheetOpen(true)}>
+            <Button variant="primary" size="lg" onClick={() => setKpSheetOpen(true)} className="font-semibold text-white">
               {tDetail('ctaKp')}
             </Button>
             <Button variant="secondary" size="lg" onClick={() => setTdModalOpen(true)}>
@@ -92,11 +92,11 @@ export function TractorProductHero({ tractor, locale }: TractorProductHeroProps)
         </div>
 
         <div className="flex flex-col gap-3">
-          <div className="overflow-hidden rounded-md bg-bg-muted" style={{ aspectRatio: '5 / 4' }}>
+          <div className="overflow-hidden rounded-md bg-white" style={{ aspectRatio: '5 / 4' }}>
             <img
               src={angles[activeImage] ?? tractor.heroImage}
               alt={`${tractor.name} — ${activeImage === 0 ? '3/4' : 'angle ' + (activeImage + 1)}`}
-              className="h-full w-full object-cover transition-opacity duration-250 ease-kk"
+              className="h-full w-full object-contain transition-opacity duration-250 ease-kk"
               loading="eager"
             />
           </div>
@@ -110,12 +110,12 @@ export function TractorProductHero({ tractor, locale }: TractorProductHeroProps)
                   aria-label={tDetail('angleAriaLabel', { tractor: tractor.name, n: index + 1 })}
                   aria-pressed={activeImage === index}
                   className={cn(
-                    'flex-1 overflow-hidden rounded-sm border bg-bg-muted transition-colors duration-fast',
+                    'flex-1 overflow-hidden rounded-sm border bg-white transition-colors duration-fast',
                     activeImage === index ? 'border-text-primary border-2' : 'border-border hover:border-border-strong',
                   )}
                   style={{ aspectRatio: '4 / 3' }}
                 >
-                  <img src={src} alt="" className="h-full w-full object-cover" loading="lazy" />
+                  <img src={src} alt="" className="h-full w-full object-contain" loading="lazy" />
                 </button>
               ))}
             </div>

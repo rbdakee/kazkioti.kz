@@ -22,8 +22,8 @@ export function MapPin({ cx, cy, type, active, onClick, label }: MapPinProps) {
   const isInteractive = Boolean(onClick)
   return (
     <g
-      transform={`translate(${cx} ${cy})`}
-      className={cn('cursor-pointer transition-transform', active && 'scale-110')}
+      transform={`translate(${cx} ${cy})${active ? ' scale(1.15)' : ''}`}
+      className={cn(isInteractive && 'cursor-pointer')}
       onClick={onClick}
       onKeyDown={
         isInteractive
