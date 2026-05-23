@@ -24,6 +24,7 @@ function dealerToPoint(dealer: Dealer): DealerPoint {
     address: dealer.address,
     phone: dealer.phone,
     hours: dealer.hours,
+    labelOffsetY: dealer.labelOffsetY,
   }
 }
 

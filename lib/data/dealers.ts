@@ -8,6 +8,9 @@ export interface Dealer {
   hours: string
   cx: number
   cy: number
+  /** Override pin label position. Set positive to push the label below the
+   * pin when the default position above collides with a region label. */
+  labelOffsetY?: number
   dealer: boolean
   service: boolean
   placeholder: true
@@ -22,8 +25,8 @@ export const DEALERS: readonly Dealer[] = [
     phone: '+7 747 876 44 44',
     phoneHref: 'tel:+77478764444',
     hours: 'пн–пт · 09:00–18:00',
-    cx: 564,
-    cy: 641,
+    cx: 578,
+    cy: 567,
     dealer: true,
     service: true,
     placeholder: true,
@@ -36,8 +39,8 @@ export const DEALERS: readonly Dealer[] = [
     phone: '+7 701 536 96 76',
     phoneHref: 'tel:+77015369676',
     hours: 'пн–пт · 09:00–18:00',
-    cx: 315,
-    cy: 457,
+    cx: 274,
+    cy: 284,
     dealer: true,
     service: true,
     placeholder: true,
@@ -50,8 +53,8 @@ export const DEALERS: readonly Dealer[] = [
     phone: '+7 747 954 70 83',
     phoneHref: 'tel:+77479547083',
     hours: 'пн–пт · 09:00–18:00',
-    cx: 600,
-    cy: 627,
+    cx: 621,
+    cy: 548,
     dealer: true,
     service: true,
     placeholder: true,
@@ -64,8 +67,8 @@ export const DEALERS: readonly Dealer[] = [
     phone: '+7 776 154 88 19',
     phoneHref: 'tel:+77761548819',
     hours: 'пн–пт · 09:00–18:00',
-    cx: 600,
-    cy: 436,
+    cx: 624,
+    cy: 250,
     dealer: true,
     service: true,
     placeholder: true,
@@ -78,8 +81,8 @@ export const DEALERS: readonly Dealer[] = [
     phone: '+7 708 775 13 40',
     phoneHref: 'tel:+77087751340',
     hours: 'пн–пт · 09:00–18:00',
-    cx: 635,
-    cy: 469,
+    cx: 664,
+    cy: 302,
     dealer: true,
     service: true,
     placeholder: true,
@@ -92,8 +95,8 @@ export const DEALERS: readonly Dealer[] = [
     phone: '+7 777 061 55 11',
     phoneHref: 'tel:+77770615511',
     hours: 'пн–пт · 09:00–18:00',
-    cx: 198,
-    cy: 427,
+    cx: 131,
+    cy: 247,
     dealer: true,
     service: true,
     placeholder: true,
@@ -106,8 +109,9 @@ export const DEALERS: readonly Dealer[] = [
     phone: '+7 777 058 18 82',
     phoneHref: 'tel:+77770581882',
     hours: 'пн–пт · 09:00–18:00',
-    cx: 470,
-    cy: 580,
+    cx: 477,
+    cy: 482,
+    labelOffsetY: 12,
     dealer: true,
     service: true,
     placeholder: true,
