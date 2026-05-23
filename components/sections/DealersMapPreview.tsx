@@ -14,6 +14,7 @@ const PREVIEW_POINTS: readonly DealerPoint[] = DEALERS.map((dealer) => ({
   phone: dealer.phone,
   phoneHref: dealer.phoneHref,
   hours: dealer.hours,
+  labelOffsetY: dealer.labelOffsetY,
 }))
 
 export interface DealersMapPreviewProps {

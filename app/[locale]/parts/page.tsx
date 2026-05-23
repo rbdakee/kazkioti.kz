@@ -36,6 +36,7 @@ function dealerToMapPoint(dealer: (typeof DEALERS)[number]): DealerPoint {
     phone: dealer.phone,
     phoneHref: dealer.phoneHref,
     hours: dealer.hours,
+    labelOffsetY: dealer.labelOffsetY,
   }
 }
 

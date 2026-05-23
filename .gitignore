@@ -21,6 +21,7 @@ build/
 raw/
 uploads/
 .handoff/
+scripts/.gadm-kaz-1.json
 
 # Logs
 *.log

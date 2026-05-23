@@ -13,11 +13,26 @@ export interface MapPinProps {
   onClick?: () => void
   label?: string
   showLabel?: boolean
+  /**
+   * Vertical offset for the label in SVG units relative to the pin center.
+   * Negative places it above (default), positive below. Use a positive value
+   * when the default position collides with neighbouring map labels.
+   */
+  labelOffsetY?: number
 }
 
 const PIN_FILL = '#e0001b'
 
-export function MapPin({ cx, cy, type, active, onClick, label, showLabel = false }: MapPinProps) {
+export function MapPin({
+  cx,
+  cy,
+  type,
+  active,
+  onClick,
+  label,
+  showLabel = false,
+  labelOffsetY = -12,
+}: MapPinProps) {
   const isInteractive = Boolean(onClick)
   return (
     <g
@@ -52,8 +67,9 @@ export function MapPin({ cx, cy, type, active, onClick, label, showLabel = false
       {showLabel && label ? (
         <text
           x={0}
-          y={-12}
+          y={labelOffsetY}
           textAnchor="middle"
+          dominantBaseline={labelOffsetY >= 0 ? 'hanging' : 'auto'}
           className="pointer-events-none select-none"
           style={{
             fontFamily: 'var(--font-jetbrains-mono), ui-monospace, monospace',

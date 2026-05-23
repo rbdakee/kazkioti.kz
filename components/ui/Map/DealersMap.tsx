@@ -9,10 +9,10 @@ import {
   type PointerEvent as ReactPointerEvent,
   type TouchEvent as ReactTouchEvent,
 } from 'react'
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { MapPin, type MapPinType } from './MapPin'
 import { cn } from '@/lib/utils/cn'
-import { KZ_PATH_LAKE, KZ_PATH_MAIN, KZ_PATH_TRANSFORM, KZ_VIEWBOX } from '@/lib/data/kz-map'
+import { KZ_REGIONS, KZ_VIEWBOX } from '@/lib/data/kz-map'
 
 export interface DealerPoint {
   id: string
@@ -24,6 +24,8 @@ export interface DealerPoint {
   phone?: string
   phoneHref?: string
   hours?: string
+  /** Override the label position relative to the pin. Defaults to -12 (above). */
+  labelOffsetY?: number
 }
 
 // Kept for backwards-compatible call sites — variant filtering is no longer
@@ -57,6 +59,12 @@ function clamp(value: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, value))
 }
 
+// Keep region labels at roughly the same on-screen size regardless of zoom:
+// SVG font-size shrinks proportionally as the viewBox window narrows.
+function labelFontSize(viewBoxWidth: number): number {
+  return clamp(viewBoxWidth / 95, 3, 12)
+}
+
 export function DealersMap({
   dealers,
   activeId,
@@ -68,6 +76,7 @@ export function DealersMap({
   embedSelectedCard = false,
 }: DealersMapProps) {
   const t = useTranslations('dealers')
+  const locale = useLocale()
   const [internalActive, setInternalActive] = useState<string | undefined>(activeId)
   const [zoom, setZoom] = useState(1)
   // pan is expressed in SVG user units, applied on top of the focus center
@@ -281,9 +290,44 @@ export function DealersMap({
         role="img"
         aria-label={t('mapAriaLabel')}
       >
-        <g transform={KZ_PATH_TRANSFORM} fill="#f6f5f2" stroke="rgba(15,15,15,0.18)" strokeWidth={6}>
-          <path d={KZ_PATH_MAIN} />
-          <path d={KZ_PATH_LAKE} fill="#dfe9f4" />
+        <g
+          fill="#f6f5f2"
+          stroke="rgba(15,15,15,0.22)"
+          strokeWidth={0.6}
+          strokeLinejoin="round"
+        >
+          {KZ_REGIONS.map((region) => (
+            <path key={region.id} d={region.path} />
+          ))}
+        </g>
+        <g aria-hidden="true" className="pointer-events-none select-none">
+          {KZ_REGIONS.map((region) => {
+            const label = locale === 'kk' ? region.shortKk : region.shortRu
+            const fontSize = labelFontSize(viewBox.w)
+            return (
+              <text
+                key={`label-${region.id}`}
+                x={region.labelX}
+                y={region.labelY}
+                textAnchor="middle"
+                dominantBaseline="middle"
+                style={{
+                  fontFamily: 'var(--font-jetbrains-mono), ui-monospace, monospace',
+                  fontSize,
+                  fontWeight: 500,
+                  letterSpacing: 0.6,
+                  textTransform: 'uppercase',
+                  fill: 'rgba(15,15,15,0.42)',
+                  paintOrder: 'stroke',
+                  stroke: '#f6f5f2',
+                  strokeWidth: fontSize * 0.35,
+                  strokeLinejoin: 'round',
+                }}
+              >
+                {label}
+              </text>
+            )
+          })}
         </g>
         {dealers.map((dealer) => (
           <MapPin
@@ -295,6 +339,7 @@ export function DealersMap({
             onClick={interactive ? () => handlePinClick(dealer.id) : undefined}
             label={dealer.city}
             showLabel={showLabels}
+            labelOffsetY={dealer.labelOffsetY}
           />
         ))}
       </svg>
