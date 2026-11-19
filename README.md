@@ -2,6 +2,66 @@
 
 Next.js 14 + React 18 + TypeScript + Tailwind. Bilingual (RU/KK) marketing site for the Kazakhstan tractor manufacturer.
 
+## Как обновлять сайт
+
+Сайт размещён на Vercel и подключён к этому репозиторию. **Любой push в ветку `main` автоматически публикует сайт** на https://kazkioti.kz примерно за 1–2 минуты. Больше ничего делать не нужно.
+
+### Где что лежит
+
+| Что меняем | Где |
+|---|---|
+| Тексты интерфейса (меню, кнопки, заголовки) | `messages/ru.json`, `messages/kk.json` |
+| Тракторы, навесное оборудование, новости, кейсы, FAQ | `content/<раздел>/<название>.ru.mdx` и `.kk.mdx` |
+| Картинки | `public/images/` |
+
+Сайт двуязычный: меняя текст на русском, не забудьте поправить и казахскую версию.
+
+### Первая настройка (один раз)
+
+Нужны [Git](https://git-scm.com), [Node.js 20](https://nodejs.org) и pnpm (`npm install -g pnpm`).
+
+```bash
+git clone https://github.com/rbdakee/kazkioti.kz.git
+cd kazkioti.kz
+pnpm install
+```
+
+### Внести изменения
+
+```bash
+git pull                     # забрать свежую версию
+pnpm dev                     # посмотреть локально: http://localhost:3000
+# ...правки...
+pnpm build                   # убедиться, что сайт собирается без ошибок
+git add .
+git commit -m "Обновил цены на KH-AG-140"
+git push                     # после этого сайт обновится сам
+```
+
+Небольшие правки текста можно делать прямо на GitHub: откройте файл → значок карандаша → **Commit changes** в ветку `main`.
+
+### Как проверить, что всё опубликовалось
+
+- **GitHub** → вкладка **Actions**: зелёная галочка означает, что проверки пройдены, красный крестик — что есть ошибка (нажмите на него, чтобы увидеть текст).
+- **Vercel** → проект → **Deployments**: статус **Ready** означает, что сайт обновлён, **Error** — что сборка упала.
+
+Если сборка упала, **рабочий сайт не ломается**: остаётся предыдущая версия. Исправьте ошибку и сделайте push ещё раз.
+
+### Безопасный способ: проверить перед публикацией
+
+1. Создайте ветку: `git checkout -b my-change`, внесите правки, затем `git push -u origin my-change`.
+2. На GitHub откройте **Pull Request** в `main`. Vercel пришлёт в него ссылку на preview-версию сайта.
+3. Если всё выглядит хорошо, нажмите **Merge**, и изменения уйдут на основной сайт.
+
+### Откат
+
+Vercel → **Deployments** → выберите последнюю рабочую версию → **⋯** → **Instant Rollback**. Сайт вернётся к ней за секунды.
+
+### Важно
+
+- Репозиторий **публичный**, поэтому никогда не коммитьте пароли, API-ключи и токены. Секреты хранятся только в Vercel → **Settings → Environment Variables** (список в `.env.example`). После изменения переменных нужен Redeploy.
+- Файл `.env.local` предназначен только для локальной разработки и в git не попадает.
+
 ## Develop
 
 ```bash
@@ -56,5 +116,3 @@ Point the apex `kazkioti.kz` (and `www.kazkioti.kz` as alias) to Vercel per **Pr
 - `CLAUDE.md` — coding principles
 - `PLAN.md` — workflow and phase plan
 - `MEMORY.md` — locked decisions and content gaps
-- `docs/DESIGN.md` — visual/design TZ
-- `docs/kazkioti.md` — company and product source data
