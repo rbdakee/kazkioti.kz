@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import type { ReactNode } from 'react'
-import { Geologica, Manrope, Montserrat } from 'next/font/google'
+import localFont from 'next/font/local'
 import { NextIntlClientProvider } from 'next-intl'
 import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server'
 import { notFound } from 'next/navigation'
@@ -14,25 +14,27 @@ import { CookieBanner } from '@/components/sections/CookieBanner'
 import { Analytics } from '@/components/seo/Analytics'
 import '@/styles/globals.css'
 
-const montserrat = Montserrat({
-  subsets: ['latin', 'latin-ext', 'cyrillic', 'cyrillic-ext'],
-  weight: ['500', '600', '700', '800'],
+// Self-hosted variable fonts (latin, latin-ext, cyrillic, cyrillic-ext), so builds
+// do not depend on Google Fonts. Licenses: app/fonts/OFL-*.txt
+const montserrat = localFont({
+  src: '../fonts/montserrat.woff2',
+  weight: '500 800',
   variable: '--font-montserrat',
   display: 'swap',
   preload: true,
 })
 
-const manrope = Manrope({
-  subsets: ['latin', 'latin-ext', 'cyrillic', 'cyrillic-ext'],
-  weight: ['400', '500', '600', '700'],
+const manrope = localFont({
+  src: '../fonts/manrope.woff2',
+  weight: '400 700',
   variable: '--font-manrope',
   display: 'swap',
   preload: true,
 })
 
-const geologica = Geologica({
-  subsets: ['latin', 'latin-ext', 'cyrillic', 'cyrillic-ext'],
-  weight: ['400', '500', '600'],
+const geologica = localFont({
+  src: '../fonts/geologica.woff2',
+  weight: '400 600',
   variable: '--font-geologica',
   display: 'swap',
   preload: false,
