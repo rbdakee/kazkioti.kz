@@ -178,6 +178,30 @@ export async function deleteUserAction(id: number): Promise<ActionResult> {
   return result
 }
 
+export interface CreatedToken {
+  id: number
+  name: string
+  token: string
+}
+
+export async function createTokenAction(name: string): Promise<ActionResult<CreatedToken>> {
+  const result = await run(() =>
+    adminFetch<CreatedToken>('/tokens', { method: 'POST', body: JSON.stringify({ name: z.string().parse(name) }) }),
+  )
+  if (result.ok) revalidatePath('/admin/users')
+  return result
+}
+
+export async function deleteTokenAction(id: number): Promise<ActionResult> {
+  const tokenId = z.number().int().positive().parse(id)
+  const result = await run(async () => {
+    await adminFetch(`/tokens/${tokenId}`, { method: 'DELETE' })
+    return undefined
+  })
+  if (result.ok) revalidatePath('/admin/users')
+  return result
+}
+
 export async function changePasswordAction(input: { currentPassword: string; newPassword: string }): Promise<ActionResult> {
   const result = await run(async () => {
     await adminFetch('/me/password', { method: 'PUT', body: JSON.stringify(input) })

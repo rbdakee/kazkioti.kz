@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, type FormEvent } from 'react'
+import { useState, type FormEvent, type ReactNode } from 'react'
 import { useRouter } from 'next/navigation'
 import { KeyRound, Trash2, UserPlus } from 'lucide-react'
 import { changePasswordAction, createUserAction, deleteUserAction } from '@/app/admin/actions'
@@ -16,7 +16,16 @@ interface UserRow {
   name: string
 }
 
-export function UsersManager({ users, currentUserId }: { users: UserRow[]; currentUserId: number }) {
+export function UsersManager({
+  users,
+  currentUserId,
+  children,
+}: {
+  users: UserRow[]
+  currentUserId: number
+  /** Extra cards shown under the user list. */
+  children?: ReactNode
+}) {
   const t = useT()
   const toast = useToast()
   const router = useRouter()
@@ -74,28 +83,31 @@ export function UsersManager({ users, currentUserId }: { users: UserRow[]; curre
     <div className="flex flex-col gap-6">
       <h1 className="font-heading text-[26px] font-bold text-text-primary">{t(UI.users)}</h1>
       <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
-        <Card title={t(UI.users)}>
-          <ul className="-my-2 divide-y divide-border">
-            {users.map((user) => (
-              <li key={user.id} className="flex items-center gap-3 py-3">
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-bg-muted font-heading text-[14px] font-bold">
-                  {user.name.charAt(0).toUpperCase()}
-                </span>
-                <span className="flex min-w-0 flex-1 flex-col">
-                  <span className="truncate text-[14px] font-semibold">{user.name}</span>
-                  <span className="truncate text-[12px] text-text-muted">{user.login}</span>
-                </span>
-                {user.id === currentUserId ? (
-                  <Badge tone="blue">{t(UI.you)}</Badge>
-                ) : (
-                  <IconButton label={t(UI.delete)} onClick={() => setPendingDelete(user)} className="hover:text-brand-red">
-                    <Trash2 className="h-4 w-4" />
-                  </IconButton>
-                )}
-              </li>
-            ))}
-          </ul>
-        </Card>
+        <div className="flex min-w-0 flex-col gap-6">
+          <Card title={t(UI.users)}>
+            <ul className="-my-2 divide-y divide-border">
+              {users.map((user) => (
+                <li key={user.id} className="flex items-center gap-3 py-3">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-bg-muted font-heading text-[14px] font-bold">
+                    {user.name.charAt(0).toUpperCase()}
+                  </span>
+                  <span className="flex min-w-0 flex-1 flex-col">
+                    <span className="truncate text-[14px] font-semibold">{user.name}</span>
+                    <span className="truncate text-[12px] text-text-muted">{user.login}</span>
+                  </span>
+                  {user.id === currentUserId ? (
+                    <Badge tone="blue">{t(UI.you)}</Badge>
+                  ) : (
+                    <IconButton label={t(UI.delete)} onClick={() => setPendingDelete(user)} className="hover:text-brand-red">
+                      <Trash2 className="h-4 w-4" />
+                    </IconButton>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </Card>
+          {children}
+        </div>
         <div className="flex flex-col gap-6">
           <Card title={t(UI.newUser)}>
             <form onSubmit={(event) => void createUser(event)} className="flex flex-col gap-4">
