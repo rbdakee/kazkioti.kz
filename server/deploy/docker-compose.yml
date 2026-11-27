@@ -8,7 +8,11 @@ services:
     volumes:
       - cms_data:/data
 
+  # HTTPS на VPS держит общий Caddy из стека BAI (~/bai/deploy, сайт {$CMS_DOMAIN} -> cms:4000
+  # по сети deploy_default). Свой Caddy — только для отдельного сервера:
+  #   docker compose --profile standalone-caddy up -d
   caddy:
+    profiles: [standalone-caddy]
     image: caddy:2.10-alpine
     restart: unless-stopped
     ports:
