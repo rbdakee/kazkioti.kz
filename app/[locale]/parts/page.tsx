@@ -8,8 +8,9 @@ import { Reveal } from '@/components/ui/Reveal'
 import { DealersMap, type DealerPoint } from '@/components/ui/Map/DealersMap'
 import { PartsRequestForm } from '@/components/forms/PartsRequestForm'
 import { FinalCTA } from '@/components/sections/FinalCTA'
-import { DEALERS } from '@/lib/data/dealers'
-import { COMPANY_PHONE_HUMAN, COMPANY_PHONE_TEL } from '@/lib/constants'
+import { getDealers, type Dealer } from '@/lib/content/dealers'
+import { getCompanyContacts } from '@/lib/content/company'
+import { getAllTractors } from '@/lib/content/tractors'
 
 export async function generateMetadata({
   params,
@@ -25,7 +26,7 @@ export async function generateMetadata({
   }
 }
 
-function dealerToMapPoint(dealer: (typeof DEALERS)[number]): DealerPoint {
+function dealerToMapPoint(dealer: Dealer): DealerPoint {
   return {
     id: dealer.id,
     city: dealer.name,
@@ -53,7 +54,12 @@ export default async function PartsPage({
   const tCommon = await getTranslations({ locale, namespace: 'common' })
   const tUnits = await getTranslations({ locale, namespace: 'units' })
 
-  const servicePoints = DEALERS.map(dealerToMapPoint)
+  const [dealers, company, tractors] = await Promise.all([
+    getDealers(),
+    getCompanyContacts(),
+    getAllTractors(locale),
+  ])
+  const servicePoints = dealers.map(dealerToMapPoint)
 
   const services = [
     { num: '01', title: t('item1Title'), body: t('item1Body') },
@@ -90,8 +96,8 @@ export default async function PartsPage({
                 <Button asLink href="#order" variant="primary" size="lg">
                   {t('requestService')} →
                 </Button>
-                <Button asLink href={`tel:${COMPANY_PHONE_TEL}`} variant="secondary" size="lg">
-                  {COMPANY_PHONE_HUMAN}
+                <Button asLink href={`tel:${company.phoneTel}`} variant="secondary" size="lg">
+                  {company.phoneHuman}
                 </Button>
               </div>
             </div>
@@ -156,7 +162,10 @@ export default async function PartsPage({
               <p className="max-w-xl text-lede text-text-muted">{t('formLede')}</p>
             </div>
             <div className="rounded-lg border border-border bg-bg-default p-7 shadow-form">
-              <PartsRequestForm locale={locale} />
+              <PartsRequestForm
+                locale={locale}
+                models={tractors.map(({ frontmatter }) => ({ slug: frontmatter.slug, name: frontmatter.name }))}
+              />
             </div>
           </div>
         </div>
@@ -200,12 +209,12 @@ export default async function PartsPage({
               {t('callPrompt')}{' '}
               <a
                 className="font-mono font-medium text-text-primary hover:text-brand-red"
-                href={`tel:${COMPANY_PHONE_TEL}`}
+                href={`tel:${company.phoneTel}`}
               >
-                {COMPANY_PHONE_HUMAN}
+                {company.phoneHuman}
               </a>
             </p>
-            <Button asLink href={`tel:${COMPANY_PHONE_TEL}`} variant="primary" size="md">
+            <Button asLink href={`tel:${company.phoneTel}`} variant="primary" size="md">
               {t('callButton')}
             </Button>
           </div>

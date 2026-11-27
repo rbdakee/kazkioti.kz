@@ -2,19 +2,16 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { getTranslations } from 'next-intl/server'
 import type { Locale } from '@/lib/i18n/routing'
-import {
-  COMPANY_EMAIL,
-  COMPANY_PHONE_HUMAN,
-  COMPANY_PHONE_TEL,
-  SOCIAL_LINKS,
-} from '@/lib/constants'
+import { SOCIAL_LINKS } from '@/lib/constants'
+import { getCompanyContacts } from '@/lib/content/company'
 
 export interface FooterProps {
   locale: Locale
+  showNews: boolean
 }
 
-export async function Footer({ locale }: FooterProps) {
-  const t = await getTranslations({ locale })
+export async function Footer({ locale, showNews }: FooterProps) {
+  const [t, company] = await Promise.all([getTranslations({ locale }), getCompanyContacts()])
   return (
     <footer className="bg-bg-invert text-white">
       <div className="mx-auto grid max-w-container gap-12 px-4 py-16 sm:px-6 lg:grid-cols-5 lg:px-10">
@@ -60,12 +57,12 @@ export async function Footer({ locale }: FooterProps) {
         </FooterColumn>
         <FooterColumn title={t('footer.companyTitle')}>
           <Link href={`/${locale}/about`}>{t('nav.about')}</Link>
-          {/* News and Cases sections are temporarily disabled until content is ready. */}
+          {showNews ? <Link href={`/${locale}/news`}>{t('nav.news')}</Link> : null}
           <Link href={`/${locale}/faq`}>{t('nav.faq')}</Link>
         </FooterColumn>
         <FooterColumn title={t('footer.contactsTitle')}>
-          <a href={`tel:${COMPANY_PHONE_TEL}`}>{COMPANY_PHONE_HUMAN}</a>
-          <a href={`mailto:${COMPANY_EMAIL}`}>{COMPANY_EMAIL}</a>
+          <a href={`tel:${company.phoneTel}`}>{company.phoneHuman}</a>
+          <a href={`mailto:${company.email}`}>{company.email}</a>
           <Link href={`/${locale}/dealers`}>{t('nav.dealers')}</Link>
           <Link href={`/${locale}/contacts`}>{t('nav.contacts')}</Link>
         </FooterColumn>

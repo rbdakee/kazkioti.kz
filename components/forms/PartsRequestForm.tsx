@@ -10,16 +10,18 @@ import { Textarea } from '@/components/ui/Textarea'
 import { FormField } from '@/components/ui/FormField'
 import { Toast } from '@/components/ui/Toast'
 import { PHONE_REGEX } from '@/lib/utils/formatPhone'
-import { TRACTOR_SLUGS, whatsappUrl } from '@/lib/constants'
+import { whatsappUrl } from '@/lib/constants'
 import type { Locale } from '@/lib/i18n/routing'
 
 export interface PartsRequestFormProps {
   locale: Locale
+  /** Tractor models from the catalog, offered in the model dropdown. */
+  models: ReadonlyArray<{ slug: string; name: string }>
 }
 
 type Status = 'idle' | 'submitting' | 'success' | 'error'
 
-export function PartsRequestForm({ locale }: PartsRequestFormProps) {
+export function PartsRequestForm({ locale, models }: PartsRequestFormProps) {
   const t = useTranslations('forms')
   const tParts = useTranslations('parts')
   const tMessenger = useTranslations('messenger')
@@ -85,7 +87,7 @@ export function PartsRequestForm({ locale }: PartsRequestFormProps) {
               value={model}
               onChange={(event) => setModel(event.target.value)}
               placeholder={t('modelPlaceholder')}
-              options={TRACTOR_SLUGS.map((slug) => ({ value: slug, label: slug.toUpperCase() }))}
+              options={models.map((model) => ({ value: model.slug, label: model.name }))}
             />
           </FormField>
           <FormField

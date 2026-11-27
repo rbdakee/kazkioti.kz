@@ -2,9 +2,9 @@ import { getTranslations } from 'next-intl/server'
 import type { Locale } from '@/lib/i18n/routing'
 import { Button } from '@/components/ui/Button'
 import { DealersMap, type DealerPoint } from '@/components/ui/Map/DealersMap'
-import { DEALERS } from '@/lib/data/dealers'
+import { getDealers, type Dealer } from '@/lib/content/dealers'
 
-const PREVIEW_POINTS: readonly DealerPoint[] = DEALERS.map((dealer) => ({
+const toPreviewPoint = (dealer: Dealer): DealerPoint => ({
   id: dealer.id,
   city: dealer.name,
   type: dealer.id === 'badam' ? 'factory' : 'dealer',
@@ -15,14 +15,14 @@ const PREVIEW_POINTS: readonly DealerPoint[] = DEALERS.map((dealer) => ({
   phoneHref: dealer.phoneHref,
   hours: dealer.hours,
   labelOffsetY: dealer.labelOffsetY,
-}))
+})
 
 export interface DealersMapPreviewProps {
   locale: Locale
 }
 
 export async function DealersMapPreview({ locale }: DealersMapPreviewProps) {
-  const t = await getTranslations({ locale })
+  const [t, dealers] = await Promise.all([getTranslations({ locale }), getDealers()])
   return (
     <section className="bg-bg-soft">
       <div className="mx-auto max-w-container px-4 py-20 sm:px-6 lg:px-10">
@@ -32,7 +32,7 @@ export async function DealersMapPreview({ locale }: DealersMapPreviewProps) {
             <p className="mt-3 max-w-2xl text-lede text-text-muted">{t('dealers.lede')}</p>
           </div>
           <div className="relative rounded-lg border border-border bg-bg-default p-6">
-            <DealersMap dealers={PREVIEW_POINTS} embedSelectedCard />
+            <DealersMap dealers={dealers.map(toPreviewPoint)} embedSelectedCard />
             <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
               <span className="font-mono text-mono-label uppercase tracking-widest text-text-muted">
                 <span

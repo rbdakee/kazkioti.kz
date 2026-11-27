@@ -3,12 +3,6 @@ import type { Locale } from './i18n/routing'
 export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://kazkioti.kz'
 export const SITE_NAME = 'KAZKIOTI'
 
-export const COMPANY_PHONE_HUMAN = '+7 747 876 44 44'
-export const COMPANY_PHONE_TEL = '+77478764444'
-export const COMPANY_EMAIL = 'info@kazkioti.kz'
-export const COMPANY_ADDRESS =
-  'Туркестанская обл., Ордабасынский р-н, с. Бадам, Казахстанско-Турецкая индустриальная зона'
-
 export const WHATSAPP_NUMBER = process.env.WHATSAPP_NUMBER ?? '77478764444'
 export const TELEGRAM_USERNAME = process.env.TELEGRAM_USERNAME ?? 'kazkioti'
 
@@ -37,8 +31,14 @@ export const NAV_ITEMS: readonly NavItem[] = [
   { key: 'parts', href: '/parts' },
   { key: 'dealers', href: '/dealers' },
   { key: 'about', href: '/about' },
-  // News and Cases are temporarily hidden — keep the routes available for direct access only.
 ] as const
+
+/** Shown in navigation only while at least one news article is published. */
+export const NEWS_NAV_ITEM: NavItem = { key: 'news', href: '/news' }
+
+export function navItems(showNews: boolean): readonly NavItem[] {
+  return showNews ? [...NAV_ITEMS, NEWS_NAV_ITEM] : NAV_ITEMS
+}
 
 export const SOCIAL_LINKS = {
   instagram: process.env.INSTAGRAM_URL ?? 'https://www.instagram.com/dong_feng_kz',
@@ -46,6 +46,3 @@ export const SOCIAL_LINKS = {
 } as const
 
 export const PDF_CATALOG_URL = '/docs/kazkioti-catalog.pdf'
-
-export const TRACTOR_SLUGS = ['df404', 'df404-cab', 'df904', 'ts1204', 'ts1404', 'ts2114'] as const
-export type TractorSlug = (typeof TRACTOR_SLUGS)[number]

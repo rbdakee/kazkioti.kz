@@ -2,7 +2,7 @@ import { getTranslations } from 'next-intl/server'
 import type { Locale } from '@/lib/i18n/routing'
 import { Eyebrow } from '@/components/ui/Eyebrow'
 import { LeadForm } from '@/components/forms/LeadForm'
-import { COMPANY_EMAIL, COMPANY_PHONE_HUMAN, COMPANY_PHONE_TEL } from '@/lib/constants'
+import { getCompanyContacts } from '@/lib/content/company'
 
 export interface FinalCTAProps {
   locale: Locale
@@ -11,7 +11,7 @@ export interface FinalCTAProps {
 }
 
 export async function FinalCTA({ locale, defaultModel, source }: FinalCTAProps) {
-  const t = await getTranslations({ locale })
+  const [t, company] = await Promise.all([getTranslations({ locale }), getCompanyContacts()])
   return (
     <section id="final" className="relative overflow-hidden bg-bg-muted">
       <div
@@ -27,16 +27,16 @@ export async function FinalCTA({ locale, defaultModel, source }: FinalCTAProps) 
           <p className="max-w-lg text-lede text-text-muted">{t('tractors.ctaLede')}</p>
           <div className="mt-6 flex flex-col gap-3 border-t border-border pt-6">
             <a
-              href={`tel:${COMPANY_PHONE_TEL}`}
+              href={`tel:${company.phoneTel}`}
               className="font-heading text-h3 text-text-primary hover:text-brand-red"
             >
-              {COMPANY_PHONE_HUMAN}
+              {company.phoneHuman}
             </a>
             <a
-              href={`mailto:${COMPANY_EMAIL}`}
+              href={`mailto:${company.email}`}
               className="font-mono text-mono-label uppercase tracking-widest text-text-muted hover:text-text-primary"
             >
-              {COMPANY_EMAIL}
+              {company.email}
             </a>
           </div>
         </div>

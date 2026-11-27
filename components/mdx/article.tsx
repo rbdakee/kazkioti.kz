@@ -3,8 +3,6 @@ import { createHeadingIdAssigner } from '@/lib/utils/slugifyHeading'
 import { CaseGallery } from './CaseGallery'
 import { CaseQuote } from './CaseQuote'
 import { CaseStats } from './CaseStats'
-import { NewsQuote } from './NewsQuote'
-import { NewsStats } from './NewsStats'
 
 function nodeToString(children: ReactNode): string {
   if (typeof children === 'string') return children
@@ -87,8 +85,9 @@ function makeBaseComponents() {
   return { h2: ArticleH2, h3: ArticleH3, p: ArticleP, ul: ArticleUL, ol: ArticleOL, a: ArticleA, strong: ArticleStrong }
 }
 
-export function buildNewsArticleComponents() {
-  return { ...makeBaseComponents(), NewsStats, NewsQuote }
+/** Components for plain Markdown text (headings, paragraphs, lists, links). */
+export function buildMarkdownComponents() {
+  return makeBaseComponents()
 }
 
 export function buildCaseArticleComponents() {

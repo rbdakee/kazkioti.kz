@@ -1,38 +1,29 @@
-import {
-  AttachmentFrontmatterSchema,
-  type AttachmentFrontmatter,
-} from '@/lib/types/attachment'
+import { fetchCollection, type PublicEntry } from '@/lib/cms/client'
 import type { Locale } from '@/lib/i18n/routing'
-import { listMdx, readMdx } from './fs'
+import { AttachmentFrontmatterSchema, type AttachmentFrontmatter } from '@/lib/types/attachment'
+import { pickLocale, type AttachmentDoc } from '@/shared/content'
 
 export interface AttachmentRecord {
   frontmatter: AttachmentFrontmatter
   body: string
 }
 
-export async function getAllAttachments(locale: Locale): Promise<AttachmentRecord[]> {
-  const files = await listMdx('attachments', locale)
-  const records = await Promise.all(
-    files.map((file) =>
-      readMdx('attachments', file, (data) => AttachmentFrontmatterSchema.parse(data)),
-    ),
-  )
-  return records.map(({ frontmatter, body }) => ({ frontmatter, body }))
+function toRecord({ slug, data }: PublicEntry<AttachmentDoc>, locale: Locale): AttachmentRecord {
+  const { name, description, specs, ...shared } = data
+  const localizedSpecs = specs.flatMap(({ key, value }) => {
+    const text = pickLocale(value, locale)
+    return text ? [[key, text] as const] : []
+  })
+  const frontmatter = AttachmentFrontmatterSchema.parse({
+    ...shared,
+    slug,
+    name: pickLocale(name, locale),
+    specs: Object.fromEntries(localizedSpecs),
+  })
+  return { frontmatter, body: pickLocale(description, locale) ?? '' }
 }
 
-export async function getAttachment(
-  slug: string,
-  locale: Locale,
-): Promise<AttachmentRecord | null> {
-  try {
-    const { frontmatter, body } = await readMdx(
-      'attachments',
-      `${slug}.${locale}.mdx`,
-      (data) => AttachmentFrontmatterSchema.parse(data),
-    )
-    return { frontmatter, body }
-  } catch (error) {
-    if ((error as NodeJS.ErrnoException).code === 'ENOENT') return null
-    throw error
-  }
+export async function getAllAttachments(locale: Locale): Promise<AttachmentRecord[]> {
+  const entries = await fetchCollection('attachments')
+  return entries.map((entry) => toRecord(entry, locale))
 }

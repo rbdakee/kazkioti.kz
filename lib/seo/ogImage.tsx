@@ -1,6 +1,7 @@
 import { ImageResponse } from 'next/og'
 import type { Locale } from '@/lib/i18n/routing'
-import { SITE_NAME, COMPANY_PHONE_HUMAN } from '@/lib/constants'
+import { SITE_NAME } from '@/lib/constants'
+import { getCompanyContacts } from '@/lib/content/company'
 
 export const OG_SIZE = { width: 1200, height: 630 } as const
 export const OG_CONTENT_TYPE = 'image/png'
@@ -27,8 +28,13 @@ const DEFAULT_EYEBROW: Record<Locale, string> = {
  * Typographic, edge-renderable. Falls back to system fonts for Cyrillic support
  * without requiring runtime font fetches.
  */
-export function renderOgImage({ locale, title, eyebrow }: RenderOgImageOptions): ImageResponse {
+export async function renderOgImage({
+  locale,
+  title,
+  eyebrow,
+}: RenderOgImageOptions): Promise<ImageResponse> {
   const eyebrowText = eyebrow ?? DEFAULT_EYEBROW[locale]
+  const company = await getCompanyContacts()
 
   return new ImageResponse(
     (
@@ -159,7 +165,7 @@ export function renderOgImage({ locale, title, eyebrow }: RenderOgImageOptions):
           }}
         >
           <span>kazkioti.kz</span>
-          <span>{COMPANY_PHONE_HUMAN}</span>
+          <span>{company.phoneHuman}</span>
         </div>
 
         {/* Hidden but available for screen-reader context via alt prop */}

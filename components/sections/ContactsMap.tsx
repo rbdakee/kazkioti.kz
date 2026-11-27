@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { DealersMap, type DealerPoint } from '@/components/ui/Map/DealersMap'
-import type { Dealer } from '@/lib/data/dealers'
+import type { Dealer } from '@/lib/content/dealers'
 
 function dealerToPoint(dealer: Dealer): DealerPoint {
   return {

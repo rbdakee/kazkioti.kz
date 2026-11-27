@@ -2,16 +2,10 @@ import { getTranslations, setRequestLocale } from 'next-intl/server'
 import type { Locale } from '@/lib/i18n/routing'
 import { localizedAlternates } from '@/lib/seo/alternates'
 import { breadcrumbListJsonLd } from '@/lib/seo/jsonLd'
-import {
-  COMPANY_PHONE_HUMAN,
-  COMPANY_PHONE_TEL,
-  COMPANY_EMAIL,
-  SITE_URL,
-  SOCIAL_LINKS,
-  whatsappUrl,
-} from '@/lib/constants'
+import { SITE_URL, SOCIAL_LINKS, whatsappUrl } from '@/lib/constants'
 import { JsonLd } from '@/components/seo/JsonLd'
-import { DEALERS } from '@/lib/data/dealers'
+import { getCompanyContacts } from '@/lib/content/company'
+import { getDealers } from '@/lib/content/dealers'
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs'
 import { Eyebrow } from '@/components/ui/Eyebrow'
 import { LeadForm } from '@/components/forms/LeadForm'
@@ -39,28 +33,30 @@ export default async function ContactsPage({
   const { locale } = await params
   setRequestLocale(locale)
 
-  const [tBc, t] = await Promise.all([
+  const [tBc, t, dealers, company] = await Promise.all([
     getTranslations({ locale, namespace: 'breadcrumbs' }),
     getTranslations({ locale, namespace: 'contacts' }),
+    getDealers(),
+    getCompanyContacts(),
   ])
 
-  const dealerCount = DEALERS.filter((d) => d.dealer).length
-  const serviceCount = DEALERS.filter((d) => d.service).length
-  const factoryCount = DEALERS.filter((d) => d.id === 'badam').length
+  const dealerCount = dealers.filter((d) => d.dealer).length
+  const serviceCount = dealers.filter((d) => d.service).length
+  const factoryCount = dealers.filter((d) => d.id === 'badam').length
 
   const contactCards = [
     {
       label: t('phoneLabel'),
-      value: COMPANY_PHONE_HUMAN,
+      value: company.phoneHuman,
       desc: t('phoneDesc'),
-      href: `tel:${COMPANY_PHONE_TEL}`,
+      href: `tel:${company.phoneTel}`,
       highlight: true,
     },
     {
       label: t('emailLabel'),
-      value: COMPANY_EMAIL,
+      value: company.email,
       desc: t('emailDesc'),
-      href: `mailto:${COMPANY_EMAIL}`,
+      href: `mailto:${company.email}`,
       highlight: false,
     },
     {
@@ -156,7 +152,7 @@ export default async function ContactsPage({
                 <span>{t('mapLabel')}</span>
                 <span className="text-text-faint">{t('mapCoords')}</span>
               </div>
-              <ContactsMap dealers={DEALERS} />
+              <ContactsMap dealers={dealers} />
               <div className="flex flex-wrap items-start justify-between gap-4 border-t border-border pt-4">
                 <div>
                   <p className="font-mono text-mono-label uppercase tracking-widest text-text-muted">

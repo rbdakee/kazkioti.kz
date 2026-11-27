@@ -66,7 +66,7 @@ interface AttachmentPreview {
   slug: string
   name: string
   categoryKey: AttachmentFrontmatter['category']
-  heroImage: string
+  heroImage?: string
 }
 
 const ATTACHMENT_CATEGORY_ORDER: ReadonlyArray<AttachmentFrontmatter['category']> = [

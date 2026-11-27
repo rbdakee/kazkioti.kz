@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next'
 import { SITE_URL } from '@/lib/constants'
 
-const DISALLOW_PATHS = ['/api/', '/ru/dev', '/kk/dev']
+const DISALLOW_PATHS = ['/api/', '/admin', '/ru/dev', '/kk/dev']
 
 const AI_BOT_USER_AGENTS = [
   'GPTBot', // OpenAI / ChatGPT training crawler

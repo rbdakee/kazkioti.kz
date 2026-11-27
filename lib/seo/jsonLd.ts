@@ -1,13 +1,11 @@
 import {
-  COMPANY_ADDRESS,
-  COMPANY_EMAIL,
-  COMPANY_PHONE_TEL,
   SITE_NAME,
   SITE_URL,
   SOCIAL_LINKS,
 } from '@/lib/constants'
 import type { Locale } from '@/lib/i18n/routing'
-import type { Dealer } from '@/lib/data/dealers'
+import type { Dealer } from '@/lib/content/dealers'
+import type { CompanyContacts } from '@/lib/content/company'
 import type { TractorFrontmatter } from '@/lib/types/tractor'
 
 type JsonLdObject = Record<string, unknown>
@@ -41,7 +39,7 @@ function toAbsoluteAsset(image: string): string {
   return `${SITE_URL}${cleanPath}`
 }
 
-export function organizationJsonLd(locale: Locale): JsonLdObject {
+export function organizationJsonLd(locale: Locale, company: CompanyContacts): JsonLdObject {
   return {
     '@context': SCHEMA_CONTEXT,
     // Dual-type: AutoDealer alone loses generic Organization signals,
@@ -59,8 +57,8 @@ export function organizationJsonLd(locale: Locale): JsonLdObject {
     ],
     url: abs(locale, ''),
     logo: `${SITE_URL}/logo.png`,
-    email: COMPANY_EMAIL,
-    telephone: COMPANY_PHONE_TEL,
+    email: company.email,
+    telephone: company.phoneTel,
     slogan:
       locale === 'kk'
         ? 'Қазақстанда құрастырылған тракторлар'
@@ -96,7 +94,7 @@ export function organizationJsonLd(locale: Locale): JsonLdObject {
     inLanguage: ['ru', 'kk'],
     address: {
       '@type': 'PostalAddress',
-      streetAddress: COMPANY_ADDRESS,
+      streetAddress: company.address,
       addressCountry: 'KZ',
     },
   }

@@ -1,12 +1,12 @@
-import { z } from 'zod'
+import type { FAQ_CATEGORIES } from '@/shared/content'
 
-export const FAQGroupSchema = z.object({
-  category: z.enum(['warranty', 'leasing', 'delivery', 'docs', 'service']),
-  title: z.string(),
-  order: z.number(),
-})
+type FaqCategory = (typeof FAQ_CATEGORIES)[number]
 
-export type FAQGroup = z.infer<typeof FAQGroupSchema>
+export interface FAQGroup {
+  category: FaqCategory
+  title: string
+  order: number
+}
 
 export interface FAQItem {
   question: string

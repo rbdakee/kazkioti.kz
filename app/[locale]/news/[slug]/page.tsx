@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { MDXRemote } from 'next-mdx-remote/rsc'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import type { Locale } from '@/lib/i18n/routing'
 import { routing } from '@/lib/i18n/routing'
@@ -16,8 +15,7 @@ import { CardNews } from '@/components/ui/Card/CardNews'
 import { ArticleToc } from '@/components/sections/ArticleToc'
 import { ArticleShareRow } from '@/components/sections/ArticleShareRow'
 import { FinalCTA } from '@/components/sections/FinalCTA'
-import { buildNewsArticleComponents } from '@/components/mdx/article'
-import { extractToc } from '@/lib/utils/mdxToc'
+import { NewsArticleBody } from '@/components/mdx/NewsArticleBody'
 
 const TAG_KEY: Record<NewsFrontmatter['tag'], 'tagProduction' | 'tagDelivery' | 'tagPartnership' | 'tagLineup'> = {
   production: 'tagProduction',
@@ -86,7 +84,9 @@ export default async function NewsDetailPage({
   const t = await getTranslations({ locale })
   const tNews = await getTranslations({ locale, namespace: 'news' })
 
-  const toc = extractToc(article.body)
+  const toc = article.blocks.flatMap((block) =>
+    block.type === 'heading' ? [{ id: block.id, text: block.text }] : [],
+  )
 
   const allRecords = await getAllNews(locale)
   const others = allRecords
@@ -160,7 +160,7 @@ export default async function NewsDetailPage({
         <div className="mx-auto max-w-content px-4 py-16 sm:px-6 lg:px-10">
           <div className="grid gap-12 lg:grid-cols-[1fr_280px]">
             <article className="flex max-w-[72ch] flex-col gap-5">
-              <MDXRemote source={article.body} options={{ blockJS: false }} components={buildNewsArticleComponents()} />
+              <NewsArticleBody blocks={article.blocks} />
               <ArticleShareRow
                 url={articleUrl}
                 title={fm.title}

@@ -13,6 +13,12 @@ const nextConfig = {
   experimental: {
     mdxRs: false,
   },
+  // Photos uploaded in the admin live on the CMS server; serve them from the
+  // site's own domain so content can store plain `/uploads/...` paths.
+  async rewrites() {
+    const cmsUrl = process.env.CMS_URL?.replace(/\/$/, '')
+    return cmsUrl ? [{ source: '/uploads/:path*', destination: `${cmsUrl}/uploads/:path*` }] : []
+  },
 }
 
 export default withNextIntl(nextConfig)

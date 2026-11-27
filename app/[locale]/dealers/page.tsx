@@ -9,7 +9,7 @@ import { Eyebrow } from '@/components/ui/Eyebrow'
 import { Button } from '@/components/ui/Button'
 import { DealersDirectory } from '@/components/sections/DealersDirectory'
 import { FinalCTA } from '@/components/sections/FinalCTA'
-import { DEALERS, DEALER_REGIONS } from '@/lib/data/dealers'
+import { dealerRegions, getDealers } from '@/lib/content/dealers'
 
 export async function generateMetadata({
   params,
@@ -35,13 +35,14 @@ export default async function DealersPage({
   const t = await getTranslations({ locale, namespace: 'dealers' })
   const tCrumbs = await getTranslations({ locale, namespace: 'breadcrumbs' })
   const tNav = await getTranslations({ locale, namespace: 'nav' })
+  const dealers = await getDealers()
 
   const jsonLdPayload = [
     breadcrumbListJsonLd([
       { name: tCrumbs('home'), url: `${SITE_URL}/${locale}` },
       { name: tNav('dealers'), url: `${SITE_URL}/${locale}/dealers` },
     ]),
-    ...DEALERS.map((dealer) => localBusinessJsonLd(dealer, locale)),
+    ...dealers.map((dealer) => localBusinessJsonLd(dealer, locale)),
   ]
 
   return (
@@ -63,7 +64,7 @@ export default async function DealersPage({
         </div>
       </section>
 
-      <DealersDirectory dealers={DEALERS} regions={DEALER_REGIONS} />
+      <DealersDirectory dealers={dealers} regions={dealerRegions(dealers)} />
 
       <section className="bg-bg-default">
         <div className="mx-auto max-w-container px-4 py-16 sm:px-6 lg:px-10">

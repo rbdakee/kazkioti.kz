@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
 import { DealersMap, type DealerPoint } from '@/components/ui/Map/DealersMap'
 import { cn } from '@/lib/utils/cn'
-import type { Dealer } from '@/lib/data/dealers'
+import type { Dealer } from '@/lib/content/dealers'
 
 export interface DealersDirectoryProps {
   dealers: readonly Dealer[]

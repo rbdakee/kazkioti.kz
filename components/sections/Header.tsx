@@ -6,21 +6,19 @@ import { useEffect, useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { usePathname } from 'next/navigation'
 import type { Locale } from '@/lib/i18n/routing'
-import {
-  COMPANY_PHONE_HUMAN,
-  COMPANY_PHONE_TEL,
-  NAV_ITEMS,
-  PDF_CATALOG_URL,
-} from '@/lib/constants'
+import { PDF_CATALOG_URL, navItems } from '@/lib/constants'
 import { Button } from '@/components/ui/Button'
 import { LanguageSwitcher } from './LanguageSwitcher'
 import { cn } from '@/lib/utils/cn'
 
 export interface HeaderProps {
   locale: Locale
+  phone: { human: string; tel: string }
+  showNews: boolean
 }
 
-export function Header({ locale }: HeaderProps) {
+export function Header({ locale, phone, showNews }: HeaderProps) {
+  const items = navItems(showNews)
   const t = useTranslations()
   const pathname = usePathname()
   const isHome = /^\/(ru|kk)\/?$/.test(pathname)
@@ -83,7 +81,7 @@ export function Header({ locale }: HeaderProps) {
             />
           </Link>
           <nav className="hidden items-center gap-5 lg:flex">
-            {NAV_ITEMS.map((item) => (
+            {items.map((item) => (
               <Link
                 key={item.key}
                 href={`/${locale}${item.href}`}
@@ -101,13 +99,13 @@ export function Header({ locale }: HeaderProps) {
           <div className="flex items-center gap-3">
             <LanguageSwitcher currentLocale={locale} className="hidden sm:inline-flex" dark={darkMode} />
             <a
-              href={`tel:${COMPANY_PHONE_TEL}`}
+              href={`tel:${phone.tel}`}
               className={cn(
                 'hidden whitespace-nowrap font-mono text-[15px] font-medium tracking-[0.04em] transition-colors duration-250 xl:inline-block',
                 darkMode ? 'text-white/85 hover:text-white' : 'text-text-primary hover:text-brand-red',
               )}
             >
-              {COMPANY_PHONE_HUMAN}
+              {phone.human}
             </a>
             <Button
               asLink
@@ -172,7 +170,7 @@ export function Header({ locale }: HeaderProps) {
             </div>
           </div>
           <nav className="flex flex-col gap-4 px-6 py-8">
-            {NAV_ITEMS.map((item) => (
+            {items.map((item) => (
               <Link
                 key={item.key}
                 href={`/${locale}${item.href}`}
@@ -199,10 +197,10 @@ export function Header({ locale }: HeaderProps) {
           </nav>
           <div className="mt-auto flex flex-col items-stretch gap-3 border-t border-border px-6 py-6">
             <a
-              href={`tel:${COMPANY_PHONE_TEL}`}
+              href={`tel:${phone.tel}`}
               className="text-center font-mono text-[15px] font-medium tracking-[0.04em] text-text-primary"
             >
-              {COMPANY_PHONE_HUMAN}
+              {phone.human}
             </a>
             <Button asLink href={`/${locale}/contacts`} variant="primary" size="lg" onClick={() => setMenuOpen(false)}>
               {t('header.cta')}

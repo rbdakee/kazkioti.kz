@@ -21,12 +21,14 @@ export function CardNews({ article, locale, tagLabel, className }: CardNewsProps
     >
       <Link href={href} className="block overflow-hidden rounded-md bg-bg-muted">
         <div className="relative aspect-[16/10]">
-          <img
-            src={article.coverImage}
-            alt={article.title}
-            className="absolute inset-0 h-full w-full object-cover transition-transform duration-slow ease-kk group-hover:scale-[1.03]"
-            loading="lazy"
-          />
+          {article.coverImage ? (
+            <img
+              src={article.coverImage}
+              alt={article.title}
+              className="absolute inset-0 h-full w-full object-cover transition-transform duration-slow ease-kk group-hover:scale-[1.03]"
+              loading="lazy"
+            />
+          ) : null}
         </div>
       </Link>
       <div className="flex items-center gap-3 font-mono text-mono-label uppercase tracking-widest text-text-muted">

@@ -3,6 +3,7 @@ import { routing } from '@/lib/i18n/routing'
 import { SITE_URL } from '@/lib/constants'
 import { HREFLANG_BY_LOCALE } from '@/lib/seo/alternates'
 import { getAllTractors } from '@/lib/content/tractors'
+import { getAllNews } from '@/lib/content/news'
 
 type ChangeFrequency = NonNullable<MetadataRoute.Sitemap[number]['changeFrequency']>
 
@@ -12,9 +13,8 @@ interface RouteMeta {
   changeFrequency: ChangeFrequency
 }
 
-// News and Cases are intentionally omitted — their sections are temporarily
-// hidden from navigation and should not be indexed. The route files remain for
-// direct access only. The /attachments detail pages do not exist (no
+// Cases are intentionally omitted — the section is temporarily hidden. News is
+// listed only while something is published (drafts never reach the site). The /attachments detail pages do not exist (no
 // `[slug]/page.tsx`), so individual attachment URLs are excluded as well.
 const STATIC_ROUTES: readonly RouteMeta[] = [
   { path: '', priority: 1.0, changeFrequency: 'weekly' },
@@ -52,7 +52,10 @@ function buildEntry(
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const BUILD_DATE = new Date()
 
-  const tractors = await getAllTractors(routing.defaultLocale)
+  const [tractors, news] = await Promise.all([
+    getAllTractors(routing.defaultLocale),
+    getAllNews(routing.defaultLocale),
+  ])
 
   const staticEntries = STATIC_ROUTES.map((route) =>
     buildEntry(route.path, BUILD_DATE, route.changeFrequency, route.priority),
@@ -62,5 +65,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     buildEntry(`/tractors/${tractor.frontmatter.slug}`, BUILD_DATE, 'monthly', 0.9),
   )
 
-  return [...staticEntries, ...tractorEntries]
+  const newsEntries =
+    news.length > 0
+      ? [
+          buildEntry('/news', BUILD_DATE, 'weekly', 0.6),
+          ...news.map((article) =>
+            buildEntry(`/news/${article.frontmatter.slug}`, new Date(article.frontmatter.date), 'yearly', 0.5),
+          ),
+        ]
+      : []
+
+  return [...staticEntries, ...tractorEntries, ...newsEntries]
 }

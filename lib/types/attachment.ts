@@ -5,7 +5,7 @@ export const AttachmentFrontmatterSchema = z.object({
   name: z.string(),
   category: z.enum(['seeding', 'tillage', 'mowing', 'extra']),
   compatibleModels: z.array(z.string()),
-  heroImage: z.string(),
+  heroImage: z.string().optional(),
   specs: z.record(z.string()).optional(),
   // KZT pricing from the official 2026 price list (без НДС). Subsidy is the
   // absolute deduction under АПК programmes when applicable.

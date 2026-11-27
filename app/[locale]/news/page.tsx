@@ -1,3 +1,4 @@
+import { notFound } from 'next/navigation'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import type { Locale } from '@/lib/i18n/routing'
 import { localizedAlternates } from '@/lib/seo/alternates'
@@ -36,6 +37,8 @@ export default async function NewsPage({
   const tNews = await getTranslations({ locale, namespace: 'news' })
 
   const records = await getAllNews(locale)
+  // The section is hidden until something is published.
+  if (records.length === 0) notFound()
   const articles = records.map((record) => record.frontmatter)
 
   const parsedPage = page ? Number.parseInt(page, 10) : 1

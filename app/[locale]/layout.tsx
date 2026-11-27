@@ -1,43 +1,20 @@
 import type { Metadata, Viewport } from 'next'
 import type { ReactNode } from 'react'
-import { Geologica, Manrope, Montserrat } from 'next/font/google'
 import { NextIntlClientProvider } from 'next-intl'
 import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 import { routing, type Locale } from '@/lib/i18n/routing'
 import { SITE_URL } from '@/lib/constants'
 import { localizedAlternates } from '@/lib/seo/alternates'
+import { getCompanyContacts } from '@/lib/content/company'
+import { hasPublishedNews } from '@/lib/content/news'
 import { Header } from '@/components/sections/Header'
 import { Footer } from '@/components/sections/Footer'
 import { MessengerFAB } from '@/components/forms/MessengerFAB'
 import { CookieBanner } from '@/components/sections/CookieBanner'
 import { Analytics } from '@/components/seo/Analytics'
+import { FONT_VARIABLES } from '@/lib/fonts'
 import '@/styles/globals.css'
-
-const montserrat = Montserrat({
-  subsets: ['latin', 'latin-ext', 'cyrillic', 'cyrillic-ext'],
-  weight: ['500', '600', '700', '800'],
-  variable: '--font-montserrat',
-  display: 'swap',
-  preload: true,
-})
-
-const manrope = Manrope({
-  subsets: ['latin', 'latin-ext', 'cyrillic', 'cyrillic-ext'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-manrope',
-  display: 'swap',
-  preload: true,
-})
-
-const geologica = Geologica({
-  subsets: ['latin', 'latin-ext', 'cyrillic', 'cyrillic-ext'],
-  weight: ['400', '500', '600'],
-  variable: '--font-geologica',
-  display: 'swap',
-  preload: false,
-  adjustFontFallback: false,
-})
 
 export const viewport: Viewport = {
   themeColor: '#ffffff',
@@ -89,13 +66,17 @@ export default async function LocaleLayout({
   if (!routing.locales.includes(locale as Locale)) notFound()
 
   setRequestLocale(locale)
-  const messages = await getMessages()
-  const t = await getTranslations({ locale, namespace: 'common' })
+  const [messages, t, company, showNews] = await Promise.all([
+    getMessages(),
+    getTranslations({ locale, namespace: 'common' }),
+    getCompanyContacts(),
+    hasPublishedNews(),
+  ])
 
   return (
     <html
       lang={locale}
-      className={`${montserrat.variable} ${manrope.variable} ${geologica.variable}`}
+      className={FONT_VARIABLES}
     >
       <body className="bg-bg-default text-text-primary font-body antialiased">
         <NextIntlClientProvider locale={locale} messages={messages}>
@@ -105,11 +86,11 @@ export default async function LocaleLayout({
           >
             {t('skipToContent')}
           </a>
-          <Header locale={locale as Locale} />
+          <Header locale={locale as Locale} phone={{ human: company.phoneHuman, tel: company.phoneTel }} showNews={showNews} />
           <main id="main-content" className="min-h-screen">
             {children}
           </main>
-          <Footer locale={locale as Locale} />
+          <Footer locale={locale as Locale} showNews={showNews} />
           <MessengerFAB locale={locale as Locale} />
           <CookieBanner />
         </NextIntlClientProvider>
