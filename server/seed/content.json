@@ -4,7 +4,6 @@
       "df404-cab": {
         "name": "Dongfeng DF404 Cab",
         "status": "available",
-        "powerClass": "40",
         "price": 6500000,
         "subsidy": 1950000,
         "priceWithSubsidy": 4550000,
@@ -69,7 +68,6 @@
       "df404": {
         "name": "Dongfeng DF404",
         "status": "available",
-        "powerClass": "40",
         "price": 5500000,
         "subsidy": 1650000,
         "priceWithSubsidy": 3850000,
@@ -140,7 +138,6 @@
       "df904": {
         "name": "Dongfeng DF904",
         "status": "available",
-        "powerClass": "90",
         "price": 14500000,
         "subsidy": 4350000,
         "priceWithSubsidy": 10150000,
@@ -206,7 +203,6 @@
       "ts1204": {
         "name": "Wuzheng TS1204",
         "status": "available",
-        "powerClass": "120",
         "price": 17000000,
         "subsidy": 4470000,
         "priceWithSubsidy": 12530000,
@@ -277,7 +273,6 @@
       "ts1404": {
         "name": "Wuzheng TS1404",
         "status": "available",
-        "powerClass": "140",
         "price": 21000000,
         "subsidy": 6300000,
         "priceWithSubsidy": 14700000,
@@ -346,7 +341,6 @@
       "ts2114": {
         "name": "Wuzheng TS2114",
         "status": "available",
-        "powerClass": "210",
         "price": 48500000,
         "subsidy": 14550000,
         "priceWithSubsidy": 33950000,

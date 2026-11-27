@@ -11,7 +11,6 @@ const PASSWORD = 'correct-horse-battery'
 
 const tractor = (name: string) => ({
   name,
-  powerClass: '90',
   heroImage: '/uploads/2026/01/a.jpg',
   subtitle: { ru: 'Трактор', kk: 'Трактор' },
   power: 90,

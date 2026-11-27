@@ -1,4 +1,3 @@
-import { TRACTOR_POWER_CLASSES } from '@/shared/content'
 import { l, priceFields, seoFields } from './common'
 import { textOf } from './paths'
 import type { CollectionFormConfig } from './types'
@@ -12,7 +11,6 @@ export const tractorForm: CollectionFormConfig = {
   titleOf: (doc) => textOf(doc.name),
   emptyDoc: () => ({
     status: 'available',
-    powerClass: '90',
     galleryImages: [],
     compatibleAttachments: [],
     relatedCases: [],
@@ -35,14 +33,7 @@ export const tractorForm: CollectionFormConfig = {
       title: l('Основное', 'Негізгі'),
       fields: [
         { key: 'name', kind: 'text', required: true, width: 'half', label: l('Название модели', 'Модель атауы'), placeholder: 'DF 904' },
-        {
-          key: 'powerClass',
-          kind: 'select',
-          required: true,
-          width: 'half',
-          label: l('Класс мощности (для фильтра)', 'Қуат класы (сүзгі үшін)'),
-          options: TRACTOR_POWER_CLASSES.map((value) => ({ value, label: l(`${value} л.с.`, `${value} а.к.`) })),
-        },
+        { key: 'power', kind: 'number', required: true, unit: 'л.с.', width: 'half', label: l('Мощность', 'Қуаты') },
         { key: 'subtitle', kind: 'localized', required: true, label: l('Подзаголовок', 'Тақырыпша'), hint: l('Одна строка под названием', 'Атау астындағы бір жол') },
         { key: 'description', kind: 'localized', multiline: true, rows: 5, kazakhOptional: true, label: l('Описание', 'Сипаттама') },
       ],
@@ -62,7 +53,6 @@ export const tractorForm: CollectionFormConfig = {
     {
       title: l('Двигатель и трансмиссия', 'Қозғалтқыш және трансмиссия'),
       fields: [
-        { key: 'power', kind: 'number', required: true, unit: 'л.с.', width: 'third', label: l('Мощность', 'Қуаты') },
         { key: 'engineModel', kind: 'text', required: true, width: 'third', label: l('Модель двигателя', 'Қозғалтқыш моделі') },
         { key: 'engineEcoClass', kind: 'text', required: true, width: 'third', label: l('Экокласс', 'Экокласы'), placeholder: 'Euro 3' },
         { key: 'engineCylinders', kind: 'number', required: true, width: 'third', label: l('Цилиндров', 'Цилиндрлер') },

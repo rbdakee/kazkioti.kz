@@ -4,7 +4,6 @@ export const TractorFrontmatterSchema = z.object({
   slug: z.string(),
   name: z.string(),
   subtitle: z.string(),
-  powerClass: z.enum(['40', '90', '100', '120', '140', '210']),
 
   power: z.number(),
   driveType: z.string(),

@@ -11,13 +11,11 @@ import {
   slugList,
 } from './fields'
 
-export const TRACTOR_POWER_CLASSES = ['40', '90', '100', '120', '140', '210'] as const
 export const TRACTOR_STATUSES = ['available', 'coming-soon'] as const
 
 export const TractorDocSchema = z.object({
   name: requiredText,
   status: z.enum(TRACTOR_STATUSES).default('available'),
-  powerClass: z.enum(TRACTOR_POWER_CLASSES),
   price: optionalNumber,
   subsidy: optionalNumber,
   priceWithSubsidy: optionalNumber,

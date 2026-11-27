@@ -55,7 +55,7 @@ const COLLECTION_TOOLS: Record<CollectionName, { tool: string; label: string }> 
   faq: { tool: 'faq_section', label: 'FAQ section (category with questions)' },
 }
 
-const SUMMARY_FIELDS = ['status', 'date', 'tag', 'category', 'powerClass', 'price', 'order'] as const
+const SUMMARY_FIELDS = ['status', 'date', 'tag', 'category', 'power', 'price', 'order'] as const
 
 const collectionSchema = z.enum(COLLECTION_NAMES as [CollectionName, ...CollectionName[]])
 const settingsSchema = z.enum(SETTINGS_KEYS as [SettingsKey, ...SettingsKey[]])
