@@ -1,0 +1,30 @@
+services:
+  cms:
+    build:
+      context: ../..
+      dockerfile: server/Dockerfile
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - cms_data:/data
+
+  caddy:
+    image: caddy:2.10-alpine
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    environment:
+      CMS_DOMAIN: ${CMS_DOMAIN:?set CMS_DOMAIN in deploy/.env}
+    depends_on:
+      - cms
+
+volumes:
+  # Database and uploaded photos: back this volume up.
+  cms_data:
+  caddy_data:
+  caddy_config:
