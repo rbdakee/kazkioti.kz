@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Bot, Check, Copy, Plus, Trash2 } from 'lucide-react'
 import { createTokenAction, deleteTokenAction, type CreatedToken } from '@/app/admin/actions'
 import { formatAdminDateTime } from '@/lib/admin/formatDate'
+import { mcpAgentInstructions } from '@/lib/admin/mcpSetup'
 import { UI } from '@/lib/admin/i18n'
 import { useT } from './AdminLang'
 import { ConfirmDialog } from './ConfirmDialog'
@@ -19,7 +20,8 @@ export interface ApiTokenRow {
   lastUsedAt: string | null
 }
 
-function CopyLine({ label, value }: { label: string; value: string }) {
+/** Copies a value without showing it, so secrets stay off the screen. */
+function CopyButton({ value, label, tone }: { value: string; label: string; tone?: 'primary' | 'secondary' }) {
   const t = useT()
   const [copied, setCopied] = useState(false)
 
@@ -30,22 +32,20 @@ function CopyLine({ label, value }: { label: string; value: string }) {
   }
 
   return (
-    <div className="flex flex-col gap-1.5">
-      <span className="text-[12px] font-semibold text-text-muted">{label}</span>
-      <div className="flex items-start gap-2">
-        <code className="min-w-0 flex-1 whitespace-pre-wrap break-all rounded-md bg-bg-soft px-3 py-2 font-mono text-[12px] text-text-primary">
-          {value}
-        </code>
-        <AdminButton
-          size="sm"
-          onClick={() => void copy()}
-          icon={copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-        >
-          {copied ? t(UI.copied) : t(UI.copy)}
-        </AdminButton>
-      </div>
-    </div>
+    <AdminButton
+      size="sm"
+      tone={tone}
+      onClick={() => void copy()}
+      icon={copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+    >
+      {copied ? t(UI.copied) : label}
+    </AdminButton>
   )
+}
+
+/** First and last characters only: enough to tell tokens apart. */
+function maskToken(token: string): string {
+  return `${token.slice(0, 8)}…${token.slice(-4)}`
 }
 
 export function ApiTokensManager({ tokens, mcpUrl }: { tokens: ApiTokenRow[]; mcpUrl: string }) {
@@ -84,19 +84,42 @@ export function ApiTokensManager({ tokens, mcpUrl }: { tokens: ApiTokenRow[]; mc
     else toast({ tone: 'error', message: t(UI.genericError) })
   }
 
+  const instructions = mcpAgentInstructions(mcpUrl)
+
   return (
-    <Card title={t(UI.mcpAccess)} description={t(UI.mcpDescription)}>
+    <Card
+      title={t(UI.mcpAccess)}
+      description={t(UI.mcpDescription)}
+      actions={created ? null : <CopyButton value={instructions} label={t(UI.mcpCopyInstructions)} />}
+    >
       <div className="flex flex-col gap-6">
         {created ? (
           <div className="flex flex-col gap-4 rounded-md border border-amber-200 bg-amber-50/60 p-4">
             <p className="text-[13px] font-semibold text-amber-800">
               {created.name}: {t(UI.mcpTokenShownOnce)}
             </p>
-            <CopyLine
-              label={t(UI.mcpWithHeader)}
-              value={`${mcpUrl}\nAuthorization: Bearer ${created.token}`}
-            />
-            <CopyLine label={t(UI.mcpWithLink)} value={`${mcpUrl}/${created.token}`} />
+            <div className="flex flex-col gap-2">
+              <p className="text-[13px] text-text-primary">{t(UI.mcpStepInstructions)}</p>
+              <div className="self-start">
+                <CopyButton value={instructions} label={t(UI.mcpCopyInstructions)} />
+              </div>
+            </div>
+            <div className="flex flex-col gap-2">
+              <p className="text-[13px] text-text-primary">{t(UI.mcpStepToken)}</p>
+              <div className="flex flex-wrap items-center gap-3">
+                <CopyButton value={created.token} label={t(UI.mcpCopyToken)} tone="primary" />
+                <code className="font-mono text-[12px] text-text-muted">{maskToken(created.token)}</code>
+              </div>
+            </div>
+            <details className="rounded-md border border-amber-200/70 bg-white/60 px-3 py-2 text-[13px]">
+              <summary className="cursor-pointer font-semibold text-text-primary">{t(UI.mcpBrowserTitle)}</summary>
+              <div className="mt-2 flex flex-col gap-2">
+                <p className="text-text-muted">{t(UI.mcpBrowserHint)}</p>
+                <div className="self-start">
+                  <CopyButton value={`${mcpUrl}/${created.token}`} label={t(UI.mcpCopyLink)} />
+                </div>
+              </div>
+            </details>
             <AdminButton size="sm" className="self-start" onClick={() => setCreated(null)}>
               {t(UI.done)}
             </AdminButton>
