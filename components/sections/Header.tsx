@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { usePathname } from 'next/navigation'
 import type { Locale } from '@/lib/i18n/routing'
-import { PDF_CATALOG_URL, navItems } from '@/lib/constants'
+import { navItems } from '@/lib/constants'
 import { Button } from '@/components/ui/Button'
 import { LanguageSwitcher } from './LanguageSwitcher'
 import { cn } from '@/lib/utils/cn'
@@ -14,10 +14,11 @@ import { cn } from '@/lib/utils/cn'
 export interface HeaderProps {
   locale: Locale
   phone: { human: string; tel: string }
+  catalogUrl: string
   showNews: boolean
 }
 
-export function Header({ locale, phone, showNews }: HeaderProps) {
+export function Header({ locale, phone, catalogUrl, showNews }: HeaderProps) {
   const items = navItems(showNews)
   const t = useTranslations()
   const pathname = usePathname()
@@ -109,7 +110,7 @@ export function Header({ locale, phone, showNews }: HeaderProps) {
             </a>
             <Button
               asLink
-              href={PDF_CATALOG_URL}
+              href={catalogUrl}
               target="_blank"
               rel="noopener noreferrer"
               variant={darkMode ? 'onDark' : 'secondary'}
@@ -207,7 +208,7 @@ export function Header({ locale, phone, showNews }: HeaderProps) {
             </Button>
             <Button
               asLink
-              href={PDF_CATALOG_URL}
+              href={catalogUrl}
               target="_blank"
               rel="noopener noreferrer"
               variant="secondary"

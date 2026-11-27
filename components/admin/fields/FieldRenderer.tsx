@@ -13,6 +13,7 @@ import { AdminButton, FieldShell, IconButton, SelectInput, TextArea, TextInput, 
 import { BlocksInput } from './BlocksInput'
 import { GalleryInput, ImageDrop } from './ImageField'
 import { LocalizedInput, type LocalizedValue } from './LocalizedInput'
+import { PdfInput } from './PdfInput'
 import { RelationInput } from './RelationInput'
 import { SpecsInput } from './SpecsInput'
 
@@ -117,6 +118,12 @@ export function FieldRenderer({ field, path }: { field: FieldConfig; path: Path 
       return (
         <FieldShell label={label} required={field.required} hint={hint} error={error}>
           <ImageDrop value={typeof value === 'string' ? value : undefined} onChange={set} invalid={Boolean(error)} />
+        </FieldShell>
+      )
+    case 'pdf':
+      return (
+        <FieldShell label={label} required={field.required} hint={hint} error={error}>
+          <PdfInput value={typeof value === 'string' ? value : undefined} fallback={field.fallback} onChange={set} invalid={Boolean(error)} />
         </FieldShell>
       )
     case 'gallery':

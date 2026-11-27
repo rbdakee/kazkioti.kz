@@ -34,15 +34,31 @@ async function prepare(file: File): Promise<Blob> {
   return blob
 }
 
+/** Sends a file through the admin to the CMS and returns its site path (`/uploads/...`). */
+async function send(blob: Blob, name: string): Promise<string> {
+  const form = new FormData()
+  form.set('file', blob, name)
+  const response = await fetch('/admin/upload', { method: 'POST', body: form })
+  const body = (await response.json().catch(() => ({}))) as { path?: string; message?: string }
+  if (!response.ok || !body.path) throw new ImageUploadError(body.message ?? `Upload failed (${response.status})`)
+  return body.path
+}
+
 /** Uploads a photo through the admin and returns its site path (`/uploads/...`). */
 export async function uploadImage(file: File): Promise<string> {
   if (!ACCEPTED_TYPES.includes(file.type)) throw new ImageUploadError('Unsupported file type')
   const blob = await prepare(file)
   if (blob.size > MAX_UPLOAD_BYTES) throw new ImageUploadError('Image is too large')
-  const form = new FormData()
-  form.set('file', blob, file.name)
-  const response = await fetch('/admin/upload', { method: 'POST', body: form })
-  const body = (await response.json().catch(() => ({}))) as { path?: string; message?: string }
-  if (!response.ok || !body.path) throw new ImageUploadError(body.message ?? `Upload failed (${response.status})`)
-  return body.path
+  return send(blob, file.name)
+}
+
+export class PdfTooLargeError extends ImageUploadError {}
+
+export const MAX_PDF_MB = MAX_UPLOAD_BYTES / 1024 / 1024
+
+/** Uploads a PDF as is (PDFs cannot be shrunk in the browser). */
+export async function uploadPdf(file: File): Promise<string> {
+  if (file.type !== 'application/pdf') throw new ImageUploadError('Only PDF files are accepted')
+  if (file.size > MAX_UPLOAD_BYTES) throw new PdfTooLargeError('PDF is too large')
+  return send(file, file.name)
 }

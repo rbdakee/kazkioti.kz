@@ -1,4 +1,5 @@
 import { fetchSettings } from '@/lib/cms/client'
+import { PDF_CATALOG_URL } from '@/lib/constants'
 
 export interface CompanyContacts {
   /** As shown to people, e.g. "+7 747 876 44 44". */
@@ -7,6 +8,8 @@ export interface CompanyContacts {
   phoneTel: string
   email: string
   address: string
+  /** PDF behind the "Download catalog" button. */
+  catalogUrl: string
 }
 
 export function toPhoneTel(phone: string): string {
@@ -20,5 +23,6 @@ export async function getCompanyContacts(): Promise<CompanyContacts> {
     phoneTel: toPhoneTel(company.phone),
     email: company.email,
     address: company.address,
+    catalogUrl: company.catalogPdf ?? PDF_CATALOG_URL,
   }
 }

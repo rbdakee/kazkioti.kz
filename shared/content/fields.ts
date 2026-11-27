@@ -41,6 +41,19 @@ export const optionalMediaPath = z
   .optional()
   .transform((value) => (value ? value : undefined))
 
+/** Path of an uploaded PDF (`/uploads/...pdf`) or one bundled with the site (`/docs/...pdf`). */
+export const optionalPdfPath = z
+  .union([
+    z
+      .string()
+      .trim()
+      .regex(/^\/(uploads|docs)\/[\w\-./]+\.pdf$/, 'Expected a PDF file')
+      .refine((value) => !value.includes('..'), 'Invalid file path'),
+    z.literal(''),
+  ])
+  .optional()
+  .transform((value) => (value ? value : undefined))
+
 export const slugList = z.array(z.string().regex(/^[a-z0-9-]+$/)).default([])
 
 export const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Expected YYYY-MM-DD')

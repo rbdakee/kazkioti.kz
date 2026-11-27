@@ -43,7 +43,7 @@ import {
 import { handleMcpRequest } from './mcp'
 import { revalidateSite, type RevalidateTarget } from './revalidate'
 import { createApiToken, deleteApiToken, findApiTokenUser, isApiToken, listApiTokens } from './tokens'
-import { UploadError, saveImage } from './uploads'
+import { UploadError, saveUpload } from './uploads'
 
 export interface AppOptions {
   db: Db
@@ -117,7 +117,7 @@ export function createApp(options: AppOptions) {
 
   app.get('/health', (c) => c.json({ ok: true }))
 
-  // Uploaded images: random names, so they can be cached forever.
+  // Uploaded photos and PDFs: random names, so they can be cached forever.
   app.use(
     '/uploads/*',
     async (c, next) => {
@@ -231,8 +231,9 @@ export function createApp(options: AppOptions) {
   admin.post('/uploads', bodyLimit({ maxSize: options.maxUploadBytes + 64 * 1024 }), async (c) => {
     const body = await c.req.parseBody()
     const file = body.file
-    if (!(file instanceof File)) throw new UploadError('Expected an image in the "file" field')
-    const path = await saveImage(options.uploadsDir, Buffer.from(await file.arrayBuffer()), options.maxUploadBytes)
+    if (!(file instanceof File)) throw new UploadError('Expected a file in the "file" field')
+    const bytes = Buffer.from(await file.arrayBuffer())
+    const path = await saveUpload(options.uploadsDir, bytes, options.maxUploadBytes, ['image', 'pdf'])
     return c.json({ path }, 201)
   })
 

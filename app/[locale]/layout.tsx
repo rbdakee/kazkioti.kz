@@ -86,7 +86,7 @@ export default async function LocaleLayout({
           >
             {t('skipToContent')}
           </a>
-          <Header locale={locale as Locale} phone={{ human: company.phoneHuman, tel: company.phoneTel }} showNews={showNews} />
+          <Header locale={locale as Locale} phone={{ human: company.phoneHuman, tel: company.phoneTel }} catalogUrl={company.catalogUrl} showNews={showNews} />
           <main id="main-content" className="min-h-screen">
             {children}
           </main>

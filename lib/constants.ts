@@ -45,4 +45,5 @@ export const SOCIAL_LINKS = {
   youtube: process.env.YOUTUBE_URL ?? 'https://youtube.com/@kazkioti',
 } as const
 
+/** Catalog bundled with the site; the header links to it until one is uploaded in the admin. */
 export const PDF_CATALOG_URL = '/docs/kazkioti-catalog.pdf'

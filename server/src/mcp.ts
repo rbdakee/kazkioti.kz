@@ -25,9 +25,9 @@ import {
   saveSettings,
   updateEntry,
 } from './entries'
-import { downloadImage } from './remoteImage'
+import { downloadFile } from './remoteImage'
 import { revalidateSite, type RevalidateTarget } from './revalidate'
-import { UploadError, saveImage } from './uploads'
+import { UploadError, saveUpload, type UploadKind } from './uploads'
 
 export interface McpOptions {
   db: Db
@@ -42,6 +42,7 @@ const INSTRUCTIONS = `Content admin of kazkioti.kz, the site of a Kazakhstan tra
 - Prices are whole tenge (KZT) without spaces, e.g. 23000000.
 - Slugs are generated from the name/title on create and never change. Use list_entries to find them.
 - Photos: upload with upload_image first, then put the returned path (/uploads/...) into an image field.
+- The "Download catalog" PDF in the site header is company.catalogPdf: upload_pdf, then update_company with that path; empty means the bundled catalog.
 - News are created as drafts unless status is "published"; the news section appears on the site only when at least one article is published.
 - News body is a list of blocks; text blocks accept light Markdown (blank line = paragraph, **bold**, [link](https://...), "- " list items).
 - To edit, send only the fields that change in "changes"; they replace those top-level fields, the rest stays. Nested objects and lists are replaced whole, so send the full value of any field you change.
@@ -209,24 +210,38 @@ function registerTools(server: McpServer, options: McpOptions, user: User): void
     )
   }
 
+  const megabytes = Math.round(options.maxUploadBytes / 1024 / 1024)
+  const uploadInput = {
+    url: z.string().url().optional().describe('Public http(s) link to the file'),
+    base64: z.string().optional().describe('File bytes as base64 (a data: URL prefix is allowed)'),
+  }
+  const upload = (kind: UploadKind) => ({ url, base64 }: { url?: string; base64?: string }) =>
+    attempt(async () => {
+      if (Boolean(url) === Boolean(base64)) throw new UploadError('Give exactly one of url or base64')
+      const bytes = url
+        ? await downloadFile(url, options.maxUploadBytes)
+        : Buffer.from((base64 ?? '').replace(/^data:[^,]*,/, ''), 'base64')
+      return { path: await saveUpload(options.uploadsDir, bytes, options.maxUploadBytes, [kind]) }
+    })
+
   server.registerTool(
     'upload_image',
     {
       title: 'Upload image',
-      description: `Stores a JPEG, PNG, WebP or AVIF image (up to ${Math.round(options.maxUploadBytes / 1024 / 1024)} MB) and returns its path for image fields. Give either a public link or base64 data.`,
-      inputSchema: {
-        url: z.string().url().optional().describe('Public http(s) link to the image'),
-        base64: z.string().optional().describe('Image bytes as base64 (a data: URL prefix is allowed)'),
-      },
+      description: `Stores a JPEG, PNG, WebP or AVIF image (up to ${megabytes} MB) and returns its path for image fields. Give either a public link or base64 data.`,
+      inputSchema: uploadInput,
     },
-    ({ url, base64 }) =>
-      attempt(async () => {
-        if (Boolean(url) === Boolean(base64)) throw new UploadError('Give exactly one of url or base64')
-        const bytes = url
-          ? await downloadImage(url, options.maxUploadBytes)
-          : Buffer.from((base64 ?? '').replace(/^data:[^,]*,/, ''), 'base64')
-        return { path: await saveImage(options.uploadsDir, bytes, options.maxUploadBytes) }
-      }),
+    upload('image'),
+  )
+
+  server.registerTool(
+    'upload_pdf',
+    {
+      title: 'Upload PDF',
+      description: `Stores a PDF (up to ${megabytes} MB) and returns its path, e.g. for the catalog: update_company with { catalogPdf: path }. Give either a public link or base64 data.`,
+      inputSchema: uploadInput,
+    },
+    upload('pdf'),
   )
 
   server.registerTool(

@@ -60,8 +60,8 @@ async function readCapped(response: Response, maxBytes: number): Promise<Buffer>
   return Buffer.concat(chunks)
 }
 
-/** Downloads an image from a public link, following a few redirects, each checked again. */
-export async function downloadImage(link: string, maxBytes: number): Promise<Buffer> {
+/** Downloads a file from a public link, following a few redirects, each checked again. */
+export async function downloadFile(link: string, maxBytes: number): Promise<Buffer> {
   let url: URL
   try {
     url = new URL(link)

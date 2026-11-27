@@ -126,6 +126,22 @@ describe('MCP', () => {
     assert.match(local.content[0]?.text ?? '', /not reachable/)
   })
 
+  it('uploads a catalog PDF and links it from the company settings', async () => {
+    const pdf = Buffer.from('%PDF-1.4\n%%EOF\n').toString('base64')
+    const { path: catalogPdf } = ctx.parse(await ctx.callTool('upload_pdf', { base64: pdf })) as { path: string }
+    assert.match(catalogPdf, /^\/uploads\/\d{4}\/\d{2}\/[0-9a-f]{24}\.pdf$/)
+
+    const notPdf = await ctx.callTool('upload_pdf', { base64: PNG_1PX })
+    assert.equal(notPdf.isError, true)
+
+    await ctx.admin('PUT', '/settings/company', { data: { phone: '+7 700 000 00 00', email: 'info@kazkioti.kz', address: 'Шымкент' } })
+    const saved = ctx.parse(await ctx.callTool('update_company', { changes: { catalogPdf } })) as { entry: { data: { catalogPdf: string } } }
+    assert.equal(saved.entry.data.catalogPdf, catalogPdf)
+
+    const wrong = await ctx.callTool('update_company', { changes: { catalogPdf: '/uploads/2026/11/photo.png' } })
+    assert.equal(wrong.isError, true)
+  })
+
   it('stops working once the token is revoked', async () => {
     assert.equal((await ctx.admin('DELETE', `/tokens/${ctx.tokenId}`)).status, 200)
     assert.equal((await ctx.rpc('tools/list', {})).status, 401)

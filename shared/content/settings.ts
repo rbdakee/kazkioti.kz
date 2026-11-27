@@ -1,10 +1,12 @@
 import { z } from 'zod'
-import { requiredText } from './fields'
+import { optionalPdfPath, requiredText } from './fields'
 
 export const CompanySchema = z.object({
   phone: requiredText,
   email: z.string().trim().email(),
   address: requiredText,
+  /** "Download catalog" button in the header; the bundled catalog when empty. */
+  catalogPdf: optionalPdfPath,
 })
 
 export type Company = z.infer<typeof CompanySchema>

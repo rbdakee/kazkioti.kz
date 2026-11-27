@@ -29,6 +29,8 @@ export type FieldConfig =
   | (FieldBase & { kind: 'localized'; multiline?: boolean; rows?: number; kazakhOptional?: boolean })
   | (FieldBase & { kind: 'image' })
   | (FieldBase & { kind: 'gallery' })
+  /** One PDF with an inline preview; `fallback` is what the site shows while the field is empty. */
+  | (FieldBase & { kind: 'pdf'; fallback?: string })
   /** Pick entries of another collection by name. */
   | (FieldBase & { kind: 'relation'; collection: CollectionName })
   /** A list of similar items, e.g. questions or dealers. */

@@ -1,4 +1,5 @@
 import type { SettingsKey } from '@/shared/content'
+import { PDF_CATALOG_URL } from '@/lib/constants'
 import type { Label } from '../i18n'
 import { l } from './common'
 import { textOf } from './paths'
@@ -24,6 +25,11 @@ export const companyForm: SettingsFormConfig = {
         { key: 'email', kind: 'text', required: true, width: 'half', label: l('Email', 'Email'), placeholder: 'info@kazkioti.kz' },
         { key: 'address', kind: 'textarea', rows: 2, required: true, label: l('Адрес завода', 'Зауыт мекенжайы') },
       ],
+    },
+    {
+      title: l('Каталог', 'Каталог'),
+      description: l('PDF по кнопке «Скачать каталог» в шапке сайта', 'Сайт тақырыпшасындағы «Каталогты жүктеу» батырмасының PDF файлы'),
+      fields: [{ key: 'catalogPdf', kind: 'pdf', fallback: PDF_CATALOG_URL, label: l('PDF-каталог', 'PDF-каталог') }],
     },
   ],
 }
