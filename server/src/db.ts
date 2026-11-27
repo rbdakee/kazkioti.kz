@@ -37,6 +37,17 @@ const MIGRATIONS: readonly string[] = [
     updated_by INTEGER REFERENCES users(id) ON DELETE SET NULL
   );
   `,
+  `
+  CREATE TABLE api_tokens (
+    id INTEGER PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    name TEXT NOT NULL,
+    token_hash TEXT NOT NULL UNIQUE,
+    created_at TEXT NOT NULL,
+    last_used_at TEXT
+  );
+  CREATE INDEX api_tokens_user ON api_tokens(user_id);
+  `,
 ]
 
 export function openDatabase(file: string): Db {

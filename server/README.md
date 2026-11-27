@@ -36,6 +36,22 @@ Caddy gets the HTTPS certificate automatically. Then set on the site (Vercel):
 
 Update: `git pull && docker compose up -d --build`.
 
+## MCP for AI assistants
+
+`/mcp` exposes everything the admin can do (catalog, news, FAQ, contacts, dealers, photo uploads, users)
+as MCP tools, so Claude, ChatGPT, Codex or Cursor can edit the site. Saves go through the same validation
+and refresh the site like the admin does.
+
+Create a token in the admin: **Пользователи → Доступ для ИИ (MCP)**. It is shown once; revoke it there.
+
+- Clients that send headers (Claude Code, Codex, Cursor, Claude Desktop):
+  `https://api.kazkioti.kz/mcp` with `Authorization: Bearer kzk_…`.
+  Claude Code: `claude mcp add --transport http kazkioti https://api.kazkioti.kz/mcp --header "Authorization: Bearer kzk_…"`
+- Clients without custom headers (claude.ai, ChatGPT connectors): the secret link
+  `https://api.kazkioti.kz/mcp/kzk_…` as a connector without authentication. Treat the link like a password.
+
+Photos are uploaded with `upload_image` from a public link or base64 data (links to private networks are refused).
+
 ## Backups
 
 Content and photos are in the `cms_data` Docker volume. A consistent copy while running:

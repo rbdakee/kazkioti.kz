@@ -40,7 +40,9 @@ import {
   saveSettings,
   updateEntry,
 } from './entries'
+import { handleMcpRequest } from './mcp'
 import { revalidateSite, type RevalidateTarget } from './revalidate'
+import { createApiToken, deleteApiToken, findApiTokenUser, isApiToken, listApiTokens } from './tokens'
 import { UploadError, saveImage } from './uploads'
 
 export interface AppOptions {
@@ -62,6 +64,7 @@ const NewUserSchema = z.object({
   name: z.string().trim().min(1).max(100),
   password: PasswordSchema,
 })
+const TokenNameSchema = z.object({ name: z.string().trim().min(1).max(100) })
 const SaveSchema = z.object({ data: z.unknown(), expectedVersion: z.number().int().positive().optional() })
 
 function collectionParam(c: Context): CollectionName {
@@ -154,6 +157,18 @@ export function createApp(options: AppOptions) {
     return c.json({ ...session, user: { id: user.id, login: user.login, name: user.name } })
   })
 
+  // ---- MCP for AI assistants, authorised by an API token ---------------------
+  // The token comes in the Authorization header, or in the path for clients that
+  // cannot send headers (claude.ai and ChatGPT connectors).
+  const mcpBodyLimit = bodyLimit({ maxSize: Math.ceil((options.maxUploadBytes * 4) / 3) + 1024 * 1024 })
+  const mcp = async (c: Context, token: string | undefined) => {
+    const user = token && isApiToken(token) ? findApiTokenUser(db, token) : undefined
+    if (!user) return c.json({ error: 'unauthorized' }, 401)
+    return handleMcpRequest(c.req.raw, options, user)
+  }
+  app.all('/mcp', mcpBodyLimit, (c) => mcp(c, bearerToken(c)))
+  app.all('/mcp/:token', mcpBodyLimit, (c) => mcp(c, c.req.param('token')))
+
   // ---- Everything below requires a session ---------------------------------
   const admin = new Hono<Env>()
 
@@ -233,6 +248,18 @@ export function createApp(options: AppOptions) {
     const id = Number(c.req.param('id'))
     if (id === c.get('user').id) throw new HTTPException(400, { message: 'You cannot delete yourself' })
     if (!deleteUser(db, id)) throw new NotFoundError('User not found')
+    return c.json({ ok: true })
+  })
+
+  admin.get('/tokens', (c) => c.json(listApiTokens(db)))
+
+  admin.post('/tokens', async (c) => {
+    const { name } = await jsonBody(c, TokenNameSchema)
+    return c.json(createApiToken(db, c.get('user').id, name), 201)
+  })
+
+  admin.delete('/tokens/:id', (c) => {
+    if (!deleteApiToken(db, Number(c.req.param('id')))) throw new NotFoundError('Token not found')
     return c.json({ ok: true })
   })
 

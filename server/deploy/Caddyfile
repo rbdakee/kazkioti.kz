@@ -1,7 +1,7 @@
 {$CMS_DOMAIN} {
 	encode zstd gzip
 	request_body {
-		max_size 12MB
+		max_size 16MB
 	}
 	reverse_proxy cms:4000
 }
